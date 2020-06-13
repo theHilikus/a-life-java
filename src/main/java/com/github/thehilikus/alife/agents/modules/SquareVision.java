@@ -41,7 +41,7 @@ public class SquareVision implements Vision {
 
     @Override
     public Map<String, String> getParameters() {
-        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+        return Map.of(PARAMETER_PREFIX + "radius", Integer.toString(radius));
     }
 
     @Override
