@@ -5,6 +5,7 @@ import com.github.thehilikus.alife.api.Coordinates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,5 +77,15 @@ public class World {
         }
 
         return grid[x][y];
+    }
+
+    public Map<String, String> getAgentDetails(int agentId) {
+        Map<String, String> result = Collections.emptyMap();
+        Agent agent = agents.get(agentId);
+        if (agent != null) {
+            result = agent.getParameters();
+        }
+
+        return result;
     }
 }
