@@ -8,6 +8,7 @@ import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -165,7 +166,14 @@ public class SquareMotion implements Motion {
 
     @Override
     public Map<String, String> getParameters() {
-       throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+        Map<String, String> result = new HashMap<>();
+        result.put(PARAMETER_PREFIX + "orientation", currentOrientation.toString());
+        result.put(PARAMETER_PREFIX + "position", currentPosition.getX() + ", " + currentPosition.getY());
+        result.put(PARAMETER_PREFIX + "turningProbability", Integer.toString(turningProbability));
+        result.put(PARAMETER_PREFIX + "energyExpenditureFactor", Double.toString(energyExpenditureFactor));
+        result.putAll(speeds.getParameters());
+
+        return result;
     }
 
     public static class Speeds {
@@ -190,6 +198,17 @@ public class SquareMotion implements Motion {
             double scoutSpeedFactor = RandomSource.nextDouble(1.0);
             double escapeSpeedFactor = RandomSource.nextDouble(1.0);
             return new Speeds(topSpeed, huntSpeedFactor, idleSpeedFactor, scoutSpeedFactor, escapeSpeedFactor);
+        }
+
+        public Map<String, String> getParameters() {
+            String speedsPrefix = PARAMETER_PREFIX + "speeds.";
+            return Map.of(
+                    speedsPrefix + "topSpeed", Integer.toString(topSpeed),
+                    speedsPrefix + "idleSpeedFactor", Double.toString(idleSpeedFactor),
+                    speedsPrefix + "scoutSpeedFactor", Double.toString(scoutSpeedFactor),
+                    speedsPrefix + "huntSpeedFactor", Double.toString(huntSpeedFactor),
+                    speedsPrefix + "escapeSpeedFactor", Double.toString(escapeSpeedFactor)
+            );
         }
     }
 }

@@ -7,6 +7,11 @@ import java.util.SortedSet;
  */
 public interface Vision extends Component {
     /**
+     * The prefix for vision parameters
+     */
+    String PARAMETER_PREFIX = "vision.";
+
+    /**
      * Searches for agents around itself
      *
      * @param type the type of agent to scan for

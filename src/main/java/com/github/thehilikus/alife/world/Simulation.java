@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.world;
 
-import com.github.thehilikus.alife.agents.FoodAgent;
 import com.github.thehilikus.alife.agents.HuntingAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,8 +90,8 @@ public class Simulation {
         if (agentId.chars().allMatch( Character::isDigit )) {
             Map<String, String> agentDetails = world.getAgentDetails(Integer.parseInt(agentId));
             StringBuilder detailsBuffer = new StringBuilder();
-            detailsBuffer.append("Details of agent ").append(agentId).append('\n');
-            agentDetails.forEach((key, value) -> detailsBuffer.append(key).append(": ").append(value));
+            detailsBuffer.append("##### Details of agent ").append(agentId).append(" #####").append(System.lineSeparator());
+            agentDetails.forEach((key, value) -> detailsBuffer.append(key).append(": ").append(value).append(System.lineSeparator()));
             System.out.println(detailsBuffer.toString());
         } else {
             System.err.println("Invalid id \"" + agentId + "\". Ignoring command");

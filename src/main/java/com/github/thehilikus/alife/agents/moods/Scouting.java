@@ -57,6 +57,9 @@ public class Scouting implements Mood {
 
     @Override
     public Map<String, String> getParameters() {
-        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+        return Map.of(
+                PARAMETER_PREFIX + "current", getClass().getSimpleName(),
+                PARAMETER_PREFIX + "lastMovement", Integer.toString(lastMovement)
+        );
     }
 }

@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,7 +71,8 @@ public class HuntingAgent implements Agent {
 
     @Override
     public Map<String, String> getParameters() {
-        Map<String, String> result = new HashMap<>();
+        Map<String, String> result = new LinkedHashMap<>();
+        result.put("type", getClass().getSimpleName());
         result.putAll(vision.getParameters());
         result.putAll(motion.getParameters());
         result.putAll(currentMood.getParameters());
