@@ -12,10 +12,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Motion that can move in 4 directions: North, West, East and South
+ * Motion that moves always in the direction being faced and random turns
  */
-public class SquareMotion implements Motion {
-    private static final Logger LOG = LoggerFactory.getLogger(SquareMotion.class.getSimpleName());
+public class FrontWalkerWithRandomTurn implements Motion {
+    private static final Logger LOG = LoggerFactory.getLogger(FrontWalkerWithRandomTurn.class.getSimpleName());
     private final int agentId;
     private Orientation currentOrientation;
     private final Coordinates currentPosition;
@@ -25,11 +25,11 @@ public class SquareMotion implements Motion {
     private final Speeds speeds;
     private final double energyExpenditureFactor;
 
-    private SquareMotion(int agentId, int woldWidth, int worldHeight, Coordinates startingPosition, Speeds speeds) {
+    private FrontWalkerWithRandomTurn(int agentId, int woldWidth, int worldHeight, Coordinates startingPosition, Speeds speeds) {
         this(agentId, Orientation.fromInt(RandomSource.nextInt(4)), startingPosition, RandomSource.nextInt(100), woldWidth, worldHeight, speeds, RandomSource.nextDouble(1));
     }
 
-    private SquareMotion(int agentId, Orientation currentOrientation, Coordinates currentPosition, int turningProbability, int woldWidth, int worldHeight, Speeds speeds, double energyExpenditureFactor) {
+    private FrontWalkerWithRandomTurn(int agentId, Orientation currentOrientation, Coordinates currentPosition, int turningProbability, int woldWidth, int worldHeight, Speeds speeds, double energyExpenditureFactor) {
         this.agentId = agentId;
         this.currentOrientation = currentOrientation;
         this.currentPosition = currentPosition;
@@ -41,7 +41,7 @@ public class SquareMotion implements Motion {
     }
 
     public static Motion create(int id, World world) {
-        return new SquareMotion(id, world.getWidth(), world.getHeight(), world.getEmptyPosition(), Speeds.create());
+        return new FrontWalkerWithRandomTurn(id, world.getWidth(), world.getHeight(), world.getEmptyPosition(), Speeds.create());
     }
 
     @Override
