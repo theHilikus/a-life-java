@@ -2,6 +2,8 @@ package com.github.thehilikus.alife.world;
 
 import com.github.thehilikus.alife.agents.FoodAgent;
 import com.github.thehilikus.alife.agents.HuntingAgent;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,19 +20,34 @@ public class Simulation {
     private static final Logger LOG = LoggerFactory.getLogger(Simulation.class.getSimpleName());
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private final World world;
-
-    private boolean automatic = false;
-    private boolean printWorld;
+    private final CliOptions options;
 
     public static void main(String[] args) {
-        Simulation simulation = new Simulation(args);
-        simulation.start();
+        CliOptions options = parseArguments(args);
+        if (options != null) {
+            Simulation simulation = new Simulation(options);
+            simulation.start();
+        }
     }
 
-    private Simulation(String[] argsArray) {
+    private static CliOptions parseArguments(String[] args) {
 
-        processArguments(argsArray);
+        CliOptions result = new CliOptions();
+        CmdLineParser parser = new CmdLineParser(result);
+        try {
+            parser.parseArgument(args);
+            return result;
+        } catch (CmdLineException e) {
+            System.err.println(e.getMessage());
+            parser.printUsage(System.err);
+            System.err.println();
+        }
 
+        return null;
+    }
+
+    private Simulation(CliOptions options) {
+        this.options = options;
         int worldWidth = 100;
         int worldHeight = 100;
         int foodCount = 50;
@@ -41,18 +58,8 @@ public class Simulation {
 //        FoodAgent.create(foodCount, world);
     }
 
-    private void processArguments(String[] argsArray) {
-        List<String> args = Arrays.asList(argsArray);
-        if (args.contains("--automatic")) {
-            automatic = true;
-        }
-        if (args.contains("--print-world")) {
-            printWorld = true;
-        }
-    }
-
     private void start() {
-        if (automatic) {
+        if (options.isAutomatic()) {
             runAutomatic();
         } else {
             runManual();
@@ -62,7 +69,7 @@ public class Simulation {
     private void runAutomatic() {
         Runnable tick = () -> {
             world.tick();
-            if (printWorld) {
+            if (options.isPrintWorld()) {
                 System.out.println(world.getRepresentation());
             }
         };
@@ -80,7 +87,7 @@ public class Simulation {
         try (Scanner scanner = new Scanner(System.in)) {
             while (!command.equals("x")) {
                 if (command.equals("a")) {
-                    automatic = true;
+                    options.setAutomatic(true);
                     start();
                     break;
                 } else if (command.startsWith("q ")) {
@@ -89,7 +96,7 @@ public class Simulation {
                 }
 
                 world.tick();
-                if (printWorld) {
+                if (options.isPrintWorld()) {
                     System.out.println(world.getRepresentation());
                 }
                 System.out.println("Enter command to run");
