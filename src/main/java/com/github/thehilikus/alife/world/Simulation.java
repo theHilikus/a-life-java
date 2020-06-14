@@ -1,14 +1,18 @@
 package com.github.thehilikus.alife.world;
 
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Context;
+import ch.qos.logback.core.FileAppender;
+import ch.qos.logback.core.spi.AppenderAttachable;
 import com.github.thehilikus.alife.agents.FoodAgent;
 import com.github.thehilikus.alife.agents.HuntingAgent;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.ParserProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.*;
@@ -25,15 +29,42 @@ public class Simulation {
     public static void main(String[] args) {
         CliOptions options = parseArguments(args);
         if (options != null) {
+            if (options.getLogFile() != null) {
+                setupLogFile(options);
+            }
             Simulation simulation = new Simulation(options);
             simulation.start();
         }
     }
 
+    private static void setupLogFile(CliOptions options) {
+        Context loggerContext = (Context) LoggerFactory.getILoggerFactory();
+
+        PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setContext(loggerContext);
+        encoder.setPattern("%relative %logger - %msg%n");
+        encoder.start();
+
+        FileAppender<ILoggingEvent> fileAppender = new FileAppender<>();
+        fileAppender.setContext(loggerContext);
+        fileAppender.setName("timestamp");
+        fileAppender.setFile(options.getLogFile().getAbsolutePath());
+        fileAppender.setAppend(false);
+        fileAppender.setEncoder(encoder);
+        fileAppender.start();
+
+        // attach the rolling file appender to the logger of your choice
+        AppenderAttachable<ILoggingEvent> logbackLogger = (AppenderAttachable<ILoggingEvent>) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        logbackLogger.addAppender(fileAppender);
+        logbackLogger.detachAppender("console");
+    }
+
     private static CliOptions parseArguments(String[] args) {
 
         CliOptions result = new CliOptions();
-        CmdLineParser parser = new CmdLineParser(result);
+        ParserProperties defaults = ParserProperties.defaults();
+        defaults.withUsageWidth(150);
+        CmdLineParser parser = new CmdLineParser(result,defaults);
         try {
             parser.parseArgument(args);
             return result;

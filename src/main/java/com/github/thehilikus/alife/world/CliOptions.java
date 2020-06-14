@@ -12,7 +12,7 @@ public class CliOptions {
     private boolean automatic = false;
     @Option(name = "--print-world", usage = "Show a representation of the world in STDOUT")
     private boolean printWorld = true;
-    @Option(name = "--log-file", metaVar = "logFile")
+    @Option(name = "--log-file", metaVar = "<logFile>", usage = "File to log to. Disables logging to the console")
     private File logFile;
 
     public boolean isAutomatic() {
