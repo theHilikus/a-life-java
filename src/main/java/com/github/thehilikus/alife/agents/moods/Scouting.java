@@ -33,7 +33,7 @@ public class Scouting implements Mood {
         //scout the area
         SortedSet<ScanResult> foundAgents = vision.scan(FoodAgent.class);
         if (!foundAgents.isEmpty()) {
-            return new Hunting((FoodAgent) foundAgents.first().getAgent());
+            return new Hunting(foundAgents.first().getAgent());
         } else {
             lastMovement = motion.move(Motion.SpeedType.SCOUT);
         }
