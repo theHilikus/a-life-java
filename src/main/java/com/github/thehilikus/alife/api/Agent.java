@@ -30,4 +30,10 @@ public interface Agent {
      * @return a string representing the agent in 3 characters
      */
     String getStringRepresentation();
+
+    Motion getMotion();
+
+    Vision getVision();
+
+    Object getMood();
 }

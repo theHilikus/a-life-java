@@ -97,4 +97,19 @@ public class HuntingAgent implements Agent {
                 "id=" + id +
                 '}';
     }
+
+    @Override
+    public Vision getVision() {
+        return vision;
+    }
+
+    @Override
+    public Motion getMotion() {
+        return motion;
+    }
+
+    @Override
+    public Mood getMood() {
+        return currentMood;
+    }
 }
