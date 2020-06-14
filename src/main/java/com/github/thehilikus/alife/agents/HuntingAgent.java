@@ -1,6 +1,7 @@
 package com.github.thehilikus.alife.agents;
 
 import com.diogonunes.jcdp.color.api.Ansi;
+import com.github.thehilikus.alife.agents.controllers.MoodController;
 import com.github.thehilikus.alife.agents.modules.StraightWalkWithRandomTurn;
 import com.github.thehilikus.alife.agents.modules.SquareVision;
 import com.github.thehilikus.alife.agents.moods.Scouting;
@@ -34,14 +35,14 @@ public class HuntingAgent implements Agent {
             Motion motion = StraightWalkWithRandomTurn.create(id, world);
             Vision vision = SquareVision.create(id, world);
 
-            Agent newAgent = new HuntingAgent(id, vision, motion, size);
+            Agent newAgent = new HuntingAgent(id, vision, motion, new MoodController(world), size);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }
 
     }
 
-    private HuntingAgent(int id, Vision vision, Motion motion, int size) {
+    private HuntingAgent(int id, Vision vision, Motion motion, MoodController moodController, int size) {
         this.id = id;
         this.vision = vision;
         this.motion = motion;
@@ -55,7 +56,6 @@ public class HuntingAgent implements Agent {
         LOG.debug("#### Updating state of {} ####", this);
         Mood newMood = currentMood.tick();
         if (!newMood.getClass().equals(currentMood.getClass())) {
-            LOG.debug("{} changing mood from {} to {}", this, currentMood, newMood);
             currentMood = newMood;
         }
     }

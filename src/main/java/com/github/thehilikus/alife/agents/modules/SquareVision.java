@@ -24,7 +24,7 @@ public class SquareVision implements Vision {
     private final int radius;
     private final World world;
 
-    private SquareVision(int agentId, int radius, World world) {
+    public SquareVision(int agentId, int radius, World world) {
         this.agentId = agentId;
         this.radius = radius;
         this.world = world;
@@ -62,4 +62,7 @@ public class SquareVision implements Vision {
         return result;
     }
 
+    public int getRadius() {
+        return radius;
+    }
 }

@@ -57,6 +57,10 @@ public class World {
         agents.remove(agent.getId());
     }
 
+    public Agent getAgent(int id) {
+        return agents.get(id);
+    }
+
     public Coordinates getEmptyPosition() {
         int x;
         int y;
