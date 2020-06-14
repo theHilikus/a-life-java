@@ -1,5 +1,7 @@
 package com.github.thehilikus.alife.api;
 
+import com.diogonunes.jcdp.color.api.Ansi;
+
 /**
  * The current behaviour of an agent
  */
@@ -17,4 +19,6 @@ public interface Mood extends Component {
      * @return the number of energy points used in the last turn
      */
     int getEnergyDelta();
+
+    Ansi.FColor getTerminalColour();
 }

@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agents.moods;
 
+import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Mood;
 
 import java.util.Map;
@@ -29,6 +30,11 @@ public class Existing implements Mood {
     @Override
     public int getEnergyDelta() {
         return ENERGY_DERIVATIVE;
+    }
+
+    @Override
+    public Ansi.FColor getTerminalColour() {
+        return null;
     }
 
     @Override

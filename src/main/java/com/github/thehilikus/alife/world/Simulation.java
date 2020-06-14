@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.world;
 
+import com.github.thehilikus.alife.agents.FoodAgent;
 import com.github.thehilikus.alife.agents.HuntingAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ public class Simulation {
     private final World world;
 
     private boolean automatic = false;
+    private boolean printWorld;
 
     public static void main(String[] args) {
         Simulation simulation = new Simulation(args);
@@ -44,6 +46,9 @@ public class Simulation {
         if (args.contains("--automatic")) {
             automatic = true;
         }
+        if (args.contains("--print-world")) {
+            printWorld = true;
+        }
     }
 
     private void start() {
@@ -55,7 +60,13 @@ public class Simulation {
     }
 
     private void runAutomatic() {
-        ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(world::tick, 0, 3, TimeUnit.SECONDS);
+        Runnable tick = () -> {
+            world.tick();
+            if (printWorld) {
+                System.out.println(world.getRepresentation());
+            }
+        };
+        ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(tick, 0, 3, TimeUnit.SECONDS);
 
         try {
             scheduledFuture.get();
@@ -78,6 +89,9 @@ public class Simulation {
                 }
 
                 world.tick();
+                if (printWorld) {
+                    System.out.println(world.getRepresentation());
+                }
                 System.out.println("Enter command to run");
                 System.out.print("> ");
                 command = scanner.nextLine();
