@@ -118,8 +118,8 @@ public class Simulation {
     }
 
     private void runManual() {
-        String command = "";
         try (Scanner scanner = new Scanner(System.in)) {
+            String command = getCommand(scanner);
             while (!command.equals("x")) {
                 if (command.equals("a")) {
                     options.setAutomatic(true);
@@ -134,12 +134,18 @@ public class Simulation {
                 if (options.isPrintWorld()) {
                     System.out.println(world.getRepresentation());
                 }
-                System.out.println("Enter command to run");
-                System.out.print("> ");
-                command = scanner.nextLine();
+                command = getCommand(scanner);
             }
             System.out.println("Exiting simulation");
         }
+    }
+
+    private String getCommand(Scanner scanner) {
+        String command;
+        System.out.println("Enter command to run");
+        System.out.print("> ");
+        command = scanner.nextLine();
+        return command;
     }
 
     private void queryAgent(String agentId) {
