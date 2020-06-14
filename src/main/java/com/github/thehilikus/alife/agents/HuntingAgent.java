@@ -11,9 +11,7 @@ import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,8 +26,7 @@ public class HuntingAgent implements Agent {
     private Mood currentMood;
     private final int id;
 
-    public static List<HuntingAgent> create(int count, World world) {
-        List<HuntingAgent> result = new ArrayList<>(count);
+    public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
             int size = RandomSource.nextInt(MAX_SIZE);
 
@@ -37,13 +34,11 @@ public class HuntingAgent implements Agent {
             Motion motion = SquareMotion.create(id, world);
             Vision vision = SquareVision.create(id, world);
 
-            HuntingAgent newAgent = new HuntingAgent(id, vision, motion, size);
+            Agent newAgent = new HuntingAgent(id, vision, motion, size);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
-            result.add(newAgent);
         }
 
-        return result;
     }
 
     private HuntingAgent(int id, Vision vision, Motion motion, int size) {
