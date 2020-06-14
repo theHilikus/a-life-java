@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agents;
 
+import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.modules.NoMotion;
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Coordinates;
@@ -59,6 +60,15 @@ public class FoodAgent implements Agent {
     @Override
     public Coordinates.Immutable getPosition() {
         return motion.getPosition();
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        Ansi.Attribute agentTypeStyle = Ansi.Attribute.LIGHT;
+
+        Ansi.BColor background = Ansi.BColor.GREEN;
+        String formatCode = Ansi.generateCode(agentTypeStyle, Ansi.FColor.BLACK, background);
+        return Ansi.formatMessage(String.format("%02d", id), formatCode);
     }
 
     @Override

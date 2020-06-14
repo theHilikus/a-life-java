@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agents;
 
+import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.modules.SquareMotion;
 import com.github.thehilikus.alife.agents.modules.SquareVision;
 import com.github.thehilikus.alife.agents.moods.Scouting;
@@ -83,6 +84,16 @@ public class HuntingAgent implements Agent {
     @Override
     public Coordinates.Immutable getPosition() {
         return motion.getPosition();
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        Ansi.Attribute agentTypeStyle = Ansi.Attribute.BOLD;
+
+        Ansi.FColor moodColour = currentMood.getTerminalColour();
+        Ansi.BColor background = Ansi.BColor.NONE;
+        String formatCode = Ansi.generateCode(agentTypeStyle, moodColour, background);
+        return Ansi.formatMessage(String.format("%02d", id), formatCode);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agents.moods;
 
+import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.FoodAgent;
 import com.github.thehilikus.alife.api.Mood;
 
@@ -35,5 +36,10 @@ public class Hunting implements Mood {
     @Override
     public int getEnergyDelta() {
         throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+    }
+
+    @Override
+    public Ansi.FColor getTerminalColour() {
+        return Ansi.FColor.YELLOW;
     }
 }

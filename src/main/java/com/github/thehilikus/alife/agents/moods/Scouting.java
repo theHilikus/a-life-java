@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agents.moods;
 
+import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.FoodAgent;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.Motion;
@@ -48,6 +49,11 @@ public class Scouting implements Mood {
     @Override
     public int getEnergyDelta() {
         return existing.getEnergyDelta() + (int) Math.round(lastMovement * motion.getEnergyExpenditureFactor());
+    }
+
+    @Override
+    public Ansi.FColor getTerminalColour() {
+        return Ansi.FColor.BLUE;
     }
 
     @Override
