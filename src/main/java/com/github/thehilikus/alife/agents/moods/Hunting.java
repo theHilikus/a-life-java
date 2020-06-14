@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.agents.moods;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.FoodAgent;
+import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Mood;
 
 import java.util.Map;
@@ -10,7 +10,8 @@ import java.util.Map;
  * When food has been located
  */
 public class Hunting implements Mood {
-    public Hunting(FoodAgent foodAgent) {
+    public Hunting(Agent foodAgent) {
+
     }
 
     @Override
