@@ -38,7 +38,6 @@ public class FoodAgent implements Agent {
     @Override
     public void tick() {
         LOG.debug("#### Updating state of {} ####", this);
-        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
     }
 
     @Override

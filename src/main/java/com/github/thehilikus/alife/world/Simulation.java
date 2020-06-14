@@ -86,7 +86,7 @@ public class Simulation {
         world = new World(worldWidth, worldHeight);
 
         HuntingAgent.create(huntersCount, world);
-//        FoodAgent.create(foodCount, world);
+        FoodAgent.create(foodCount, world);
     }
 
     private void start() {
