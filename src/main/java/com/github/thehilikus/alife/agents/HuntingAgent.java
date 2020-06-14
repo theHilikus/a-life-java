@@ -47,7 +47,7 @@ public class HuntingAgent implements Agent {
         this.motion = motion;
         this.size = size;
 
-        currentMood = new Scouting(vision, motion);
+        currentMood = new Scouting(moodController, vision, motion, 0.2);
     }
 
     @Override

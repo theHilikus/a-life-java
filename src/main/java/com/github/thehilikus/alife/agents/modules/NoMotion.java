@@ -2,6 +2,7 @@ package com.github.thehilikus.alife.agents.modules;
 
 import com.github.thehilikus.alife.api.Coordinates;
 import com.github.thehilikus.alife.api.Motion;
+import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.world.World;
 
 import java.util.Map;
@@ -33,12 +34,7 @@ public class NoMotion implements Motion {
     }
 
     @Override
-    public int move(SpeedType speedType) {
-        return 0;
-    }
-
-    @Override
-    public int moveTo(Coordinates destination, SpeedType speedType) {
+    public int move(double speedFactor, Orientation direction) {
         return 0;
     }
 

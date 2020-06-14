@@ -9,9 +9,7 @@ public interface Motion extends Component {
      */
     String PARAMETER_PREFIX = "motion.";
 
-    int move(SpeedType speedType);
-
-    int moveTo(Coordinates destination, SpeedType speedType);
+    int move(double speedFactor, Orientation direction);
 
     double getEnergyExpenditureFactor();
 

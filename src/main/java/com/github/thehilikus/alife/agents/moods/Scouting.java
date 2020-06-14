@@ -19,12 +19,14 @@ public class Scouting implements Mood {
     private final Existing existing;
     private final int agentId;
     private int lastMovement;
+    private final double speedFactor;
 
 
     public Scouting(Vision vision, Motion motion) {
         this.agentId = vision.getAgentId();
         this.vision = vision;
         this.motion = motion;
+        this.speedFactor = speedFactor;
         existing = new Existing(agentId);
     }
 
@@ -35,7 +37,7 @@ public class Scouting implements Mood {
         if (!foundAgents.isEmpty()) {
             return new Hunting(foundAgents.first().getAgent());
         } else {
-            lastMovement = motion.move(Motion.SpeedType.SCOUT);
+            lastMovement = motion.move(speedFactor, null);
         }
 
         return this;
@@ -65,6 +67,7 @@ public class Scouting implements Mood {
     public Map<String, String> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "current", getClass().getSimpleName(),
+                PARAMETER_PREFIX + "scoutSpeedFactor", Double.toString(speedFactor),
                 PARAMETER_PREFIX + "lastMovement", Integer.toString(lastMovement)
         );
     }
