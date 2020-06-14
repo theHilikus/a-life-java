@@ -92,6 +92,8 @@ public class World {
 
     public String getRepresentation() {
         StringBuilder stringBuilder = new StringBuilder(getWidth() * getHeight() * 2);
+        stringBuilder.append("World view on day ").append(day).append(System.lineSeparator());
+
         String formatCode = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.NONE, Ansi.BColor.NONE);
         String formatCodeEdge = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.WHITE, Ansi.BColor.WHITE);
         String emptySpace = Ansi.formatMessage("  ", formatCode);
