@@ -10,8 +10,6 @@ import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,18 +20,14 @@ public class FoodAgent implements Agent {
     private final int id;
     private final Motion motion;
 
-    public static List<FoodAgent> create(int count, World world) {
-        List<FoodAgent> result = new ArrayList<>(count);
+    public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
             int id = IdsSource.getNextId();
             Motion motion = NoMotion.create(id, world);
-            FoodAgent newAgent = new FoodAgent(id, motion);
+            Agent newAgent = new FoodAgent(id, motion);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
-            result.add(newAgent);
         }
-
-        return result;
     }
 
     private FoodAgent(int id, Motion motion) {
