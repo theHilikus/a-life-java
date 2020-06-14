@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.agents;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.modules.FrontWalkerWithRandomTurn;
+import com.github.thehilikus.alife.agents.modules.StraightWalkWithRandomTurn;
 import com.github.thehilikus.alife.agents.modules.SquareVision;
 import com.github.thehilikus.alife.agents.moods.Scouting;
 import com.github.thehilikus.alife.api.*;
@@ -31,7 +31,7 @@ public class HuntingAgent implements Agent {
             int size = RandomSource.nextInt(MAX_SIZE);
 
             int id = IdsSource.getNextId();
-            Motion motion = FrontWalkerWithRandomTurn.create(id, world);
+            Motion motion = StraightWalkWithRandomTurn.create(id, world);
             Vision vision = SquareVision.create(id, world);
 
             Agent newAgent = new HuntingAgent(id, vision, motion, size);
