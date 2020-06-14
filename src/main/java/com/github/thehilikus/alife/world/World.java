@@ -33,7 +33,7 @@ public class World {
     }
 
     public void tick() {
-        LOG.info("Starting day {}", day);
+        LOG.info("Starting day {}", ++day);
         agents.values().forEach(agent -> {
             Coordinates.Immutable originalPosition = agent.getPosition();
             grid[originalPosition.getX()][originalPosition.getY()] = null;
@@ -44,7 +44,6 @@ public class World {
                 LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
             }
         });
-        day++;
     }
 
     public void addAgent(Agent agent) {
