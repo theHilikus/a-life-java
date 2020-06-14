@@ -192,7 +192,7 @@ public class FrontWalkerWithRandomTurn implements Motion {
         }
 
         public static Speeds create() {
-            int topSpeed = RandomSource.nextInt(100);
+            int topSpeed = RandomSource.nextInt(20);
             double huntSpeedFactor = RandomSource.nextDouble(1.0);
             double idleSpeedFactor = RandomSource.nextDouble(1.0);
             double scoutSpeedFactor = RandomSource.nextDouble(1.0);
