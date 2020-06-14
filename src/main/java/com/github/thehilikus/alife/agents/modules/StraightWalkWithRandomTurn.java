@@ -14,8 +14,8 @@ import java.util.Map;
 /**
  * Motion that moves always in the direction being faced and random turns
  */
-public class FrontWalkerWithRandomTurn implements Motion {
-    private static final Logger LOG = LoggerFactory.getLogger(FrontWalkerWithRandomTurn.class.getSimpleName());
+public class StraightWalkWithRandomTurn implements Motion {
+    private static final Logger LOG = LoggerFactory.getLogger(StraightWalkWithRandomTurn.class.getSimpleName());
     private final int agentId;
     private Orientation currentOrientation;
     private final Coordinates currentPosition;
@@ -25,11 +25,11 @@ public class FrontWalkerWithRandomTurn implements Motion {
     private final Speeds speeds;
     private final double energyExpenditureFactor;
 
-    private FrontWalkerWithRandomTurn(int agentId, int woldWidth, int worldHeight, Coordinates startingPosition, Speeds speeds) {
+    private StraightWalkWithRandomTurn(int agentId, int woldWidth, int worldHeight, Coordinates startingPosition, Speeds speeds) {
         this(agentId, Orientation.fromInt(RandomSource.nextInt(4)), startingPosition, RandomSource.nextInt(100), woldWidth, worldHeight, speeds, RandomSource.nextDouble(1));
     }
 
-    private FrontWalkerWithRandomTurn(int agentId, Orientation currentOrientation, Coordinates currentPosition, int turningProbability, int woldWidth, int worldHeight, Speeds speeds, double energyExpenditureFactor) {
+    private StraightWalkWithRandomTurn(int agentId, Orientation currentOrientation, Coordinates currentPosition, int turningProbability, int woldWidth, int worldHeight, Speeds speeds, double energyExpenditureFactor) {
         this.agentId = agentId;
         this.currentOrientation = currentOrientation;
         this.currentPosition = currentPosition;
@@ -41,7 +41,7 @@ public class FrontWalkerWithRandomTurn implements Motion {
     }
 
     public static Motion create(int id, World world) {
-        return new FrontWalkerWithRandomTurn(id, world.getWidth(), world.getHeight(), world.getEmptyPosition(), Speeds.create());
+        return new StraightWalkWithRandomTurn(id, world.getWidth(), world.getHeight(), world.getEmptyPosition(), Speeds.create());
     }
 
     @Override
