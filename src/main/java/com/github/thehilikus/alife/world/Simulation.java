@@ -87,6 +87,10 @@ public class Simulation {
 
         HuntingAgent.create(huntersCount, world);
         FoodAgent.create(foodCount, world);
+
+        if (options.isPrintWorld()) {
+            System.out.println(world.getRepresentation());
+        }
     }
 
     private void start() {

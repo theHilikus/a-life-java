@@ -8,7 +8,7 @@ import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -166,7 +166,7 @@ public class SquareMotion implements Motion {
 
     @Override
     public Map<String, String> getParameters() {
-        Map<String, String> result = new HashMap<>();
+        Map<String, String> result = new LinkedHashMap<>();
         result.put(PARAMETER_PREFIX + "orientation", currentOrientation.toString());
         result.put(PARAMETER_PREFIX + "position", currentPosition.getX() + ", " + currentPosition.getY());
         result.put(PARAMETER_PREFIX + "turningProbability", Integer.toString(turningProbability));
