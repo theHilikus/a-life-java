@@ -1,10 +1,11 @@
-package com.github.thehilikus.alife.agents;
+package com.github.thehilikus.alife.agents.animals;
 
 import com.diogonunes.jcdp.color.api.Ansi;
+import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.agents.controllers.MoodController;
-import com.github.thehilikus.alife.agents.modules.StraightWalkWithRandomTurn;
-import com.github.thehilikus.alife.agents.modules.SquareVision;
-import com.github.thehilikus.alife.agents.moods.Scouting;
+import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
+import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
+import com.github.thehilikus.alife.agents.animals.moods.Scouting;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.IdsSource;
 import com.github.thehilikus.alife.world.RandomSource;
@@ -18,11 +19,11 @@ import java.util.Map;
 /**
  * A living agent that hunts for food
  */
-public class HuntingAgent implements Agent {
+public class Herbivore implements Agent {
     private static final int MAX_SIZE = 50;
-    private static final Logger LOG = LoggerFactory.getLogger(HuntingAgent.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(Herbivore.class.getSimpleName());
     private final Vision vision;
-    private final Motion motion;
+    private final Locomotion locomotion;
     private final int size;
     private Mood currentMood;
     private final int id;
@@ -32,23 +33,23 @@ public class HuntingAgent implements Agent {
             int size = RandomSource.nextInt(MAX_SIZE);
 
             int id = IdsSource.getNextId();
-            Motion motion = StraightWalkWithRandomTurn.create(id, world);
-            Vision vision = SquareVision.create(id, world);
+            Locomotion locomotion = StraightWalkWithRandomTurn.create(id, world);
+            Vision vision = SurroundingsVision.create(id, world);
 
-            Agent newAgent = new HuntingAgent(id, vision, motion, new MoodController(world), size);
+            Agent newAgent = new Herbivore(id, vision, locomotion, new MoodController(world), size);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }
 
     }
 
-    private HuntingAgent(int id, Vision vision, Motion motion, MoodController moodController, int size) {
+    private Herbivore(int id, Vision vision, Locomotion locomotion, MoodController moodController, int size) {
         this.id = id;
         this.vision = vision;
-        this.motion = motion;
+        this.locomotion = locomotion;
         this.size = size;
 
-        currentMood = new Scouting(moodController, vision, motion, 0.2);
+        currentMood = new Scouting(moodController, vision, locomotion, 0.2);
     }
 
     @Override
@@ -70,7 +71,7 @@ public class HuntingAgent implements Agent {
         Map<String, String> result = new LinkedHashMap<>();
         result.put("type", getClass().getSimpleName());
         result.putAll(vision.getParameters());
-        result.putAll(motion.getParameters());
+        result.putAll(locomotion.getParameters());
         result.putAll(currentMood.getParameters());
 
         return result;
@@ -78,7 +79,7 @@ public class HuntingAgent implements Agent {
 
     @Override
     public Coordinates.Immutable getPosition() {
-        return motion.getPosition();
+        return locomotion.getPosition();
     }
 
     @Override
@@ -104,8 +105,8 @@ public class HuntingAgent implements Agent {
     }
 
     @Override
-    public Motion getMotion() {
-        return motion;
+    public Locomotion getLocomotion() {
+        return locomotion;
     }
 
     @Override

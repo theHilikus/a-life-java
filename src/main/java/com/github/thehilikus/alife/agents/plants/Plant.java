@@ -1,9 +1,7 @@
-package com.github.thehilikus.alife.agents;
+package com.github.thehilikus.alife.agents.plants;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.modules.NoMotion;
-import com.github.thehilikus.alife.agents.modules.NoVision;
-import com.github.thehilikus.alife.agents.moods.NoMood;
+import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.IdsSource;
 import com.github.thehilikus.alife.world.World;
@@ -15,29 +13,29 @@ import java.util.Map;
 /**
  * An inanimate agent that gets eaten
  */
-public class FoodAgent implements Agent {
-    private static final Logger LOG = LoggerFactory.getLogger(FoodAgent.class.getSimpleName());
+public class Plant implements Agent {
+    private static final Logger LOG = LoggerFactory.getLogger(Plant.class.getSimpleName());
     private final int id;
     private final Vision vision;
-    private final Motion motion;
+    private final Locomotion locomotion;
     private final Mood mood;
 
     public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
             int id = IdsSource.getNextId();
-            Motion motion = NoMotion.create(id, world);
+            Locomotion locomotion = NoLocomotion.create(id, world);
             Vision vision = NoVision.create(id);
 
-            Agent newAgent = new FoodAgent(id, vision, motion);
+            Agent newAgent = new Plant(id, vision, locomotion);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }
     }
 
-    private FoodAgent(int id, Vision vision, Motion motion) {
+    private Plant(int id, Vision vision, Locomotion locomotion) {
         this.id = id;
         this.vision = vision;
-        this.motion = motion;
+        this.locomotion = locomotion;
 
         mood = new NoMood();
     }
@@ -54,12 +52,12 @@ public class FoodAgent implements Agent {
 
     @Override
     public Map<String, String> getParameters() {
-        return motion.getParameters();
+        return locomotion.getParameters();
     }
 
     @Override
     public Coordinates.Immutable getPosition() {
-        return motion.getPosition();
+        return locomotion.getPosition();
     }
 
     @Override
@@ -72,8 +70,8 @@ public class FoodAgent implements Agent {
     }
 
     @Override
-    public Motion getMotion() {
-        return motion;
+    public Locomotion getLocomotion() {
+        return locomotion;
     }
 
     @Override

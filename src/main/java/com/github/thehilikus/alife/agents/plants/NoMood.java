@@ -1,4 +1,4 @@
-package com.github.thehilikus.alife.agents.moods;
+package com.github.thehilikus.alife.agents.plants;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Mood;
@@ -6,40 +6,32 @@ import com.github.thehilikus.alife.api.Mood;
 import java.util.Map;
 
 /**
- * The basic behaviour of an agent, regardless of mood
+ * Do nothing
  */
-public class Existing implements Mood {
-    private static final int HUNGER_DERIVATIVE = -2;
-    private static final int ENERGY_DERIVATIVE = -2;
-    private final int agentId;
-
-    public Existing(int agentId) {
-        this.agentId = agentId;
-    }
-
+public class NoMood implements Mood {
     @Override
     public Mood tick() {
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
     }
 
     @Override
     public int getHungerDelta() {
-        return HUNGER_DERIVATIVE;
+        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
     }
 
     @Override
     public int getEnergyDelta() {
-        return ENERGY_DERIVATIVE;
+        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
     }
 
     @Override
     public Ansi.FColor getTerminalColour() {
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
     }
 
     @Override
     public int getAgentId() {
-        return agentId;
+        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
     }
 
     @Override

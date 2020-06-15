@@ -1,7 +1,7 @@
-package com.github.thehilikus.alife.agents.modules;
+package com.github.thehilikus.alife.agents.animals.motions;
 
 import com.github.thehilikus.alife.api.Coordinates;
-import com.github.thehilikus.alife.api.Motion;
+import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.world.RandomSource;
 import com.github.thehilikus.alife.world.World;
@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Motion that always moves forward until reaching the edge of the world
  */
-public class StraightWalk implements Motion {
+public class StraightWalk implements Locomotion {
     private static final Logger LOG = LoggerFactory.getLogger(StraightWalk.class.getSimpleName());
     private final int agentId;
     private final int topSpeed;

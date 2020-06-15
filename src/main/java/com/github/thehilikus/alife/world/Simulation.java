@@ -5,8 +5,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.spi.AppenderAttachable;
-import com.github.thehilikus.alife.agents.FoodAgent;
-import com.github.thehilikus.alife.agents.HuntingAgent;
+import com.github.thehilikus.alife.agents.plants.Plant;
+import com.github.thehilikus.alife.agents.animals.Herbivore;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ParserProperties;
@@ -85,8 +85,8 @@ public class Simulation {
         int huntersCount = 20;
         world = new World(worldWidth, worldHeight);
 
-        HuntingAgent.create(huntersCount, world);
-        FoodAgent.create(foodCount, world);
+        Herbivore.create(huntersCount, world);
+        Plant.create(foodCount, world);
 
         if (options.isPrintWorld()) {
             System.out.println(world.getRepresentation());

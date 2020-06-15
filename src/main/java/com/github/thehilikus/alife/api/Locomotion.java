@@ -3,7 +3,7 @@ package com.github.thehilikus.alife.api;
 /**
  * A strategy to move in the world
  */
-public interface Motion extends Component {
+public interface Locomotion extends Component {
     /**
      * The prefix for motion parameters
      */
