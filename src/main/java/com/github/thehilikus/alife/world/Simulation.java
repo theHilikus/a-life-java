@@ -120,12 +120,12 @@ public class Simulation {
     private void runManual() {
         try (Scanner scanner = new Scanner(System.in)) {
             String command = getCommand(scanner);
-            while (!command.equals("x")) {
+            while (!command.equals("q")) {
                 if (command.equals("a")) {
                     options.setAutomatic(true);
                     start();
                     break;
-                } else if (command.startsWith("q ")) {
+                } else if (command.startsWith("d ")) {
                     String agentId = command.substring(2);
                     queryAgent(agentId);
                 }
