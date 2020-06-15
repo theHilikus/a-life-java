@@ -33,11 +33,5 @@ public interface Agent {
      */
     String getStringRepresentation();
 
-    Locomotion getLocomotion();
-
-    Vision getVision();
-
-    Object getMood();
-
     Genome getGenome();
 }

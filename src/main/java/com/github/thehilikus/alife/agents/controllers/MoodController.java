@@ -6,6 +6,7 @@ import com.github.thehilikus.alife.agents.animals.motions.TargetWalk;
 import com.github.thehilikus.alife.agents.animals.visions.TargetVision;
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Locomotion;
+import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.Vision;
 import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
@@ -25,10 +26,12 @@ public class MoodController {
     public Hunting startHunting(int agentId, Agent target) {
         Agent agent = theWorld.getAgent(agentId);
 
+        String currentMood = agent.getDetails().get(Mood.PARAMETER_PREFIX + "current");
+
         Vision vision = new TargetVision(agentId, agent.getGenome(), theWorld, target);
         Locomotion locomotion = new TargetWalk(target, new StraightWalk(agentId, agent.getGenome(), theWorld));
         Hunting result = new Hunting(this, vision, locomotion, target);
-        LOG.info("Agent {} transitioning from {} to {}", agentId, agent.getMood(), result);
+        LOG.info("Agent {} transitioning from {} to {}", agentId, currentMood, result);
 
         return result;
     }

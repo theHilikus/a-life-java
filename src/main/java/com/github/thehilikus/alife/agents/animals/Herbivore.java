@@ -27,7 +27,7 @@ public class Herbivore implements Agent {
 
     private final Genome genome;
 
-    private Mood currentMood;
+    private Mood mood;
     private final int id;
 
     public static void create(int count, World world) {
@@ -51,15 +51,15 @@ public class Herbivore implements Agent {
         this.locomotion = locomotion;
         this.genome = genome;
 
-        currentMood = new Scouting(moodController, vision, locomotion, genome);
+        mood = new Scouting(moodController, vision, locomotion, genome);
     }
 
     @Override
     public void tick() {
         LOG.debug("#### Updating state of {} ####", this);
-        Mood newMood = currentMood.tick();
-        if (!newMood.getClass().equals(currentMood.getClass())) {
-            currentMood = newMood;
+        Mood newMood = mood.tick();
+        if (!newMood.getClass().equals(mood.getClass())) {
+            mood = newMood;
         }
     }
 
@@ -75,7 +75,7 @@ public class Herbivore implements Agent {
         result.putAll(genome.getParameters());
         result.putAll(vision.getParameters());
         result.putAll(locomotion.getParameters());
-        result.putAll(currentMood.getParameters());
+        result.putAll(mood.getParameters());
 
         return result;
     }
@@ -89,7 +89,7 @@ public class Herbivore implements Agent {
     public String getStringRepresentation() {
         Ansi.Attribute agentTypeStyle = Ansi.Attribute.BOLD;
 
-        Ansi.FColor moodColour = currentMood.getTerminalColour();
+        Ansi.FColor moodColour = mood.getTerminalColour();
         Ansi.BColor background = Ansi.BColor.NONE;
         String formatCode = Ansi.generateCode(agentTypeStyle, moodColour, background);
         return Ansi.formatMessage(String.format("%02d", id), formatCode);
@@ -100,21 +100,6 @@ public class Herbivore implements Agent {
         return "HuntingAgent{" +
                 "id=" + id +
                 '}';
-    }
-
-    @Override
-    public Vision getVision() {
-        return vision;
-    }
-
-    @Override
-    public Locomotion getLocomotion() {
-        return locomotion;
-    }
-
-    @Override
-    public Mood getMood() {
-        return currentMood;
     }
 
     @Override
