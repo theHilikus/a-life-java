@@ -92,7 +92,11 @@ public class Herbivore implements Agent {
         Ansi.FColor moodColour = mood.getTerminalColour();
         Ansi.BColor background = Ansi.BColor.NONE;
         String formatCode = Ansi.generateCode(agentTypeStyle, moodColour, background);
-        return Ansi.formatMessage(String.format("%02d", id), formatCode);
+        String idString = Integer.toString(id);
+        if (id < 10) {
+            idString = ' ' + idString;
+        }
+        return Ansi.formatMessage(idString, formatCode);
     }
 
     @Override

@@ -20,16 +20,8 @@ public interface Agent {
     Coordinates.Immutable getPosition();
 
     /**
-     * A textual representation of the agent in the following format:
-     * <p>
-     * {@code
-     * id{2}mood{1}
-     * }
-     * </p>
-     * Example:
-     * If agent 3 is Hunting, its representation can be "03H"
-     *
-     * @return a string representing the agent in 3 characters
+     * A textual representation of the agent with its id. The style represents the type of agent, the colour
+     * represents its current mood
      */
     String getStringRepresentation();
 

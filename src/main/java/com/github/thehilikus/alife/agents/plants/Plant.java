@@ -66,11 +66,15 @@ public class Plant implements Agent {
 
     @Override
     public String getStringRepresentation() {
-        Ansi.Attribute agentTypeStyle = Ansi.Attribute.LIGHT;
+        Ansi.Attribute agentTypeStyle = Ansi.Attribute.NONE;
 
         Ansi.BColor background = Ansi.BColor.GREEN;
-        String formatCode = Ansi.generateCode(agentTypeStyle, Ansi.FColor.BLACK, background);
-        return Ansi.formatMessage(String.format("%02d", id), formatCode);
+        String formatCode = Ansi.generateCode(agentTypeStyle, Ansi.FColor.WHITE, background);
+        String idString = Integer.toString(id);
+        if (id < 10) {
+            idString = ' ' + idString;
+        }
+        return Ansi.formatMessage(idString, formatCode);
     }
 
     @Override

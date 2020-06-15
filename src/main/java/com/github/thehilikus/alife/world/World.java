@@ -106,12 +106,12 @@ public class World {
                 Agent agent = grid[row][col];
                 if (agent == null) {
                     if (row == 0 || col == 0 || row == getWidth() -1 || col == getHeight() -1) {
-                     stringBuilder.append(" ").append(emptySpaceEdge);
+                     stringBuilder.append(emptySpaceEdge);
                     } else {
-                        stringBuilder.append(" ").append(emptySpace);
+                        stringBuilder.append(emptySpace);
                     }
                 } else {
-                    stringBuilder.append(" ").append(agent.getStringRepresentation());
+                    stringBuilder.append(agent.getStringRepresentation());
                 }
             }
             stringBuilder.append(System.lineSeparator());
