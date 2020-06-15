@@ -1,9 +1,9 @@
 package com.github.thehilikus.alife.agents.animals.motions;
 
+import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.Coordinates;
 import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Orientation;
-import com.github.thehilikus.alife.world.RandomSource;
 import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,21 +23,13 @@ public class StraightWalk implements Locomotion {
     private final int woldWidth;
     private final int worldHeight;
 
-    public static StraightWalk create(int id, World world) {
-        Coordinates startingPosition = world.getEmptyPosition();
-        int topSpeed = RandomSource.nextInt(20);
-        double energyExpenditureFactor = RandomSource.nextDouble(1);
-
-        return new StraightWalk(id, topSpeed, energyExpenditureFactor, startingPosition, world.getWidth(), world.getHeight());
-    }
-
-    private StraightWalk(int agentId, int topSpeed, double energyExpenditureFactor, Coordinates position, int woldWidth, int worldHeight) {
+    public StraightWalk(int agentId, Genome genome, World world) {
         this.agentId = agentId;
-        this.topSpeed = topSpeed;
-        this.energyExpenditureFactor = energyExpenditureFactor;
-        this.position = position;
-        this.woldWidth = woldWidth;
-        this.worldHeight = worldHeight;
+        this.topSpeed = genome.getGene(Locomotion.PARAMETER_PREFIX + "topSpeed");
+        this.energyExpenditureFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor");
+        this.position = world.getEmptyPosition();
+        this.woldWidth = world.getWidth();
+        this.worldHeight = world.getHeight();
     }
 
     @Override
@@ -72,7 +64,7 @@ public class StraightWalk implements Locomotion {
 
     @Override
     public double getEnergyExpenditureFactor() {
-        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+        return energyExpenditureFactor;
     }
 
     @Override

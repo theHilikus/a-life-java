@@ -14,12 +14,8 @@ import java.util.SortedSet;
 public class NoVision implements Vision {
     private final int agentId;
 
-    private NoVision(int id) {
+    public NoVision(int id) {
         agentId = id;
-    }
-
-    public static Vision create(int id) {
-        return new NoVision(id);
     }
 
     @Override

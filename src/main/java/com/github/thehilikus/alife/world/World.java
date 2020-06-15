@@ -87,7 +87,7 @@ public class World {
         Map<String, String> result = Collections.emptyMap();
         Agent agent = agents.get(agentId);
         if (agent != null) {
-            result = agent.getParameters();
+            result = agent.getDetails();
         }
 
         return result;

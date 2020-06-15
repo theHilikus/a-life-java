@@ -14,13 +14,9 @@ public class NoLocomotion implements Locomotion {
     private final int agentId;
     private final Coordinates currentPosition;
 
-    private NoLocomotion(int agentId, Coordinates currentPosition) {
+    public NoLocomotion(int agentId, World world) {
         this.agentId = agentId;
-        this.currentPosition = currentPosition;
-    }
-
-    public static Locomotion create(int id, World world) {
-        return new NoLocomotion(id, world.getEmptyPosition());
+        this.currentPosition = world.getEmptyPosition();
     }
 
     @Override

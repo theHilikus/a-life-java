@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agents.animals.visions;
 
+import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.ScanResult;
 import com.github.thehilikus.alife.api.Vision;
@@ -17,8 +18,8 @@ public class TargetVision implements Vision {
     private final Agent target;
     private final SurroundingsVision surroundingsVision;
 
-    public TargetVision(int agentId, int radius, World world, Agent target) {
-        surroundingsVision = new SurroundingsVision(agentId, radius, world);
+    public TargetVision(int agentId, Genome genome, World world, Agent target) {
+        surroundingsVision = new SurroundingsVision(agentId, genome, world);
         this.target = target;
     }
 

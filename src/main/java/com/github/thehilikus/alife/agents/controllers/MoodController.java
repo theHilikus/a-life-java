@@ -1,9 +1,9 @@
 package com.github.thehilikus.alife.agents.controllers;
 
-import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
-import com.github.thehilikus.alife.agents.animals.visions.TargetVision;
-import com.github.thehilikus.alife.agents.animals.motions.TargetWalk;
 import com.github.thehilikus.alife.agents.animals.moods.Hunting;
+import com.github.thehilikus.alife.agents.animals.motions.StraightWalk;
+import com.github.thehilikus.alife.agents.animals.motions.TargetWalk;
+import com.github.thehilikus.alife.agents.animals.visions.TargetVision;
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Vision;
@@ -24,10 +24,9 @@ public class MoodController {
 
     public Hunting startHunting(int agentId, Agent target) {
         Agent agent = theWorld.getAgent(agentId);
-        int visionRadius = ((SurroundingsVision) agent.getVision()).getRadius();
 
-        Vision vision = new TargetVision(agentId, visionRadius, theWorld, target);
-        Locomotion locomotion = new TargetWalk(target, null); //TODO: fix
+        Vision vision = new TargetVision(agentId, agent.getGenome(), theWorld, target);
+        Locomotion locomotion = new TargetWalk(target, new StraightWalk(agentId, agent.getGenome(), theWorld));
         Hunting result = new Hunting(this, vision, locomotion, target);
         LOG.info("Agent {} transitioning from {} to {}", agentId, agent.getMood(), result);
 

@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agents.animals.motions;
 
+import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.Coordinates;
 import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Orientation;
@@ -22,20 +23,11 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     private Orientation orientation;
 
 
-    private StraightWalkWithRandomTurn(int agentId, int turningProbability, Orientation orientation, StraightWalk walk) {
+    public StraightWalkWithRandomTurn(int agentId, Genome genome, World world) {
         this.agentId = agentId;
-        this.turningProbability = turningProbability;
-        this.orientation = orientation;
-        this.walker = walk;
-    }
-
-    public static Locomotion create(int id, World world) {
-        int turningProbability = RandomSource.nextInt(100);
-        Orientation startingOrientation = Orientation.fromInt(RandomSource.nextInt(4));
-
-        StraightWalk walk = StraightWalk.create(id, world);
-
-        return new StraightWalkWithRandomTurn(id, turningProbability, startingOrientation, walk);
+        this.turningProbability = genome.getGene(Locomotion.PARAMETER_PREFIX + "turningProbability");
+        this.orientation = Orientation.fromInt(RandomSource.nextInt(4));
+        this.walker = new StraightWalk(agentId, genome, world);
     }
 
     @Override
