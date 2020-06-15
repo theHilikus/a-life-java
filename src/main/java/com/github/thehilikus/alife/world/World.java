@@ -101,17 +101,17 @@ public class World {
         String formatCodeEdge = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.WHITE, Ansi.BColor.WHITE);
         String emptySpace = Ansi.formatMessage("  ", formatCode);
         String emptySpaceEdge = Ansi.formatMessage("  ", formatCodeEdge);
-        for (int row = 0; row < getWidth(); row++) {
-            for (int col = 0; col < getHeight(); col++) {
-                Agent agent = grid[row][col];
-                if (agent == null) {
-                    if (row == 0 || col == 0 || row == getWidth() -1 || col == getHeight() -1) {
-                     stringBuilder.append(emptySpaceEdge);
-                    } else {
-                        stringBuilder.append(emptySpace);
-                    }
+        for (int row = -1; row <= getWidth(); row++) {
+            for (int col = -1; col <= getHeight(); col++) {
+                if (row == -1 || col == -1 || row == getWidth() || col == getHeight()) {
+                    stringBuilder.append(emptySpaceEdge);
                 } else {
-                    stringBuilder.append(agent.getStringRepresentation());
+                    Agent agent = grid[row][col];
+                    if (agent == null) {
+                        stringBuilder.append(emptySpace);
+                    } else {
+                        stringBuilder.append(agent.getStringRepresentation());
+                    }
                 }
             }
             stringBuilder.append(System.lineSeparator());
