@@ -1,6 +1,7 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.diogonunes.jcdp.color.api.Ansi;
+import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.agents.controllers.MoodController;
 import com.github.thehilikus.alife.api.Mood;
@@ -24,12 +25,12 @@ public class Scouting implements Mood {
     private final double speedFactor;
 
 
-    public Scouting(MoodController moodController, Vision vision, Locomotion locomotion, double speedFactor) {
+    public Scouting(MoodController moodController, Vision vision, Locomotion locomotion, Genome genome) {
         this.moodController = moodController;
         this.agentId = vision.getAgentId();
         this.vision = vision;
         this.locomotion = locomotion;
-        this.speedFactor = speedFactor;
+        this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor");
         existing = new Existing(agentId);
     }
 

@@ -1,11 +1,11 @@
 package com.github.thehilikus.alife.agents.animals;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.api.Agent;
-import com.github.thehilikus.alife.agents.controllers.MoodController;
+import com.github.thehilikus.alife.agents.animals.moods.Scouting;
 import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
 import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
-import com.github.thehilikus.alife.agents.animals.moods.Scouting;
+import com.github.thehilikus.alife.agents.controllers.MoodController;
+import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.IdsSource;
 import com.github.thehilikus.alife.world.RandomSource;
@@ -20,36 +20,38 @@ import java.util.Map;
  * A living agent that hunts for food
  */
 public class Herbivore implements Agent {
-    private static final int MAX_SIZE = 50;
+
     private static final Logger LOG = LoggerFactory.getLogger(Herbivore.class.getSimpleName());
     private final Vision vision;
     private final Locomotion locomotion;
-    private final int size;
+
+    private final Genome genome;
+
     private Mood currentMood;
     private final int id;
 
     public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
-            int size = RandomSource.nextInt(MAX_SIZE);
-
             int id = IdsSource.getNextId();
-            Locomotion locomotion = StraightWalkWithRandomTurn.create(id, world);
-            Vision vision = SurroundingsVision.create(id, world);
+            HerbivoreGenome genome = HerbivoreGenome.create(id);
 
-            Agent newAgent = new Herbivore(id, vision, locomotion, new MoodController(world), size);
+            Locomotion locomotion = new StraightWalkWithRandomTurn(id, genome, world);
+            Vision vision = new SurroundingsVision(id, genome, world);
+
+            Agent newAgent = new Herbivore(id, vision, locomotion, new MoodController(world), genome);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }
 
     }
 
-    private Herbivore(int id, Vision vision, Locomotion locomotion, MoodController moodController, int size) {
+    private Herbivore(int id, Vision vision, Locomotion locomotion, MoodController moodController, Genome genome) {
         this.id = id;
         this.vision = vision;
         this.locomotion = locomotion;
-        this.size = size;
+        this.genome = genome;
 
-        currentMood = new Scouting(moodController, vision, locomotion, 0.2);
+        currentMood = new Scouting(moodController, vision, locomotion, genome);
     }
 
     @Override
@@ -67,9 +69,10 @@ public class Herbivore implements Agent {
     }
 
     @Override
-    public Map<String, String> getParameters() {
+    public Map<String, String> getDetails() {
         Map<String, String> result = new LinkedHashMap<>();
         result.put("type", getClass().getSimpleName());
+        result.putAll(genome.getParameters());
         result.putAll(vision.getParameters());
         result.putAll(locomotion.getParameters());
         result.putAll(currentMood.getParameters());
@@ -112,5 +115,39 @@ public class Herbivore implements Agent {
     @Override
     public Mood getMood() {
         return currentMood;
+    }
+
+    @Override
+    public Genome getGenome() {
+        return genome;
+    }
+
+    private static class HerbivoreGenome extends Genome {
+        private static final int MAX_VISION_DISTANCE = 20;
+        private static final int MAX_TOP_SPEED = 20;
+        private static final double MAX_SCOUT_SPEED_FACTOR = 0.5;
+        private static final int MAX_SIZE = 50;
+
+        public static HerbivoreGenome create(int agentId) {
+            Map<String, Object> genes = createGenes();
+            return new HerbivoreGenome(agentId, genes);
+        }
+
+        private static Map<String, Object> createGenes() {
+            return Map.ofEntries(
+                    Map.entry("type", "Herbivore"),
+                    Map.entry("size", RandomSource.nextInt(MAX_SIZE)),
+                    Map.entry(Vision.PARAMETER_PREFIX + "radius", RandomSource.nextInt(MAX_VISION_DISTANCE)),
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomSource.nextInt(MAX_TOP_SPEED)),
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomSource.nextDouble(1)),
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomSource.nextInt(100)),
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomSource.nextDouble(MAX_SCOUT_SPEED_FACTOR))
+            );
+        }
+
+        private HerbivoreGenome(int agentId, Map<String, Object> newGenome) {
+            super(agentId, newGenome);
+        }
+
     }
 }

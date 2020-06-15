@@ -1,5 +1,7 @@
 package com.github.thehilikus.alife.api;
 
+import com.github.thehilikus.alife.agents.genetics.Genome;
+
 import java.util.Map;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Map;
 public interface Agent {
     int getId();
 
-    Map<String, String> getParameters();
+    Map<String, String> getDetails();
 
     void tick();
 
@@ -36,4 +38,6 @@ public interface Agent {
     Vision getVision();
 
     Object getMood();
+
+    Genome getGenome();
 }

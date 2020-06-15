@@ -1,9 +1,9 @@
 package com.github.thehilikus.alife.agents.animals.visions;
 
+import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.ScanResult;
 import com.github.thehilikus.alife.api.Vision;
-import com.github.thehilikus.alife.world.RandomSource;
 import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,21 +17,16 @@ import java.util.TreeSet;
  */
 public class SurroundingsVision implements Vision {
     private static final Logger LOG = LoggerFactory.getLogger(SurroundingsVision.class.getSimpleName());
-    private static final int MAX_VISION_DISTANCE = 20;
 
     private final int agentId;
 
     private final int radius;
     private final World world;
 
-    public SurroundingsVision(int agentId, int radius, World world) {
+    public SurroundingsVision(int agentId, Genome genome, World world) {
         this.agentId = agentId;
-        this.radius = radius;
+        this.radius = genome.getGene(Vision.PARAMETER_PREFIX + "radius");
         this.world = world;
-    }
-
-    public static Vision create(int id, World world) {
-        return new SurroundingsVision(id, RandomSource.nextInt(MAX_VISION_DISTANCE), world);
     }
 
     @Override
@@ -60,9 +55,5 @@ public class SurroundingsVision implements Vision {
 
         LOG.trace("Found {} agents", result.size());
         return result;
-    }
-
-    public int getRadius() {
-        return radius;
     }
 }
