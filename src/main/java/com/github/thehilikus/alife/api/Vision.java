@@ -16,7 +16,7 @@ public interface Vision extends Component {
      *
      * @param type the type of agent to scan for
      * @param <T>  one of the agents
-     * @return a sorted list with the closest agent first in the set
+     * @return a sorted list with the most interesting agent first in the set. The concept of "most interesting" is implementation-dependent
      */
     <T extends Agent> SortedSet<ScanResult> scan(Class<T> type);
 }

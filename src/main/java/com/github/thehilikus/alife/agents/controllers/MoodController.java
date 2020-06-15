@@ -27,7 +27,7 @@ public class MoodController {
         int visionRadius = ((SquareVision) agent.getVision()).getRadius();
 
         Vision vision = new TargetVision(agentId, visionRadius, theWorld, target);
-        Motion motion = new TargetWalk();
+        Motion motion = new TargetWalk(target, null); //TODO: fix
         Hunting result = new Hunting(this, vision, motion, target);
         LOG.info("Agent {} transitioning from {} to {}", agentId, agent.getMood(), result);
 
