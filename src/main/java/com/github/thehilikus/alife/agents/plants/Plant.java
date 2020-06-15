@@ -52,7 +52,11 @@ public class Plant implements Agent {
 
     @Override
     public Map<String, String> getDetails() {
-        return locomotion.getParameters();
+        Map<String, String> result = new LinkedHashMap<>();
+        result.put("type", getClass().getSimpleName());
+        result.putAll(locomotion.getParameters());
+
+        return result;
     }
 
     @Override
