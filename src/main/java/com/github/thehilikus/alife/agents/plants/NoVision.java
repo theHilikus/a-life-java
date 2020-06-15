@@ -1,4 +1,4 @@
-package com.github.thehilikus.alife.agents.modules;
+package com.github.thehilikus.alife.agents.plants;
 
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.ScanResult;

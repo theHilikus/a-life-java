@@ -1,8 +1,8 @@
-package com.github.thehilikus.alife.agents.modules;
+package com.github.thehilikus.alife.agents.animals.motions;
 
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Coordinates;
-import com.github.thehilikus.alife.api.Motion;
+import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Orientation;
 
 import java.util.Map;
@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Motion that moves towards a target
  */
-public class TargetWalk implements Motion {
+public class TargetWalk implements Locomotion {
     private final Agent target;
     private final StraightWalk walker;
 

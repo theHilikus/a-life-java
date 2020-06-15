@@ -1,4 +1,4 @@
-package com.github.thehilikus.alife.agents.modules;
+package com.github.thehilikus.alife.agents.animals.visions;
 
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.ScanResult;
@@ -15,8 +15,8 @@ import java.util.TreeSet;
 /**
  * Vision that can see in a square around the agent
  */
-public class SquareVision implements Vision {
-    private static final Logger LOG = LoggerFactory.getLogger(SquareVision.class.getSimpleName());
+public class SurroundingsVision implements Vision {
+    private static final Logger LOG = LoggerFactory.getLogger(SurroundingsVision.class.getSimpleName());
     private static final int MAX_VISION_DISTANCE = 20;
 
     private final int agentId;
@@ -24,14 +24,14 @@ public class SquareVision implements Vision {
     private final int radius;
     private final World world;
 
-    public SquareVision(int agentId, int radius, World world) {
+    public SurroundingsVision(int agentId, int radius, World world) {
         this.agentId = agentId;
         this.radius = radius;
         this.world = world;
     }
 
     public static Vision create(int id, World world) {
-        return new SquareVision(id, RandomSource.nextInt(MAX_VISION_DISTANCE), world);
+        return new SurroundingsVision(id, RandomSource.nextInt(MAX_VISION_DISTANCE), world);
     }
 
     @Override

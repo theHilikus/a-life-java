@@ -1,7 +1,7 @@
-package com.github.thehilikus.alife.agents.modules;
+package com.github.thehilikus.alife.agents.animals.motions;
 
 import com.github.thehilikus.alife.api.Coordinates;
-import com.github.thehilikus.alife.api.Motion;
+import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.world.RandomSource;
 import com.github.thehilikus.alife.world.World;
@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Motion that moves always in the direction being faced and random turns
  */
-public class StraightWalkWithRandomTurn implements Motion {
+public class StraightWalkWithRandomTurn implements Locomotion {
     private static final Logger LOG = LoggerFactory.getLogger(StraightWalkWithRandomTurn.class.getSimpleName());
     private final int agentId;
     private final StraightWalk walker;
@@ -29,7 +29,7 @@ public class StraightWalkWithRandomTurn implements Motion {
         this.walker = walk;
     }
 
-    public static Motion create(int id, World world) {
+    public static Locomotion create(int id, World world) {
         int turningProbability = RandomSource.nextInt(100);
         Orientation startingOrientation = Orientation.fromInt(RandomSource.nextInt(4));
 

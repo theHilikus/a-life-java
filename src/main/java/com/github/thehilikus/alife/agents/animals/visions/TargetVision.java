@@ -1,4 +1,4 @@
-package com.github.thehilikus.alife.agents.modules;
+package com.github.thehilikus.alife.agents.animals.visions;
 
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.ScanResult;
@@ -15,16 +15,16 @@ import java.util.TreeSet;
  */
 public class TargetVision implements Vision {
     private final Agent target;
-    private final SquareVision squareVision;
+    private final SurroundingsVision surroundingsVision;
 
     public TargetVision(int agentId, int radius, World world, Agent target) {
-        squareVision = new SquareVision(agentId, radius, world);
+        surroundingsVision = new SurroundingsVision(agentId, radius, world);
         this.target = target;
     }
 
     @Override
     public <T extends Agent> SortedSet<ScanResult> scan(Class<T> type) {
-        SortedSet<ScanResult> scanResults = squareVision.scan(type);
+        SortedSet<ScanResult> scanResults = surroundingsVision.scan(type);
         SortedSet<ScanResult> result = new TreeSet<>();
         for (ScanResult scanResult : scanResults) {
             if (scanResult.getAgent().getId() == target.getId()) {
@@ -37,14 +37,14 @@ public class TargetVision implements Vision {
 
     @Override
     public int getAgentId() {
-        return squareVision.getAgentId();
+        return surroundingsVision.getAgentId();
     }
 
     @Override
     public Map<String, String> getParameters() {
         Map<String, String> result = new LinkedHashMap<>();
         result.put(Vision.PARAMETER_PREFIX + "targetId", Integer.toString(target.getId()));
-        result.putAll(squareVision.getParameters());
+        result.putAll(surroundingsVision.getParameters());
 
         return result;
     }

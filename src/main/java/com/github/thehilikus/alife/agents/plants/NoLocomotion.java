@@ -1,7 +1,7 @@
-package com.github.thehilikus.alife.agents.modules;
+package com.github.thehilikus.alife.agents.plants;
 
 import com.github.thehilikus.alife.api.Coordinates;
-import com.github.thehilikus.alife.api.Motion;
+import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.world.World;
 
@@ -10,17 +10,17 @@ import java.util.Map;
 /**
  * A static motion
  */
-public class NoMotion implements Motion {
+public class NoLocomotion implements Locomotion {
     private final int agentId;
     private final Coordinates currentPosition;
 
-    private NoMotion(int agentId, Coordinates currentPosition) {
+    private NoLocomotion(int agentId, Coordinates currentPosition) {
         this.agentId = agentId;
         this.currentPosition = currentPosition;
     }
 
-    public static Motion create(int id, World world) {
-        return new NoMotion(id, world.getEmptyPosition());
+    public static Locomotion create(int id, World world) {
+        return new NoLocomotion(id, world.getEmptyPosition());
     }
 
     @Override

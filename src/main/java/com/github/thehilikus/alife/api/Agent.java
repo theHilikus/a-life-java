@@ -31,7 +31,7 @@ public interface Agent {
      */
     String getStringRepresentation();
 
-    Motion getMotion();
+    Locomotion getLocomotion();
 
     Vision getVision();
 
