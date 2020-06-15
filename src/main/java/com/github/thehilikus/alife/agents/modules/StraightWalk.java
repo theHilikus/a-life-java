@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+/**
+ * Motion that always moves forward until reaching the edge of the world
+ */
 public class StraightWalk implements Motion {
     private static final Logger LOG = LoggerFactory.getLogger(StraightWalk.class.getSimpleName());
     private final int agentId;
@@ -20,6 +23,14 @@ public class StraightWalk implements Motion {
     private final int woldWidth;
     private final int worldHeight;
 
+    public static StraightWalk create(int id, World world) {
+        Coordinates startingPosition = world.getEmptyPosition();
+        int topSpeed = RandomSource.nextInt(20);
+        double energyExpenditureFactor = RandomSource.nextDouble(1);
+
+        return new StraightWalk(id, topSpeed, energyExpenditureFactor, startingPosition, world.getWidth(), world.getHeight());
+    }
+
     private StraightWalk(int agentId, int topSpeed, double energyExpenditureFactor, Coordinates position, int woldWidth, int worldHeight) {
         this.agentId = agentId;
         this.topSpeed = topSpeed;
@@ -27,14 +38,6 @@ public class StraightWalk implements Motion {
         this.position = position;
         this.woldWidth = woldWidth;
         this.worldHeight = worldHeight;
-    }
-
-    public static StraightWalk create(int id, World world) {
-        Coordinates startingPosition = world.getEmptyPosition();
-        int topSpeed = RandomSource.nextInt(20);
-        double energyExpenditureFactor = RandomSource.nextDouble(1);
-
-        return new StraightWalk(id, topSpeed, energyExpenditureFactor, startingPosition, world.getWidth(), world.getHeight());
     }
 
     @Override
