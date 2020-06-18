@@ -15,9 +15,9 @@ public interface Agent {
     void tick();
 
     /**
-     * returns an immutable coordinate with the current position of the agent
+     * returns a coordinate with the current position of the agent
      */
-    Coordinates.Immutable getPosition();
+    Position getPosition();
 
     /**
      * A textual representation of the agent with its id. The style represents the type of agent, the colour

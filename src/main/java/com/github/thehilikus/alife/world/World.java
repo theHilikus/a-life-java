@@ -2,7 +2,7 @@ package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Agent;
-import com.github.thehilikus.alife.api.Coordinates;
+import com.github.thehilikus.alife.api.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,11 +35,11 @@ public class World {
     public void tick() {
         LOG.info("Starting day {}", ++day);
         agents.values().forEach(agent -> {
-            Coordinates.Immutable originalPosition = agent.getPosition();
-            grid[originalPosition.getX()][originalPosition.getY()] = null;
+            Position originalPosition = agent.getPosition();
+            grid[originalPosition.getY()][originalPosition.getX()] = null;
             agent.tick();
-            Coordinates.Immutable newPosition = agent.getPosition();
-            grid[newPosition.getX()][newPosition.getY()] = agent;
+            Position newPosition = agent.getPosition();
+            grid[newPosition.getY()][newPosition.getX()] = agent;
             if (!originalPosition.equals(newPosition)) {
                 LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
             }
@@ -47,9 +47,9 @@ public class World {
     }
 
     public void addAgent(Agent agent) {
-        Coordinates.Immutable position = agent.getPosition();
-        LOG.info("Adding {} to world at position {}", agent, position);
-        grid[position.getX()][position.getY()] = agent;
+        Position position = agent.getPosition();
+        LOG.info("Adding {} to world", agent);
+        grid[position.getY()][position.getX()] = agent;
         agents.put(agent.getId(), agent);
     }
 
@@ -61,7 +61,7 @@ public class World {
         return agents.get(id);
     }
 
-    public Coordinates getEmptyPosition() {
+    public Position getEmptyPosition() {
         int x;
         int y;
         do {
@@ -69,18 +69,18 @@ public class World {
             y = RandomSource.nextInt(getHeight());
         } while (grid[x][y] != null);
 
-        return new Coordinates(x, y);
+        return new Position(x, y);
     }
 
     public Agent getObjectRelativeTo(int id, int xDelta, int yDelta) {
-        Coordinates.Immutable center = agents.get(id).getPosition();
+        Position center = agents.get(id).getPosition();
         int x = center.getX() + xDelta;
         int y = center.getY() + yDelta;
         if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
             return null;
         }
 
-        return grid[x][y];
+        return grid[y][x];
     }
 
     public Map<String, String> getAgentDetails(int agentId) {
@@ -101,12 +101,12 @@ public class World {
         String formatCodeEdge = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.WHITE, Ansi.BColor.WHITE);
         String emptySpace = Ansi.formatMessage("  ", formatCode);
         String emptySpaceEdge = Ansi.formatMessage("  ", formatCodeEdge);
-        for (int row = -1; row <= getWidth(); row++) {
-            for (int col = -1; col <= getHeight(); col++) {
-                if (row == -1 || col == -1 || row == getWidth() || col == getHeight()) {
+        for (int y = -1; y <= getWidth(); y++) {
+            for (int x = -1; x <= getHeight(); x++) {
+                if (x == -1 || y == -1 || x == getWidth() || y == getHeight()) {
                     stringBuilder.append(emptySpaceEdge);
                 } else {
-                    Agent agent = grid[row][col];
+                    Agent agent = grid[y][x];
                     if (agent == null) {
                         stringBuilder.append(emptySpace);
                     } else {

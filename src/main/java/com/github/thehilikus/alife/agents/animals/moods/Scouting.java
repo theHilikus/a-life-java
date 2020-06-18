@@ -41,7 +41,7 @@ public class Scouting implements Mood {
         if (!foundAgents.isEmpty()) {
             return moodController.startHunting(agentId, foundAgents.first().getAgent());
         } else {
-            lastMovement = locomotion.move(speedFactor, null);
+            lastMovement = locomotion.move(speedFactor);
         }
 
         return this;
@@ -74,5 +74,10 @@ public class Scouting implements Mood {
                 PARAMETER_PREFIX + "scoutSpeedFactor", Double.toString(speedFactor),
                 PARAMETER_PREFIX + "lastMovement", Integer.toString(lastMovement)
         );
+    }
+
+    @Override
+    public String toString() {
+        return "Scouting{}";
     }
 }

@@ -9,16 +9,14 @@ public interface Locomotion extends Component {
      */
     String PARAMETER_PREFIX = "motion.";
 
-    int move(double speedFactor, Orientation direction);
+    default int move(double speedFactor, Orientation direction) {
+        throw new UnsupportedOperationException("Invalid operation on this type of locomotion");
+    }
+    default int move(double speedFactor) {
+        return move(speedFactor, null);
+    }
 
     double getEnergyExpenditureFactor();
 
-    Coordinates.Immutable getPosition();
-
-    enum SpeedType {
-        SCOUT,
-        HUNT,
-        IDLE,
-        ESCAPE
-    }
+    Position.Immutable getPosition();
 }

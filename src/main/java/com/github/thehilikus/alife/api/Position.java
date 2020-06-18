@@ -3,16 +3,16 @@ package com.github.thehilikus.alife.api;
 /**
  * An mutable object to keep track of a position in the world
  */
-public class Coordinates {
+public class Position {
     private int x;
     private int y;
 
-    public Coordinates(int x, int y) {
+    public Position(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public Coordinates move(Orientation direction, int speed) {
+    public Position move(Orientation direction, int speed) {
         int newX = x;
         int newY = y;
         switch (direction) {
@@ -28,7 +28,7 @@ public class Coordinates {
             case EAST:
                 x += speed;
         }
-        return new Coordinates(newX, newY);
+        return new Position(newX, newY);
     }
 
     public int getX() {
@@ -39,14 +39,22 @@ public class Coordinates {
         return y;
     }
 
+    @Override
+    public String toString() {
+        return "Position{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
     /**
-     * The immutable version of {@link Coordinates}
+     * The immutable version of {@link Position}
      */
     public static class Immutable {
         private final int x;
         private final int y;
 
-        public Immutable(Coordinates mutable) {
+        public Immutable(Position mutable) {
             this.x = mutable.x;
             this.y = mutable.y;
         }

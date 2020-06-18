@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.agents.animals.motions;
 
 import com.github.thehilikus.alife.agents.genetics.Genome;
-import com.github.thehilikus.alife.api.Coordinates;
+import com.github.thehilikus.alife.api.Position;
 import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.world.RandomSource;
@@ -23,15 +23,15 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     private Orientation orientation;
 
 
-    public StraightWalkWithRandomTurn(int agentId, Genome genome, World world) {
+    public StraightWalkWithRandomTurn(int agentId, Position position, Genome genome, World world) {
         this.agentId = agentId;
         this.turningProbability = genome.getGene(Locomotion.PARAMETER_PREFIX + "turningProbability");
         this.orientation = Orientation.fromInt(RandomSource.nextInt(4));
-        this.walker = new StraightWalk(agentId, genome, world);
+        this.walker = new StraightWalk(agentId, position, genome, world);
     }
 
     @Override
-    public int move(double speedFactor, Orientation direction) {
+    public int move(double speedFactor) {
         int result = 0;
         if (shouldTurn()) {
             turn();
@@ -48,7 +48,7 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     }
 
     @Override
-    public Coordinates.Immutable getPosition() {
+    public Position.Immutable getPosition() {
         return walker.getPosition();
     }
 
@@ -69,9 +69,9 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     }
 
     private boolean isInEdge() {
-        Coordinates.Immutable position = getPosition();
+        Position.Immutable position = getPosition();
         return position.getX() == 0 && orientation == Orientation.WEST
-                || position.getX() == walker.getWoldWidth() - 1 && orientation == Orientation.EAST
+                || position.getX() == walker.getWorldWidth() - 1 && orientation == Orientation.EAST
                 || position.getY() == 0 && orientation == Orientation.NORTH
                 || position.getY() == walker.getWorldHeight() - 1 && orientation == Orientation.SOUTH;
     }
