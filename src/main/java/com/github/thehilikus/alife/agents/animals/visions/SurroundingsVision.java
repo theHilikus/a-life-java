@@ -41,13 +41,13 @@ public class SurroundingsVision implements Vision {
 
     @Override
     public <T extends Agent> SortedSet<ScanResult> scan(Class<T> type) {
-        LOG.debug("Scanning for Agents of type {} around agent {}", type.getSimpleName(), agentId);
+        LOG.debug("Scanning for Agents of type {} around agent {} in a radius of {}", type.getSimpleName(), agentId, radius);
         SortedSet<ScanResult> result = new TreeSet<>();
-        for (int row = radius * -1; row < radius; row++) {
-            for (int col = radius * -1; col < radius; col++) {
-                Agent scanResult = world.getObjectRelativeTo(agentId, row, col);
-                if (scanResult != null && scanResult.getClass().equals(type)) {
-                    ScanResult e = new ScanResult((row << 1) + (col << 1), scanResult);
+        for (int y = radius * -1; y < radius; y++) {
+            for (int x = radius * -1; x < radius; x++) {
+                Agent foundAgent = world.getObjectRelativeTo(agentId, x, y);
+                if (foundAgent != null && foundAgent.getClass().equals(type)) {
+                    ScanResult e = new ScanResult(Math.abs(x), Math.abs(y), foundAgent);
                     result.add(e);
                 }
             }
