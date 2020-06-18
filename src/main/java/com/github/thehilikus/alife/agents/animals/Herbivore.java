@@ -121,6 +121,7 @@ public class Herbivore implements Agent {
         private static final int MAX_VISION_DISTANCE = 20;
         private static final int MAX_TOP_SPEED = 20;
         private static final double MAX_SCOUT_SPEED_FACTOR = 0.5;
+        private static final double MAX_HUNT_SPEED_FACTOR = 0.9;
         private static final int MAX_SIZE = 50;
 
         public static HerbivoreGenome create(int agentId) {
@@ -136,7 +137,8 @@ public class Herbivore implements Agent {
                     Map.entry(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomSource.nextInt(MAX_TOP_SPEED)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomSource.nextDouble(1)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomSource.nextInt(100)),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomSource.nextDouble(MAX_SCOUT_SPEED_FACTOR))
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomSource.nextDouble(MAX_SCOUT_SPEED_FACTOR)),
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomSource.nextDouble(MAX_HUNT_SPEED_FACTOR))
             );
         }
 
