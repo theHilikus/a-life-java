@@ -27,26 +27,29 @@ public class Herbivore implements Agent {
 
     private final Genome genome;
 
-    private Mood mood;
     private final int id;
+    private final Position position;
+    private Mood mood;
 
     public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
             int id = IdsSource.getNextId();
+            Position startingPosition = world.getEmptyPosition();
             HerbivoreGenome genome = HerbivoreGenome.create(id);
 
-            Locomotion locomotion = new StraightWalkWithRandomTurn(id, genome, world);
+            Locomotion locomotion = new StraightWalkWithRandomTurn(id, startingPosition, genome, world);
             Vision vision = new SurroundingsVision(id, genome, world);
 
-            Agent newAgent = new Herbivore(id, vision, locomotion, new MoodController(world), genome);
+            Agent newAgent = new Herbivore(id, startingPosition, vision, locomotion, new MoodController(world), genome);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }
 
     }
 
-    private Herbivore(int id, Vision vision, Locomotion locomotion, MoodController moodController, Genome genome) {
+    private Herbivore(int id, Position position, Vision vision, Locomotion locomotion, MoodController moodController, Genome genome) {
         this.id = id;
+        this.position = position;
         this.vision = vision;
         this.locomotion = locomotion;
         this.genome = genome;
@@ -72,6 +75,7 @@ public class Herbivore implements Agent {
     public Map<String, String> getDetails() {
         Map<String, String> result = new LinkedHashMap<>();
         result.put("type", getClass().getSimpleName());
+        result.put("position", position.getX() + ", " + position.getY());
         result.putAll(genome.getParameters());
         result.putAll(vision.getParameters());
         result.putAll(locomotion.getParameters());
@@ -81,8 +85,8 @@ public class Herbivore implements Agent {
     }
 
     @Override
-    public Coordinates.Immutable getPosition() {
-        return locomotion.getPosition();
+    public Position getPosition() {
+        return position;
     }
 
     @Override
@@ -101,8 +105,10 @@ public class Herbivore implements Agent {
 
     @Override
     public String toString() {
-        return "HuntingAgent{" +
+        return "Herbivore{" +
                 "id=" + id +
+                ", position=" + position +
+                ", mood=" + mood +
                 '}';
     }
 

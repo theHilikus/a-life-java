@@ -1,10 +1,10 @@
 package com.github.thehilikus.alife.agents.plants;
 
-import com.github.thehilikus.alife.api.Coordinates;
 import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Orientation;
-import com.github.thehilikus.alife.world.World;
+import com.github.thehilikus.alife.api.Position;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -12,11 +12,11 @@ import java.util.Map;
  */
 public class NoLocomotion implements Locomotion {
     private final int agentId;
-    private final Coordinates currentPosition;
+    private final Position position;
 
-    public NoLocomotion(int agentId, World world) {
+    public NoLocomotion(int agentId, Position position) {
         this.agentId = agentId;
-        this.currentPosition = world.getEmptyPosition();
+        this.position = position;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class NoLocomotion implements Locomotion {
 
     @Override
     public Map<String, String> getParameters() {
-        return Map.of(PARAMETER_PREFIX + "position", currentPosition.getX() + ", " + currentPosition.getY());
+        return Collections.emptyMap();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class NoLocomotion implements Locomotion {
     }
 
     @Override
-    public Coordinates.Immutable getPosition() {
-        return new Coordinates.Immutable(currentPosition);
+    public Position.Immutable getPosition() {
+        return new Position.Immutable(position);
     }
 }
