@@ -1,15 +1,16 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.diogonunes.jcdp.color.api.Ansi;
+import com.github.thehilikus.alife.agents.controllers.MoodController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.agents.plants.Plant;
-import com.github.thehilikus.alife.agents.controllers.MoodController;
-import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.Locomotion;
+import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.ScanResult;
 import com.github.thehilikus.alife.api.Vision;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedSet;
 
 /**
@@ -39,7 +40,15 @@ public class Scouting implements Mood {
         //scout the area
         SortedSet<ScanResult> foundAgents = vision.scan(Plant.class);
         if (!foundAgents.isEmpty()) {
-            return moodController.startHunting(agentId, foundAgents.first().getAgent());
+            Optional<Plant> plantOptional = foundAgents.stream().map(ScanResult::getAgent).filter(Plant.class::isInstance).map(Plant.class::cast).findFirst();
+            if (plantOptional.isPresent()) {
+                return moodController.startHunting(agentId, plantOptional.get());
+            } else {
+                //only found edges
+                ScanResult closestEdgeScan = foundAgents.first();
+                int maxMovement = Math.min(Math.abs(closestEdgeScan.getXDistance()), Math.abs(closestEdgeScan.getYDistance())); // FIXME: this slows down the movement even if not facing the wall
+                lastMovement = locomotion.move(speedFactor, maxMovement);
+            }
         } else {
             lastMovement = locomotion.move(speedFactor);
         }

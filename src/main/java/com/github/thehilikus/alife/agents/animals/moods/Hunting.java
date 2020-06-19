@@ -56,9 +56,14 @@ public class Hunting implements Mood {
         SortedSet<ScanResult> scanResult = vision.scan(target.getClass());
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.target.getId()).findFirst();
         if (targetOptional.isPresent()) {
-            Orientation targetDirection = findTargetDirection();
-            lastMovement = locomotion.move(speedFactor, targetDirection);
-            //TODO: if we got there?
+            ScanResult targetScan = targetOptional.get();
+            Orientation targetDirection = findTargetDirection(targetScan);
+            int maxMovement = Math.max(Math.abs(targetScan.getXDistance()) - 1, Math.abs(targetScan.getYDistance()) - 1);
+            if (maxMovement == 0) {
+                throw new UnsupportedOperationException("EATING");
+            } else {
+                lastMovement = legs.move(speedFactor, targetDirection, maxMovement);
+            }
         } else {
             LOG.info("Target {} is gone :(", target.getId());
             return moodController.startScouting();
@@ -67,11 +72,9 @@ public class Hunting implements Mood {
         return this;
     }
 
-    private Orientation findTargetDirection() {
-        Position destination = target.getPosition();
-        Position.Immutable position = locomotion.getPosition();
-        int deltaX = destination.getX() - position.getX();
-        int deltaY = destination.getY() - position.getY();
+    private Orientation findTargetDirection(ScanResult targetScan) {
+        int deltaX = targetScan.getXDistance();
+        int deltaY = targetScan.getYDistance();
         Orientation result;
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
             //move in X
