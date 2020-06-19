@@ -20,15 +20,32 @@ public class World {
     private int day;
 
     public World(int width, int height) {
-        grid = new Agent[width][height];
+        grid = new Agent[width + 2][height + 2];
+        createEdge();
         day = 0;
     }
 
-    public int getWidth() {
+    private void createEdge() {
+        int x = 0;
+        while (x < getWidth()) {
+            grid[0][x] = new Edge();
+            grid[getHeight() - 1][x] = new Edge();
+            x++;
+        }
+
+        int y = 0;
+        while (y < getHeight()) {
+            grid[y][0] = new Edge();
+            grid[y][getWidth() - 1] = new Edge();
+            y++;
+        }
+    }
+
+    private int getWidth() {
         return grid.length;
     }
 
-    public int getHeight() {
+    private int getHeight() {
         return grid[0].length;
     }
 
@@ -65,8 +82,8 @@ public class World {
         int x;
         int y;
         do {
-            x = RandomSource.nextInt(getWidth());
-            y = RandomSource.nextInt(getHeight());
+            x = RandomSource.nextInt(1, getWidth() - 1);
+            y = RandomSource.nextInt(1, getHeight() - 1);
         } while (grid[x][y] != null);
 
         return new Position(x, y);
@@ -98,20 +115,14 @@ public class World {
         stringBuilder.append("World view on day ").append(day).append(System.lineSeparator());
 
         String formatCode = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.NONE, Ansi.BColor.NONE);
-        String formatCodeEdge = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.WHITE, Ansi.BColor.WHITE);
         String emptySpace = Ansi.formatMessage("  ", formatCode);
-        String emptySpaceEdge = Ansi.formatMessage("  ", formatCodeEdge);
-        for (int y = -1; y <= getWidth(); y++) {
-            for (int x = -1; x <= getHeight(); x++) {
-                if (x == -1 || y == -1 || x == getWidth() || y == getHeight()) {
-                    stringBuilder.append(emptySpaceEdge);
+        for (int y = 0; y < getWidth(); y++) {
+            for (int x = 0; x < getHeight(); x++) {
+                Agent agent = grid[y][x];
+                if (agent == null) {
+                    stringBuilder.append(emptySpace);
                 } else {
-                    Agent agent = grid[y][x];
-                    if (agent == null) {
-                        stringBuilder.append(emptySpace);
-                    } else {
-                        stringBuilder.append(agent.getStringRepresentation());
-                    }
+                    stringBuilder.append(agent.getStringRepresentation());
                 }
             }
             stringBuilder.append(System.lineSeparator());
