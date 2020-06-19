@@ -83,6 +83,10 @@ public class Simulation {
         int worldHeight = 100;
         int foodCount = 50;
         int huntersCount = 20;
+
+        if (options.isNotRandom()) {
+            RandomSource.fixSeed();
+        }
         world = new World(worldWidth, worldHeight);
 
         Herbivore.create(huntersCount, world);
