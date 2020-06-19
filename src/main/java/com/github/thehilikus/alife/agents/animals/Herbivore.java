@@ -118,7 +118,9 @@ public class Herbivore implements Agent {
     }
 
     private static class HerbivoreGenome extends Genome {
+        public static final int MIN_VISION_DISTANCE = 2;
         private static final int MAX_VISION_DISTANCE = 20;
+        private static final int MIN_TOP_SPEED = 1;
         private static final double MAX_SCOUT_SPEED_FACTOR = 0.5;
         private static final double MAX_HUNT_SPEED_FACTOR = 0.9;
         private static final int MAX_SIZE = 50;
@@ -129,12 +131,12 @@ public class Herbivore implements Agent {
         }
 
         private static Map<String, Object> createGenes() {
-            int visionDistance = RandomSource.nextInt(MAX_VISION_DISTANCE);
+            int visionDistance = RandomSource.nextInt(MIN_VISION_DISTANCE, MAX_VISION_DISTANCE);
             return Map.ofEntries(
                     Map.entry("type", "Herbivore"),
                     Map.entry("size", RandomSource.nextInt(MAX_SIZE)),
                     Map.entry(Vision.PARAMETER_PREFIX + "radius", visionDistance),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomSource.nextInt(visionDistance)), //agent can't move further than it can see
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomSource.nextInt(MIN_TOP_SPEED, visionDistance)), //agent can't move further than it can see
                     Map.entry(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomSource.nextDouble(1)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomSource.nextInt(100)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomSource.nextDouble(MAX_SCOUT_SPEED_FACTOR)),
