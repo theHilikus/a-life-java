@@ -14,6 +14,8 @@ public class CliOptions {
     private boolean printWorld = true;
     @Option(name = "--log-file", metaVar = "<logFile>", usage = "File to log to. Disables logging to the console")
     private File logFile;
+    @Option(name = "--not-random", usage = "Set a fixed seed to the RNG so that the runs are consistent")
+    private boolean notRandom;
 
     public boolean isAutomatic() {
         return automatic;
@@ -29,5 +31,9 @@ public class CliOptions {
 
     public void setAutomatic(boolean automatic) {
         this.automatic = automatic;
+    }
+
+    public boolean isNotRandom() {
+        return notRandom;
     }
 }
