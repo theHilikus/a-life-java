@@ -1,15 +1,13 @@
 package com.github.thehilikus.alife.agents.animals.motions;
 
 import com.github.thehilikus.alife.agents.genetics.Genome;
-import com.github.thehilikus.alife.api.Position;
 import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Orientation;
+import com.github.thehilikus.alife.api.Position;
 import com.github.thehilikus.alife.world.RandomSource;
-import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -18,25 +16,30 @@ import java.util.Map;
 public class StraightWalkWithRandomTurn implements Locomotion {
     private static final Logger LOG = LoggerFactory.getLogger(StraightWalkWithRandomTurn.class.getSimpleName());
     private final int agentId;
-    private final StraightWalk walker;
+    private final Legs walker;
     private final int turningProbability;
     private Orientation orientation;
 
 
-    public StraightWalkWithRandomTurn(int agentId, Position position, Genome genome, World world) {
+    public StraightWalkWithRandomTurn(int agentId, Position position, Genome genome) {
         this.agentId = agentId;
         this.turningProbability = genome.getGene(Locomotion.PARAMETER_PREFIX + "turningProbability");
         this.orientation = Orientation.fromInt(RandomSource.nextInt(4));
-        this.walker = new StraightWalk(agentId, position, genome, world);
+        this.walker = new Legs(agentId, position, genome);
     }
 
     @Override
-    public int move(double speedFactor) {
+    public int moveTowards(double speedFactor, Orientation direction, int maxMovement) {
+        return walker.move(speedFactor, direction, maxMovement);
+    }
+
+    @Override
+    public int move(double speedFactor, int maxMovement) {
         int result = 0;
         if (shouldTurn()) {
             turn();
         } else {
-            result = walker.move(speedFactor, orientation);
+            result = walker.move(speedFactor, orientation, maxMovement);
         }
 
         return result;
@@ -59,21 +62,8 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     }
 
     private boolean shouldTurn() {
-        if (isInEdge()) {
-            LOG.debug("Reached edge of the world");
-            return true;
-        } else {
-            int draw = RandomSource.nextInt(100);
-            return draw < turningProbability;
-        }
-    }
-
-    private boolean isInEdge() {
-        Position.Immutable position = getPosition();
-        return position.getX() == 0 && orientation == Orientation.WEST
-                || position.getX() == walker.getWorldWidth() - 1 && orientation == Orientation.EAST
-                || position.getY() == 0 && orientation == Orientation.NORTH
-                || position.getY() == walker.getWorldHeight() - 1 && orientation == Orientation.SOUTH;
+        int draw = RandomSource.nextInt(100);
+        return draw < turningProbability;
     }
 
     @Override
@@ -83,10 +73,9 @@ public class StraightWalkWithRandomTurn implements Locomotion {
 
     @Override
     public Map<String, String> getParameters() {
-        Map<String, String> result = new LinkedHashMap<>(walker.getParameters());
-        result.put(PARAMETER_PREFIX + "orientation", orientation.toString());
-        result.put(PARAMETER_PREFIX + "turningProbability", Integer.toString(turningProbability));
-
-        return result;
+        return Map.of(
+                PARAMETER_PREFIX + "orientation", orientation.toString(),
+                PARAMETER_PREFIX + "turningProbability", Integer.toString(turningProbability)
+        );
     }
 }

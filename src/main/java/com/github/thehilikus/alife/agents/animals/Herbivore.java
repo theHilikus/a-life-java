@@ -37,7 +37,7 @@ public class Herbivore implements Agent {
             Position startingPosition = world.getEmptyPosition();
             HerbivoreGenome genome = HerbivoreGenome.create(id);
 
-            Locomotion locomotion = new StraightWalkWithRandomTurn(id, startingPosition, genome, world);
+            Locomotion locomotion = new StraightWalkWithRandomTurn(id, startingPosition, genome);
             Vision vision = new SurroundingsVision(id, genome, world);
 
             Agent newAgent = new Herbivore(id, startingPosition, vision, locomotion, new MoodController(world), genome);
