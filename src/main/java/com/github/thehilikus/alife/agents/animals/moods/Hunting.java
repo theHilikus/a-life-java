@@ -1,6 +1,7 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.diogonunes.jcdp.color.api.Ansi;
+import com.github.thehilikus.alife.agents.animals.motions.Legs;
 import com.github.thehilikus.alife.agents.controllers.MoodController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
@@ -19,17 +20,17 @@ public class Hunting implements Mood {
     private final MoodController moodController;
     private final int agentId;
     private final Vision vision;
-    private final Locomotion locomotion;
+    private final Legs legs;
     private final double speedFactor;
     private final Existing existing;
     private final Agent target;
     private int lastMovement;
 
-    public Hunting(MoodController moodController, Vision vision, Locomotion locomotion, Genome genome, Agent foodAgent) {
+    public Hunting(MoodController moodController, Vision vision, Legs legs, Genome genome, Agent foodAgent) {
         this.moodController = moodController;
         this.agentId = vision.getAgentId();
         this.vision = vision;
-        this.locomotion = locomotion;
+        this.legs = legs;
         this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor");
         this.existing = new Existing(agentId);
         this.target = foodAgent;
@@ -98,7 +99,7 @@ public class Hunting implements Mood {
 
     @Override
     public int getEnergyDelta() {
-        return existing.getEnergyDelta() + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
+        return existing.getEnergyDelta() + (int) Math.round(lastMovement * legs.getEnergyExpenditureFactor());
     }
 
     @Override

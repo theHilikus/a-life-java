@@ -2,7 +2,8 @@ package com.github.thehilikus.alife.agents.plants;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.genetics.Genome;
-import com.github.thehilikus.alife.api.*;
+import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.api.Position;
 import com.github.thehilikus.alife.world.IdsSource;
 import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
@@ -19,26 +20,23 @@ public class Plant implements Agent {
     private static final Logger LOG = LoggerFactory.getLogger(Plant.class.getSimpleName());
     private final int id;
     private final Position position;
-    private final Locomotion locomotion;
     private final Genome genome;
 
     public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
             int id = IdsSource.getNextId();
             Position startingPosition = world.getEmptyPosition();
-            Locomotion locomotion = new NoLocomotion(id, startingPosition);
             Genome genome = new PlantGenome(id);
 
-            Agent newAgent = new Plant(id, startingPosition, locomotion, genome);
+            Agent newAgent = new Plant(id, startingPosition, genome);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }
     }
 
-    private Plant(int id, Position position, Locomotion locomotion, Genome genome) {
+    private Plant(int id, Position position, Genome genome) {
         this.id = id;
         this.position = position;
-        this.locomotion = locomotion;
         this.genome = genome;
 
     }
@@ -58,7 +56,6 @@ public class Plant implements Agent {
         Map<String, String> result = new LinkedHashMap<>();
         result.put("type", getClass().getSimpleName());
         result.put("position", position.getX() + ", " + position.getY());
-        result.putAll(locomotion.getParameters());
 
         return result;
     }
