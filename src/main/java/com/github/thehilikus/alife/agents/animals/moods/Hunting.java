@@ -60,7 +60,7 @@ public class Hunting implements Mood {
             Orientation targetDirection = legs.getPosition().directionTo(targetScan.getAgent().getPosition());
             int maxMovement = Math.max(Math.abs(targetScan.getXDistance()) - 1, Math.abs(targetScan.getYDistance()) - 1);
             if (maxMovement == 0) {
-                throw new UnsupportedOperationException("EATING");
+                return moodController.startEating();
             } else {
                 lastMovement = legs.move(speedFactor, targetDirection, maxMovement);
             }
