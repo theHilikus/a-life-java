@@ -29,13 +29,22 @@ public class VitalsController implements Component {
         this.ageTracker = new AgeTracker(agentId, genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
     }
 
-    public Mood update(Mood lastMood) {
+    public Mood update(Mood lastMood, Mood newMood) {
         hungerTracker.update(lastMood);
         energyTracker.update(lastMood);
         ageTracker.update();
-        //TODO: find proper mood
 
-        return lastMood;
+        Mood result = newMood;
+        if (energyTracker.isTired()) {
+            LOG.debug("{} is tired", this);
+            result = moodController.startSleeping();
+        }
+        if (hungerTracker.isHungry()) {
+            LOG.debug("{} is hungry", this);
+            result = moodController.startScouting();
+        }
+
+        return result;
     }
 
     public boolean isAlive() {

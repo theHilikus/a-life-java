@@ -55,7 +55,7 @@ public class Herbivore implements Agent {
         this.vision = vision;
         this.locomotion = locomotion;
         this.genome = genome;
-        this.vitals = new VitalsController(genome);
+        this.vitals = new VitalsController(id, moodController, genome);
         mood = new Scouting(moodController, vision, locomotion, genome);
     }
 
@@ -64,10 +64,10 @@ public class Herbivore implements Agent {
         LOG.debug("#### Updating state of {} ####", this);
         Mood oldMood = mood;
         mood = oldMood.tick();
-        Mood priorityMood = vitals.update(oldMood);
+        Mood priorityMood = vitals.update(oldMood, mood);
         boolean alive = vitals.isAlive();
         if (alive && !priorityMood.getClass().equals(mood.getClass())) {
-            LOG.info("Overwriting mood due to vital need");
+            LOG.info("Overwriting mood {} with {} due to vital need", mood, priorityMood);
             mood = priorityMood;
         }
 
@@ -134,6 +134,8 @@ public class Herbivore implements Agent {
         private static final int MAX_SIZE = 50;
         public static final int MAX_LIFE_EXPECTANCY = 80;
         public static final int MIN_LIFE_EXPECTANCY = 50;
+        private static final int MAX_LOW_ENERGY_THRESHOLD = 50;
+        private static final int MAX_HUNGRY_THRESHOLD = 50;
 
         public static HerbivoreGenome create(int agentId) {
             Map<String, Object> genes = createGenes();
@@ -151,7 +153,9 @@ public class Herbivore implements Agent {
                     Map.entry(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomSource.nextInt(100)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomSource.nextDouble(MAX_SCOUT_SPEED_FACTOR)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomSource.nextDouble(MAX_HUNT_SPEED_FACTOR)),
-                    Map.entry(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", RandomSource.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY))
+                    Map.entry(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", RandomSource.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY)),
+                    Map.entry(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold", RandomSource.nextInt(MAX_LOW_ENERGY_THRESHOLD)),
+                    Map.entry(VitalSign.PARAMETER_PREFIX + "hungryThreshold", RandomSource.nextInt(MAX_HUNGRY_THRESHOLD))
             );
         }
 
