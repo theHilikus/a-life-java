@@ -42,7 +42,7 @@ public class Scouting implements Mood {
         if (!foundAgents.isEmpty()) {
             Optional<Plant> plantOptional = foundAgents.stream().map(ScanResult::getAgent).filter(Plant.class::isInstance).map(Plant.class::cast).findFirst();
             if (plantOptional.isPresent()) {
-                return moodController.startHunting(agentId, plantOptional.get());
+                return moodController.startHunting(plantOptional.get());
             } else {
                 //only found edges
                 ScanResult closestEdgeScan = foundAgents.first();

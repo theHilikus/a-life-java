@@ -1,9 +1,12 @@
 package com.github.thehilikus.alife.agents.controllers;
 
 import com.github.thehilikus.alife.agents.animals.moods.Hunting;
+import com.github.thehilikus.alife.agents.animals.moods.Scouting;
 import com.github.thehilikus.alife.agents.animals.motions.Legs;
+import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
 import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
 import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.Vision;
 import com.github.thehilikus.alife.world.World;
@@ -16,12 +19,14 @@ import org.slf4j.LoggerFactory;
 public class MoodController {
     private static final Logger LOG = LoggerFactory.getLogger(MoodController.class.getSimpleName());
     private final World theWorld;
+    private final int agentId;
 
-    public MoodController(World theWorld) {
+    public MoodController(int agentId, World theWorld) {
+        this.agentId = agentId;
         this.theWorld = theWorld;
     }
 
-    public Hunting startHunting(int agentId, Agent target) {
+    public Hunting startHunting(Agent target) {
         Agent agent = theWorld.getAgent(agentId);
 
         String currentMood = agent.getDetails().get(Mood.PARAMETER_PREFIX + "current");
