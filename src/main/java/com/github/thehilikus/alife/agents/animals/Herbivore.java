@@ -124,6 +124,8 @@ public class Herbivore implements Agent {
         private static final double MAX_SCOUT_SPEED_FACTOR = 0.5;
         private static final double MAX_HUNT_SPEED_FACTOR = 0.9;
         private static final int MAX_SIZE = 50;
+        public static final int MAX_LIFE_EXPECTANCY = 80;
+        public static final int MIN_LIFE_EXPECTANCY = 50;
 
         public static HerbivoreGenome create(int agentId) {
             Map<String, Object> genes = createGenes();
@@ -140,7 +142,8 @@ public class Herbivore implements Agent {
                     Map.entry(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomSource.nextDouble(1)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomSource.nextInt(100)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomSource.nextDouble(MAX_SCOUT_SPEED_FACTOR)),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomSource.nextDouble(MAX_HUNT_SPEED_FACTOR))
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomSource.nextDouble(MAX_HUNT_SPEED_FACTOR)),
+                    Map.entry(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", RandomSource.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY))
             );
         }
 
