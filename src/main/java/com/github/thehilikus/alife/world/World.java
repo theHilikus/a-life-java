@@ -108,7 +108,7 @@ public class World {
         do {
             x = RandomSource.nextInt(1, getWidth() - 1);
             y = RandomSource.nextInt(1, getHeight() - 1);
-        } while (grid[x][y] != null);
+        } while (grid[y][x] != null);
 
         return new Position(x, y);
     }
