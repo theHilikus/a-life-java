@@ -150,7 +150,7 @@ public class Herbivore implements Agent {
                     Map.entry("size", RandomSource.nextInt(MAX_SIZE)),
                     Map.entry(Vision.PARAMETER_PREFIX + "radius", visionDistance),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomSource.nextInt(MIN_TOP_SPEED, visionDistance)), //agent can't move further than it can see
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomSource.nextDouble(1)),
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomSource.nextDouble(1) * -1),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomSource.nextInt(100)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor", RandomSource.nextDouble(MAX_IDLE_SPEED_FACTOR)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomSource.nextDouble(MAX_SCOUT_SPEED_FACTOR)),
