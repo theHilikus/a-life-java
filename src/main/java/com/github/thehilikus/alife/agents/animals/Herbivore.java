@@ -42,7 +42,7 @@ public class Herbivore implements Agent {
             Locomotion locomotion = new StraightWalkWithRandomTurn(id, startingPosition, genome);
             Vision vision = new SurroundingsVision(id, genome, world);
 
-            Agent newAgent = new Herbivore(id, startingPosition, vision, locomotion, new MoodController(world), genome);
+            Agent newAgent = new Herbivore(id, startingPosition, vision, locomotion, new MoodController(id, world), genome);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }
