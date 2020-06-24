@@ -24,4 +24,8 @@ public enum Orientation {
 
         return Orientation.fromInt((index + delta) % Orientation.values().length);
     }
+
+    public Orientation opposite() {
+        return turn(WEST).turn(WEST);
+    }
 }

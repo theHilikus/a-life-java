@@ -2,6 +2,7 @@ package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.api.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,11 @@ public class World {
             grid[originalPosition.getY()][originalPosition.getX()] = null;
             boolean alive = agent.tick();
             if (alive) {
-                Position newPosition = agent.getPosition();
+                Position.Immutable newPosition = agent.getPosition();
+                Agent collidedAgent = grid[newPosition.getY()][newPosition.getX()];
+                if (collidedAgent != null) {
+                    newPosition = resolveCollision(agent, originalPosition, newPosition);
+                }
                 grid[newPosition.getY()][newPosition.getX()] = agent;
                 if (!originalPosition.equals(newPosition)) {
                     LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
@@ -66,6 +71,17 @@ public class World {
             }
         });
         cemetery.forEach(this::removeAgent);
+    }
+
+    private Position.Immutable resolveCollision(Agent colliderAgent, Position.Immutable originalPosition, Position.Immutable newPosition) {
+        Orientation colliderOrientation = originalPosition.directionTo(newPosition);
+        Position adjustedPosition;
+        do {
+            adjustedPosition = colliderAgent.getMovablePosition().move(colliderOrientation.opposite(), 1);
+            LOG.trace("Adjusting collision at {}", newPosition);
+        } while (grid[adjustedPosition.getY()][adjustedPosition.getX()] != null);
+
+        return adjustedPosition.toImmutable();
     }
 
     public void addAgent(Agent agent) {

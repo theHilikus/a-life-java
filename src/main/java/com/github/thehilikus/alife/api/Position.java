@@ -71,6 +71,34 @@ public class Position {
             return y;
         }
 
+        /**
+         * Finds the farthest direction to the destination
+         *
+         * @param destination the position to get to
+         */
+        public Orientation directionTo(Position.Immutable destination) {
+            int deltaX = destination.x - this.x;
+            int deltaY = destination.y - this.y;
+            Orientation result;
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                //move in X
+                if (deltaX < 0) {
+                    result = Orientation.WEST;
+                } else {
+                    result = Orientation.EAST;
+                }
+            } else {
+                //move in Y
+                if (deltaY < 0) {
+                    result = Orientation.NORTH;
+                } else {
+                    result = Orientation.SOUTH;
+                }
+            }
+
+            return result;
+        }
+
         @Override
         public String toString() {
             return "Immutable{" +
