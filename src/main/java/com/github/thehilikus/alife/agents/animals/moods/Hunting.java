@@ -22,7 +22,6 @@ public class Hunting implements Mood {
     private final Vision vision;
     private final Legs legs;
     private final double speedFactor;
-    private final Existing existing;
     private final Agent target;
     private int lastMovement;
 
@@ -32,7 +31,6 @@ public class Hunting implements Mood {
         this.vision = vision;
         this.legs = legs;
         this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor");
-        this.existing = new Existing(agentId);
         this.target = foodAgent;
     }
 
@@ -74,12 +72,12 @@ public class Hunting implements Mood {
 
     @Override
     public int getHungerDelta() {
-        return existing.getHungerDelta();
+        return Existing.HUNGER_DERIVATIVE;
     }
 
     @Override
     public int getEnergyDelta() {
-        return existing.getEnergyDelta() + (int) Math.round(lastMovement * legs.getEnergyExpenditureFactor());
+        return Existing.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * legs.getEnergyExpenditureFactor());
     }
 
     @Override

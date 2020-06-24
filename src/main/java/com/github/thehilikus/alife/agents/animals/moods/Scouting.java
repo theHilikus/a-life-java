@@ -19,7 +19,6 @@ import java.util.SortedSet;
 public class Scouting implements Mood {
     private final Vision vision;
     private final Locomotion locomotion;
-    private final Existing existing;
     private final MoodController moodController;
     private final int agentId;
     private int lastMovement;
@@ -32,7 +31,6 @@ public class Scouting implements Mood {
         this.vision = vision;
         this.locomotion = locomotion;
         this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor");
-        existing = new Existing(agentId);
     }
 
     @Override
@@ -58,12 +56,12 @@ public class Scouting implements Mood {
 
     @Override
     public int getHungerDelta() {
-        return existing.getHungerDelta();
+        return Existing.HUNGER_DERIVATIVE;
     }
 
     @Override
     public int getEnergyDelta() {
-        return existing.getEnergyDelta() + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
+        return Existing.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
     }
 
     @Override

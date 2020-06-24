@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.agents.animals;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.animals.moods.Scouting;
+import com.github.thehilikus.alife.agents.animals.moods.Existing;
 import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
 import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
 import com.github.thehilikus.alife.agents.controllers.MoodController;
@@ -129,6 +129,7 @@ public class Herbivore implements Agent {
         public static final int MIN_VISION_DISTANCE = 2;
         private static final int MAX_VISION_DISTANCE = 20;
         private static final int MIN_TOP_SPEED = 1;
+        private static final double MAX_IDLE_SPEED_FACTOR = 0.25;
         private static final double MAX_SCOUT_SPEED_FACTOR = 0.5;
         private static final double MAX_HUNT_SPEED_FACTOR = 0.9;
         private static final int MAX_SIZE = 50;
@@ -151,6 +152,7 @@ public class Herbivore implements Agent {
                     Map.entry(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomSource.nextInt(MIN_TOP_SPEED, visionDistance)), //agent can't move further than it can see
                     Map.entry(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomSource.nextDouble(1)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomSource.nextInt(100)),
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor", RandomSource.nextDouble(MAX_IDLE_SPEED_FACTOR)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomSource.nextDouble(MAX_SCOUT_SPEED_FACTOR)),
                     Map.entry(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomSource.nextDouble(MAX_HUNT_SPEED_FACTOR)),
                     Map.entry(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", RandomSource.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY)),
