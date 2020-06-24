@@ -57,7 +57,7 @@ public class Hunting implements Mood {
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.target.getId()).findFirst();
         if (targetOptional.isPresent()) {
             ScanResult targetScan = targetOptional.get();
-            Orientation targetDirection = findTargetDirection(targetScan);
+            Orientation targetDirection = legs.getPosition().directionTo(targetScan.getAgent().getPosition());
             int maxMovement = Math.max(Math.abs(targetScan.getXDistance()) - 1, Math.abs(targetScan.getYDistance()) - 1);
             if (maxMovement == 0) {
                 throw new UnsupportedOperationException("EATING");
@@ -70,29 +70,6 @@ public class Hunting implements Mood {
         }
 
         return this;
-    }
-
-    private Orientation findTargetDirection(ScanResult targetScan) {
-        int deltaX = targetScan.getXDistance();
-        int deltaY = targetScan.getYDistance();
-        Orientation result;
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            //move in X
-            if (deltaX < 0) {
-                result = Orientation.WEST;
-            } else {
-                result = Orientation.EAST;
-            }
-        } else {
-            //move in Y
-            if (deltaY < 0) {
-                result = Orientation.NORTH;
-            } else {
-                result = Orientation.SOUTH;
-            }
-        }
-
-        return result;
     }
 
     @Override
