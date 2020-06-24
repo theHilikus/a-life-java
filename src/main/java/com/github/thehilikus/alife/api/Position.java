@@ -47,6 +47,10 @@ public class Position {
                 '}';
     }
 
+    public Immutable toImmutable() {
+        return new Immutable(this);
+    }
+
     /**
      * The immutable version of {@link Position}
      */

@@ -62,7 +62,7 @@ public class Plant implements Agent {
     }
 
     @Override
-    public Position getPosition() {
+    public Position getMovablePosition() {
         return position;
     }
 

@@ -93,7 +93,7 @@ public class Herbivore implements Agent {
     }
 
     @Override
-    public Position getPosition() {
+    public Position getMovablePosition() {
         return position;
     }
 

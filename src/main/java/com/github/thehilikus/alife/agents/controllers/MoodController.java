@@ -27,7 +27,7 @@ public class MoodController {
         String currentMood = agent.getDetails().get(Mood.PARAMETER_PREFIX + "current");
 
         Vision vision = new SurroundingsVision(agentId, agent.getGenome(), theWorld);
-        Legs legs = new Legs(agentId, agent.getPosition(), agent.getGenome());
+        Legs legs = new Legs(agentId, agent.getMovablePosition(), agent.getGenome());
         Hunting result = new Hunting(this, vision, legs, agent.getGenome(), target);
         LOG.info("Agent {} transitioning from {} to {}", agentId, currentMood, result);
 
