@@ -40,7 +40,11 @@ public class MoodController {
     }
 
     public Mood startScouting() {
-        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+        Agent agent = theWorld.getAgent(agentId);
+        Vision vision = new SurroundingsVision(agentId, agent.getGenome(), theWorld);
+        Locomotion locomotion = new StraightWalkWithRandomTurn(agentId, agent.getMovablePosition(), agent.getGenome());
+
+        return new Scouting(this, vision, locomotion, agent.getGenome());
     }
 
     public Mood startSleeping() {

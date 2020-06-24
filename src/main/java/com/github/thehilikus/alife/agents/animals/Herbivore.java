@@ -56,7 +56,7 @@ public class Herbivore implements Agent {
         this.locomotion = locomotion;
         this.genome = genome;
         this.vitals = new VitalsController(id, moodController, genome);
-        mood = new Scouting(moodController, vision, locomotion, genome);
+        mood = new Existing(vision, genome, locomotion);
     }
 
     @Override
