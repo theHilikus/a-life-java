@@ -7,8 +7,6 @@ import com.github.thehilikus.alife.api.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 
 /**
  * Motion that always moves forward until reaching the edge of the world
@@ -46,7 +44,7 @@ public class Legs {
     }
 
     public Position.Immutable getPosition() {
-        return new Position.Immutable(position);
+        return position.toImmutable();
     }
 
     public int getAgentId() {

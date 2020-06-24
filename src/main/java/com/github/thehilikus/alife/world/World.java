@@ -51,7 +51,7 @@ public class World {
         LOG.info("Starting day {}", ++day);
         Collection<Agent> cemetery = new HashSet<>();
         agents.values().forEach(agent -> {
-            Position originalPosition = agent.getPosition();
+            Position.Immutable originalPosition = agent.getPosition();
             grid[originalPosition.getY()][originalPosition.getX()] = null;
             boolean alive = agent.tick();
             if (alive) {
@@ -69,14 +69,14 @@ public class World {
     }
 
     public void addAgent(Agent agent) {
-        Position position = agent.getPosition();
+        Position.Immutable position = agent.getPosition();
         LOG.info("Adding {} to world", agent);
         grid[position.getY()][position.getX()] = agent;
         agents.put(agent.getId(), agent);
     }
 
     private void removeAgent(Agent agent) {
-        Position position = agent.getPosition();
+        Position.Immutable position = agent.getPosition();
         LOG.info("Removing {} from world", agent);
         grid[position.getY()][position.getX()] = null;
         agents.remove(agent.getId());
@@ -98,7 +98,7 @@ public class World {
     }
 
     public Agent getObjectRelativeTo(int id, int xDelta, int yDelta) {
-        Position center = agents.get(id).getPosition();
+        Position.Immutable center = agents.get(id).getPosition();
         int x = center.getX() + xDelta;
         int y = center.getY() + yDelta;
         if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {

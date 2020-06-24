@@ -22,7 +22,11 @@ public interface Agent {
     /**
      * returns a coordinate with the current position of the agent
      */
-    Position getPosition();
+    default Position.Immutable getPosition() {
+        return getMovablePosition().toImmutable();
+    }
+
+    Position getMovablePosition();
 
     /**
      * A textual representation of the agent with its id. The style represents the type of agent, the colour
