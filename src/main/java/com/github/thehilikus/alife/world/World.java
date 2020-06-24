@@ -6,9 +6,7 @@ import com.github.thehilikus.alife.api.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The environment where the agents live
@@ -51,6 +49,7 @@ public class World {
 
     public void tick() {
         LOG.info("Starting day {}", ++day);
+        Collection<Agent> cemetery = new HashSet<>();
         agents.values().forEach(agent -> {
             Position originalPosition = agent.getPosition();
             grid[originalPosition.getY()][originalPosition.getX()] = null;
@@ -63,9 +62,10 @@ public class World {
                 }
             } else {
                 LOG.debug("{} died", agent);
-                removeAgent(agent);
+                cemetery.add(agent);
             }
         });
+        cemetery.forEach(this::removeAgent);
     }
 
     public void addAgent(Agent agent) {
