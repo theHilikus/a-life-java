@@ -16,22 +16,7 @@ public interface Agent {
     @NotNull
     Map<String, String> getDetails();
 
-    /**
-     * Execute one turn of the agent
-     *
-     * @return true if the agent is alive at the end of the turn
-     */
-    boolean tick();
-
-    /**
-     * returns a coordinate with the current position of the agent
-     */
-    default Position.Immutable getPosition() {
-        return getMovablePosition().toImmutable();
-    }
-
-    @NotNull
-    Position getMovablePosition();
+    Position.Immutable getPosition();
 
     /**
      * A textual representation of the agent with its id. The style represents the type of agent, the colour
@@ -39,6 +24,39 @@ public interface Agent {
      */
     String getStringRepresentation();
 
-    @NotNull
-    Genome getGenome();
+    /**
+     * An agent that does actions in every turn
+     */
+    interface Living extends Agent {
+        /**
+         * Execute one turn of the agent
+         *
+         * @return true if the agent is alive at the end of the turn
+         */
+        boolean tick();
+    }
+
+    /**
+     * An agent that can change positions
+     */
+    interface Movable extends Living {
+        @NotNull
+        Position getMovablePosition();
+
+        /**
+         * returns a coordinate with the current position of the agent
+         */
+        @Override
+        default Position.Immutable getPosition() {
+            return getMovablePosition().toImmutable();
+        }
+    }
+
+    /**
+     * An agent that has a genotype
+     */
+    interface Evolvable extends Living {
+        @NotNull
+        Genome getGenome();
+    }
 }

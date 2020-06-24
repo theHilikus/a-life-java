@@ -3,6 +3,7 @@ package com.github.thehilikus.alife.agents.controllers;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
+import com.github.thehilikus.alife.api.MoodController;
 import com.github.thehilikus.alife.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

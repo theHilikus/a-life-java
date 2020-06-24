@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.agents.plants;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Position;
 import com.github.thehilikus.alife.world.IdsSource;
@@ -9,35 +8,31 @@ import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An inanimate agent that gets eaten
  */
-public class Plant implements Agent {
+public class Plant implements Agent.Living {
     private static final Logger LOG = LoggerFactory.getLogger(Plant.class.getSimpleName());
     private final int id;
     private final Position position;
-    private final Genome genome;
 
     public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
             int id = IdsSource.getNextId();
             Position startingPosition = world.getEmptyPosition();
-            Genome genome = new PlantGenome(id);
 
-            Agent newAgent = new Plant(id, startingPosition, genome);
+            Agent.Living newAgent = new Plant(id, startingPosition);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }
     }
 
-    private Plant(int id, Position position, Genome genome) {
+    private Plant(int id, Position position) {
         this.id = id;
         this.position = position;
-        this.genome = genome;
     }
 
     @Override
@@ -62,8 +57,8 @@ public class Plant implements Agent {
     }
 
     @Override
-    public Position getMovablePosition() {
-        return position;
+    public Position.Immutable getPosition() {
+        return position.toImmutable();
     }
 
     @Override
@@ -80,21 +75,10 @@ public class Plant implements Agent {
     }
 
     @Override
-    public Genome getGenome() {
-        return genome;
-    }
-
-    @Override
     public String toString() {
         return "Plant{" +
                 "id=" + id +
                 ", position=" + position +
                 '}';
-    }
-
-    private static class PlantGenome extends Genome {
-        public PlantGenome(int agentId) {
-            super(agentId, Collections.emptyMap());
-        }
     }
 }
