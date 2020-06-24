@@ -4,6 +4,7 @@ import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
 
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Map;
 
 /**
@@ -12,6 +13,7 @@ import java.util.Map;
 public class AgeTracker implements VitalSign, Component {
     private final int agentId;
     private final int lifeExpectancy;
+    @PositiveOrZero
     private int currentAge;
 
     public AgeTracker(int agentId, int lifeExpectancy) {

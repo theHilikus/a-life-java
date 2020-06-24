@@ -1,11 +1,22 @@
 package com.github.thehilikus.alife.api;
 
+import javax.validation.constraints.NegativeOrZero;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+
 /**
  * Each agent found in a scan
  */
 public class ScanResult implements Comparable<ScanResult> {
+    @PositiveOrZero
+    @NegativeOrZero
     private final int xDistance;
+
+    @PositiveOrZero
+    @NegativeOrZero
     private final int yDistance;
+
+    @NotNull
     private final Agent agent;
 
     public ScanResult(int xDistance, int yDistance, Agent agent) {

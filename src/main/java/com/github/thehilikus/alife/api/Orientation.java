@@ -3,6 +3,7 @@ package com.github.thehilikus.alife.api;
 /**
  * One of the four directions
  */
+@SuppressWarnings("JavaDoc")
 public enum Orientation {
     NORTH(0),
     WEST(1),

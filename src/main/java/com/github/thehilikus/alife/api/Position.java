@@ -1,10 +1,14 @@
 package com.github.thehilikus.alife.api;
 
+import javax.validation.constraints.PositiveOrZero;
+
 /**
  * An mutable object to keep track of a position in the world
  */
 public class Position {
+    @PositiveOrZero
     private int x;
+    @PositiveOrZero
     private int y;
 
     public Position(int x, int y) {

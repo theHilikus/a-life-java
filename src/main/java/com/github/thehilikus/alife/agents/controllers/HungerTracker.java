@@ -5,6 +5,8 @@ import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Map;
 
 /**
@@ -13,7 +15,11 @@ import java.util.Map;
 public class HungerTracker implements VitalSign, Component {
     private static final int STARTING_HUNGER = 50;
     private final int agentId;
+
+    @Min(0)
+    @Max(100)
     private int currentHunger;
+
     private final int hungryThreshold;
 
     public HungerTracker(int agentId, Genome genome) {

@@ -7,6 +7,9 @@ import com.github.thehilikus.alife.api.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+
 
 /**
  * Motion that always moves forward until reaching the edge of the world
@@ -15,6 +18,9 @@ public class Legs {
     private static final Logger LOG = LoggerFactory.getLogger(Legs.class.getSimpleName());
     private final int agentId;
     private final int topSpeed;
+
+    @DecimalMin("-1.0")
+    @DecimalMax("0.0")
     private final double energyExpenditureFactor;
 
     private final Position position;
