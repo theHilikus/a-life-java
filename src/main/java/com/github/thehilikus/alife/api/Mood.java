@@ -2,6 +2,8 @@ package com.github.thehilikus.alife.api;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * The current behaviour of an agent
  */
@@ -11,6 +13,7 @@ public interface Mood extends Component {
      */
     String PARAMETER_PREFIX = "mood.";
 
+    @NotNull
     Mood tick();
 
     int getHungerDelta();

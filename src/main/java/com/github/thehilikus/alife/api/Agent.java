@@ -2,14 +2,18 @@ package com.github.thehilikus.alife.api;
 
 import com.github.thehilikus.alife.agents.genetics.Genome;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Map;
 
 /**
  * An entity in the World
  */
 public interface Agent {
+    @PositiveOrZero
     int getId();
 
+    @NotNull
     Map<String, String> getDetails();
 
     /**
@@ -26,6 +30,7 @@ public interface Agent {
         return getMovablePosition().toImmutable();
     }
 
+    @NotNull
     Position getMovablePosition();
 
     /**
@@ -34,5 +39,6 @@ public interface Agent {
      */
     String getStringRepresentation();
 
+    @NotNull
     Genome getGenome();
 }

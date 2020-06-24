@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.api;
 
+import javax.validation.constraints.NotNull;
 import java.util.SortedSet;
 
 /**
@@ -18,5 +19,6 @@ public interface Vision extends Component {
      * @param <T>  one of the agents
      * @return a sorted list with the most interesting agent first in the set. The concept of "most interesting" is implementation-dependent
      */
+    @NotNull
     <T extends Agent> SortedSet<ScanResult> scan(Class<T> type);
 }

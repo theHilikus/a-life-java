@@ -8,6 +8,7 @@ import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.Positive;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -20,6 +21,7 @@ public class SurroundingsVision implements Vision {
 
     private final int agentId;
 
+    @Positive
     private final int radius;
     private final World world;
 
