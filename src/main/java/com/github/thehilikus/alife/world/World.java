@@ -54,11 +54,16 @@ public class World {
         agents.values().forEach(agent -> {
             Position originalPosition = agent.getPosition();
             grid[originalPosition.getY()][originalPosition.getX()] = null;
-            agent.tick();
-            Position newPosition = agent.getPosition();
-            grid[newPosition.getY()][newPosition.getX()] = agent;
-            if (!originalPosition.equals(newPosition)) {
-                LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
+            boolean alive = agent.tick();
+            if (alive) {
+                Position newPosition = agent.getPosition();
+                grid[newPosition.getY()][newPosition.getX()] = agent;
+                if (!originalPosition.equals(newPosition)) {
+                    LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
+                }
+            } else {
+                LOG.debug("{} died", agent);
+                removeAgent(agent);
             }
         });
     }
@@ -70,7 +75,10 @@ public class World {
         agents.put(agent.getId(), agent);
     }
 
-    public void removeAgent(Agent agent) {
+    private void removeAgent(Agent agent) {
+        Position position = agent.getPosition();
+        LOG.info("Removing {} from world", agent);
+        grid[position.getY()][position.getX()] = null;
         agents.remove(agent.getId());
     }
 

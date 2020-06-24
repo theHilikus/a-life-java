@@ -12,7 +12,12 @@ public interface Agent {
 
     Map<String, String> getDetails();
 
-    void tick();
+    /**
+     * Execute one turn of the agent
+     *
+     * @return true if the agent is alive at the end of the turn
+     */
+    boolean tick();
 
     /**
      * returns a coordinate with the current position of the agent

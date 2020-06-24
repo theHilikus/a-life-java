@@ -5,6 +5,7 @@ import com.github.thehilikus.alife.agents.animals.moods.Scouting;
 import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
 import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
 import com.github.thehilikus.alife.agents.controllers.MoodController;
+import com.github.thehilikus.alife.agents.controllers.VitalsController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.IdsSource;
@@ -30,6 +31,7 @@ public class Herbivore implements Agent {
     private final int id;
     private final Position position;
     private Mood mood;
+    private final VitalsController vitals;
 
     public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
@@ -53,17 +55,23 @@ public class Herbivore implements Agent {
         this.vision = vision;
         this.locomotion = locomotion;
         this.genome = genome;
-
+        this.vitals = new VitalsController(genome);
         mood = new Scouting(moodController, vision, locomotion, genome);
     }
 
     @Override
-    public void tick() {
+    public boolean tick() {
         LOG.debug("#### Updating state of {} ####", this);
-        Mood newMood = mood.tick();
-        if (!newMood.getClass().equals(mood.getClass())) {
-            mood = newMood;
+        Mood oldMood = mood;
+        mood = oldMood.tick();
+        Mood priorityMood = vitals.update(oldMood);
+        boolean alive = vitals.isDead();
+        if (alive && !priorityMood.getClass().equals(mood.getClass())) {
+            LOG.info("Overwriting mood due to vital need");
+            mood = priorityMood;
         }
+
+        return alive;
     }
 
     @Override
