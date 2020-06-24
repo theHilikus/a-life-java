@@ -1,10 +1,9 @@
 package com.github.thehilikus.alife.agents.animals;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.animals.moods.Existing;
 import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
 import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
-import com.github.thehilikus.alife.agents.controllers.MoodController;
+import com.github.thehilikus.alife.agents.controllers.HerbivoreMoodController;
 import com.github.thehilikus.alife.agents.controllers.VitalsController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
@@ -18,9 +17,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * A living agent that hunts for food
+ * A living agent that eats {@link com.github.thehilikus.alife.agents.plants.Plant}
  */
-public class Herbivore implements Agent {
+public class Herbivore implements Agent.Movable, Agent.Evolvable {
 
     private static final Logger LOG = LoggerFactory.getLogger(Herbivore.class.getSimpleName());
     private final Vision vision;
@@ -42,7 +41,7 @@ public class Herbivore implements Agent {
             Locomotion locomotion = new StraightWalkWithRandomTurn(id, startingPosition, genome);
             Vision vision = new SurroundingsVision(id, genome, world);
 
-            Agent newAgent = new Herbivore(id, startingPosition, vision, locomotion, new MoodController(id, world), genome);
+            Agent.Living newAgent = new Herbivore(id, startingPosition, vision, locomotion, new HerbivoreMoodController(id, world), genome);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }
@@ -56,7 +55,7 @@ public class Herbivore implements Agent {
         this.locomotion = locomotion;
         this.genome = genome;
         this.vitals = new VitalsController(id, moodController, genome);
-        mood = new Existing(vision, genome, locomotion);
+        mood = moodController.startIdling();
     }
 
     @Override

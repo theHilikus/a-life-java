@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.controllers.MoodController;
+import com.github.thehilikus.alife.api.MoodController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.api.Locomotion;

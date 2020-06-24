@@ -15,7 +15,7 @@ import java.util.*;
 public class World {
     private static final Logger LOG = LoggerFactory.getLogger(World.class.getSimpleName());
     private final Agent[][] grid;
-    private final Map<Integer, Agent> agents = new HashMap<>();
+    private final Map<Integer, Agent.Living> agents = new HashMap<>();
     private int day;
 
     public World(int width, int height) {
@@ -27,15 +27,21 @@ public class World {
     private void createEdge() {
         int x = 0;
         while (x < getWidth()) {
-            grid[0][x] = new Edge();
-            grid[getHeight() - 1][x] = new Edge();
+            Position.Immutable position = new Position(x, 0).toImmutable();
+            grid[position.getY()][position.getX()] = new Edge(position);
+
+            position = new Position(x, getHeight() - 1).toImmutable();
+            grid[position.getY()][position.getX()] = new Edge(position);
             x++;
         }
 
         int y = 0;
         while (y < getHeight()) {
-            grid[y][0] = new Edge();
-            grid[y][getWidth() - 1] = new Edge();
+            Position.Immutable position = new Position(0, y).toImmutable();
+            grid[position.getY()][position.getX()] = new Edge(position);
+
+            position = new Position(getWidth() - 1, y).toImmutable();
+            grid[position.getY()][position.getX()] = new Edge(position);
             y++;
         }
     }
@@ -52,20 +58,13 @@ public class World {
         LOG.info("Starting day {}", ++day);
         Collection<Agent> cemetery = new HashSet<>();
         agents.values().forEach(agent -> {
-            Position.Immutable originalPosition = agent.getPosition();
-            grid[originalPosition.getY()][originalPosition.getX()] = null;
-            boolean alive = agent.tick();
-            if (alive) {
-                Position.Immutable newPosition = agent.getPosition();
-                Agent collidedAgent = grid[newPosition.getY()][newPosition.getX()];
-                if (collidedAgent != null) {
-                    newPosition = resolveCollision(agent, originalPosition, newPosition);
-                }
-                grid[newPosition.getY()][newPosition.getX()] = agent;
-                if (!originalPosition.equals(newPosition)) {
-                    LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
-                }
+            boolean alive;
+            if (agent instanceof Agent.Movable) {
+                alive = tickMovableAgent((Agent.Movable) agent);
             } else {
+                alive = agent.tick();
+            }
+            if (!alive) {
                 LOG.debug("{} died", agent);
                 cemetery.add(agent);
             }
@@ -73,7 +72,26 @@ public class World {
         cemetery.forEach(this::removeAgent);
     }
 
-    private Position.Immutable resolveCollision(Agent colliderAgent, Position.Immutable originalPosition, Position.Immutable newPosition) {
+    private boolean tickMovableAgent(Agent.Movable agent) {
+        Position.Immutable originalPosition = agent.getPosition();
+        grid[originalPosition.getY()][originalPosition.getX()] = null;
+        boolean alive = agent.tick();
+        if (alive) {
+            Position.Immutable newPosition = agent.getPosition();
+            Agent collidedAgent = grid[newPosition.getY()][newPosition.getX()];
+            if (collidedAgent != null) {
+                newPosition = resolveCollision(agent, originalPosition, newPosition);
+            }
+            grid[newPosition.getY()][newPosition.getX()] = agent;
+            if (!originalPosition.equals(newPosition)) {
+                LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
+            }
+        }
+
+        return alive;
+    }
+
+    private Position.Immutable resolveCollision(Agent.Movable colliderAgent, Position.Immutable originalPosition, Position.Immutable newPosition) {
         Orientation colliderOrientation = originalPosition.directionTo(newPosition);
         Position adjustedPosition;
         do {
@@ -84,7 +102,7 @@ public class World {
         return adjustedPosition.toImmutable();
     }
 
-    public void addAgent(Agent agent) {
+    public void addAgent(Agent.Living agent) {
         Position.Immutable position = agent.getPosition();
         LOG.info("Adding {} to world", agent);
         grid[position.getY()][position.getX()] = agent;
@@ -98,7 +116,7 @@ public class World {
         agents.remove(agent.getId());
     }
 
-    public Agent getAgent(int id) {
+    public Agent.Living getAgent(int id) {
         return agents.get(id);
     }
 
