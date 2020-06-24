@@ -29,11 +29,6 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     }
 
     @Override
-    public int moveTowards(double speedFactor, Orientation direction, int maxMovement) {
-        return walker.move(speedFactor, direction, maxMovement);
-    }
-
-    @Override
     public int move(double speedFactor, int maxMovement) {
         int result = 0;
         if (shouldTurn()) {
