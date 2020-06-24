@@ -15,5 +15,5 @@ public interface VitalSign {
         update(null);
     }
 
-    boolean isDead();
+    boolean isAlive();
 }
