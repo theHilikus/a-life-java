@@ -37,4 +37,8 @@ public class MoodController {
     public Mood startScouting() {
         throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
     }
+
+    public Mood startSleeping() {
+        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+    }
 }

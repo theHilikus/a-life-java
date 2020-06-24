@@ -19,6 +19,7 @@ public class HungerTracker implements VitalSign, Component {
     public HungerTracker(int agentId, Genome genome) {
         this.agentId = agentId;
         currentHunger = STARTING_HUNGER;
+        hungryThreshold = genome.getGene(PARAMETER_PREFIX + "hungryThreshold");
     }
 
     @Override
@@ -39,5 +40,9 @@ public class HungerTracker implements VitalSign, Component {
     @Override
     public Map<String, String> getParameters() {
         return Map.of(PARAMETER_PREFIX + "hunger", Integer.toString(currentHunger));
+    }
+
+    public boolean isHungry() {
+        return currentHunger <= hungryThreshold;
     }
 }

@@ -13,14 +13,12 @@ import java.util.Map;
 public class EnergyTracker implements VitalSign, Component {
     private final int agentId;
     private int currentEnergy;
+    private final int lowEnergyThreshold;
 
     public EnergyTracker(int agentId, Genome genome) {
         this.agentId = agentId;
         currentEnergy = 100;
-    }
-
-    public static EnergyTracker create() {
-        return new EnergyTracker();
+        lowEnergyThreshold = genome.getGene(PARAMETER_PREFIX + "lowEnergyThreshold");
     }
 
     @Override
@@ -41,5 +39,9 @@ public class EnergyTracker implements VitalSign, Component {
     @Override
     public Map<String, String> getParameters() {
         return Map.of(PARAMETER_PREFIX + "energy", Integer.toString(currentEnergy));
+    }
+
+    public boolean isTired() {
+        return currentEnergy <= lowEnergyThreshold;
     }
 }
