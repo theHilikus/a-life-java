@@ -8,6 +8,7 @@ import com.github.thehilikus.alife.world.RandomSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.DecimalMax;
 import java.util.Map;
 
 /**
@@ -17,7 +18,8 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     private static final Logger LOG = LoggerFactory.getLogger(StraightWalkWithRandomTurn.class.getSimpleName());
     private final int agentId;
     private final Legs walker;
-    private final int turningProbability;
+    @DecimalMax("1.0")
+    private final double turningProbability;
     private Orientation orientation;
 
 
@@ -57,7 +59,7 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     }
 
     private boolean shouldTurn() {
-        int draw = RandomSource.nextInt(100);
+        double draw = RandomSource.nextDouble(1);
         return draw < turningProbability;
     }
 
@@ -70,7 +72,7 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     public Map<String, String> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "orientation", orientation.toString(),
-                PARAMETER_PREFIX + "turningProbability", Integer.toString(turningProbability)
+                PARAMETER_PREFIX + "turningProbability", Double.toString(turningProbability)
         );
     }
 }
