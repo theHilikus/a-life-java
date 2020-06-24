@@ -38,12 +38,13 @@ public class Plant implements Agent {
         this.id = id;
         this.position = position;
         this.genome = genome;
-
     }
 
     @Override
-    public void tick() {
+    public boolean tick() {
         LOG.debug("#### Updating state of {} ####", this);
+        //TODO: implement energy calculation
+        return true;
     }
 
     @Override

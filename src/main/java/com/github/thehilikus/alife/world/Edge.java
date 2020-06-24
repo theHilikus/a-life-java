@@ -22,8 +22,8 @@ public class Edge implements Agent {
     }
 
     @Override
-    public void tick() {
-
+    public boolean tick() {
+        return true;
     }
 
     @Override
