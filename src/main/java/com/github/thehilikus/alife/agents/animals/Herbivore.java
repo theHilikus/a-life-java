@@ -65,7 +65,7 @@ public class Herbivore implements Agent {
         Mood oldMood = mood;
         mood = oldMood.tick();
         Mood priorityMood = vitals.update(oldMood);
-        boolean alive = vitals.isDead();
+        boolean alive = vitals.isAlive();
         if (alive && !priorityMood.getClass().equals(mood.getClass())) {
             LOG.info("Overwriting mood due to vital need");
             mood = priorityMood;

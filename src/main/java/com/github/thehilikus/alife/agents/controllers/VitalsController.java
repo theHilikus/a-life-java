@@ -27,7 +27,7 @@ public class VitalsController {
         return lastMood;
     }
 
-    public boolean isDead() {
-        return hungerTracker.isDead() || energyTracker.isDead() || ageTracker.isDead();
+    public boolean isAlive() {
+        return hungerTracker.isAlive() || energyTracker.isAlive() || ageTracker.isAlive();
     }
 }

@@ -23,7 +23,7 @@ public class EnergyTracker implements VitalSign {
     }
 
     @Override
-    public boolean isDead() {
-        return currentEnergy <= 0;
+    public boolean isAlive() {
+        return currentEnergy > 0;
     }
 }

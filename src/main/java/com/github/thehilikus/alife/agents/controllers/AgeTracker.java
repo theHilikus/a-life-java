@@ -20,7 +20,7 @@ public class AgeTracker implements VitalSign {
     }
 
     @Override
-    public boolean isDead() {
-        return currentAge >= lifeExpectancy;
+    public boolean isAlive() {
+        return currentAge <= lifeExpectancy;
     }
 }

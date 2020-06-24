@@ -20,7 +20,7 @@ public class HungerTracker implements VitalSign {
     }
 
     @Override
-    public boolean isDead() {
-        return currentHunger <= 0;
+    public boolean isAlive() {
+        return currentHunger > 0;
     }
 }
