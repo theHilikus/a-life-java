@@ -74,4 +74,9 @@ public class Existing implements Mood {
                 VitalSign.PARAMETER_PREFIX + "hungerRateOfChange", Integer.toString(HUNGER_DERIVATIVE)
         );
     }
+
+    @Override
+    public String toString() {
+        return "Existing{}";
+    }
 }

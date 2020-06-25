@@ -68,6 +68,8 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         if (alive && !priorityMood.getClass().equals(mood.getClass())) {
             LOG.info("Overwriting mood {} with {} due to vital need", mood, priorityMood);
             mood = priorityMood;
+        } else if (oldMood != mood) {
+            LOG.info("Transitioning from {} to {}", oldMood, mood);
         }
 
         return alive;

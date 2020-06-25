@@ -15,7 +15,7 @@ import java.util.Map;
  * Aggregates the information of all the agent vitals
  */
 public class VitalsController implements Component {
-    private static final Logger LOG = LoggerFactory.getLogger(VitalsController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VitalsController.class.getSimpleName());
     private final HungerTracker hungerTracker;
     private final EnergyTracker energyTracker;
     private final AgeTracker ageTracker;
@@ -37,11 +37,11 @@ public class VitalsController implements Component {
 
         Mood result = newMood;
         if (energyTracker.isTired()) {
-            LOG.debug("{} is tired", this);
+            LOG.debug("{} is tired", agentId);
             result = moodController.startSleeping();
         }
         if (hungerTracker.isHungry()) {
-            LOG.debug("{} is hungry", this);
+            LOG.debug("{} is hungry", agentId);
             result = moodController.startScouting();
         }
 
