@@ -4,7 +4,7 @@ import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.controllers.VitalsController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
-import com.github.thehilikus.alife.world.RandomSource;
+import com.github.thehilikus.alife.world.RandomProvider;
 import com.github.thehilikus.alife.world.WorldComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,20 +132,20 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         private static final int MAX_HUNGRY_THRESHOLD = 50;
 
         private static Map<String, Object> createGenes() {
-            int visionDistance = RandomSource.nextInt(MIN_VISION_DISTANCE, MAX_VISION_DISTANCE);
+            int visionDistance = RandomProvider.nextInt(MIN_VISION_DISTANCE, MAX_VISION_DISTANCE);
             return Map.ofEntries(
                     Map.entry("type", "Herbivore"),
-                    Map.entry("size", RandomSource.nextInt(MAX_SIZE)),
+                    Map.entry("size", RandomProvider.nextInt(MAX_SIZE)),
                     Map.entry(Vision.PARAMETER_PREFIX + "radius", visionDistance),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomSource.nextInt(MIN_TOP_SPEED, visionDistance)), //agent can't move further than it can see
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomSource.nextDouble(1) * -1),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomSource.nextDouble(1)),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor", RandomSource.nextDouble(MAX_IDLE_SPEED_FACTOR)),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomSource.nextDouble(MAX_SCOUT_SPEED_FACTOR)),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomSource.nextDouble(MAX_HUNT_SPEED_FACTOR)),
-                    Map.entry(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", RandomSource.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY)),
-                    Map.entry(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold", RandomSource.nextInt(MAX_LOW_ENERGY_THRESHOLD)),
-                    Map.entry(VitalSign.PARAMETER_PREFIX + "hungryThreshold", RandomSource.nextInt(MAX_HUNGRY_THRESHOLD))
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomProvider.nextInt(MIN_TOP_SPEED, visionDistance)), //agent can't move further than it can see
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomProvider.nextDouble(1) * -1),
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomProvider.nextDouble(1)),
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor", RandomProvider.nextDouble(MAX_IDLE_SPEED_FACTOR)),
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomProvider.nextDouble(MAX_SCOUT_SPEED_FACTOR)),
+                    Map.entry(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomProvider.nextDouble(MAX_HUNT_SPEED_FACTOR)),
+                    Map.entry(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", RandomProvider.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY)),
+                    Map.entry(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold", RandomProvider.nextInt(MAX_LOW_ENERGY_THRESHOLD)),
+                    Map.entry(VitalSign.PARAMETER_PREFIX + "hungryThreshold", RandomProvider.nextInt(MAX_HUNGRY_THRESHOLD))
             );
         }
 

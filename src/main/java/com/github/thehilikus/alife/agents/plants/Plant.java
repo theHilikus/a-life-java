@@ -3,7 +3,7 @@ package com.github.thehilikus.alife.agents.plants;
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Position;
-import com.github.thehilikus.alife.world.IdsSource;
+import com.github.thehilikus.alife.world.IdsProvider;
 import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class Plant implements Agent.Living {
 
     public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
-            int id = IdsSource.getNextId();
+            int id = IdsProvider.getNextId();
             Position startingPosition = world.getEmptyPosition();
 
             Agent.Living newAgent = new Plant(id, startingPosition);
