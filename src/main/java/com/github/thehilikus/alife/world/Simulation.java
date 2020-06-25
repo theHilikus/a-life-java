@@ -79,17 +79,16 @@ public class Simulation {
 
     private Simulation(CliOptions options) {
         this.options = options;
-        int worldWidth = 100;
-        int worldHeight = 100;
         int foodCount = 50;
         int huntersCount = 20;
 
         if (options.isNotRandom()) {
             RandomSource.fixSeed();
         }
-        world = new World(worldWidth, worldHeight);
 
-        Herbivore.create(huntersCount, world);
+        WorldComponent worldComponent = DaggerWorldComponent.create();
+        world = worldComponent.createWorld();
+        Herbivore.create(huntersCount, worldComponent);
         Plant.create(foodCount, world);
 
         if (options.isPrintWorld()) {

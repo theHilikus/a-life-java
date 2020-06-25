@@ -1,18 +1,15 @@
 package com.github.thehilikus.alife.agents.animals;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
-import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
-import com.github.thehilikus.alife.agents.controllers.HerbivoreMoodController;
 import com.github.thehilikus.alife.agents.controllers.VitalsController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
-import com.github.thehilikus.alife.world.IdsSource;
 import com.github.thehilikus.alife.world.RandomSource;
-import com.github.thehilikus.alife.world.World;
+import com.github.thehilikus.alife.world.WorldComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,30 +29,25 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     private Mood mood;
     private final VitalsController vitals;
 
-    public static void create(int count, World world) {
+    public static void create(int count, WorldComponent world) {
         for (int current = 0; current < count; current++) {
-            int id = IdsSource.getNextId();
-            Position startingPosition = world.getEmptyPosition();
-            HerbivoreGenome genome = HerbivoreGenome.create(id);
-
-            Locomotion locomotion = new StraightWalkWithRandomTurn(id, startingPosition, genome);
-            Vision vision = new SurroundingsVision(id, genome, world);
-
-            Agent.Living newAgent = new Herbivore(id, startingPosition, vision, locomotion, new HerbivoreMoodController(id, world), genome);
+            HerbivoreComponent herbivoreComponent = DaggerHerbivoreComponent.builder().worldComponent(world).build();
+            Herbivore newAgent = herbivoreComponent.createHerbivore();
             LOG.info("Created {}", newAgent);
-            world.addAgent(newAgent);
+            world.createWorld().addAgent(newAgent);
         }
 
     }
 
-    private Herbivore(int id, Position position, Vision vision, Locomotion locomotion, MoodController moodController, Genome genome) {
+    @Inject
+    public Herbivore(int id, Position position, Vision vision, Locomotion locomotion, Mood startingMood, Genome genome, VitalsController vitals) {
         this.id = id;
         this.position = position;
         this.vision = vision;
         this.locomotion = locomotion;
         this.genome = genome;
-        this.vitals = new VitalsController(id, moodController, genome);
-        mood = moodController.startIdling();
+        this.vitals = vitals;
+        mood = startingMood;
     }
 
     @Override
@@ -126,23 +118,18 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         return genome;
     }
 
-    private static class HerbivoreGenome extends Genome {
-        public static final int MIN_VISION_DISTANCE = 2;
+    public static class HerbivoreGenome extends Genome {
+        private static final int MIN_VISION_DISTANCE = 2;
         private static final int MAX_VISION_DISTANCE = 20;
         private static final int MIN_TOP_SPEED = 1;
         private static final double MAX_IDLE_SPEED_FACTOR = 0.25;
         private static final double MAX_SCOUT_SPEED_FACTOR = 0.5;
         private static final double MAX_HUNT_SPEED_FACTOR = 0.9;
         private static final int MAX_SIZE = 50;
-        public static final int MAX_LIFE_EXPECTANCY = 80;
-        public static final int MIN_LIFE_EXPECTANCY = 50;
+        private static final int MAX_LIFE_EXPECTANCY = 80;
+        private static final int MIN_LIFE_EXPECTANCY = 50;
         private static final int MAX_LOW_ENERGY_THRESHOLD = 50;
         private static final int MAX_HUNGRY_THRESHOLD = 50;
-
-        public static HerbivoreGenome create(int agentId) {
-            Map<String, Object> genes = createGenes();
-            return new HerbivoreGenome(agentId, genes);
-        }
 
         private static Map<String, Object> createGenes() {
             int visionDistance = RandomSource.nextInt(MIN_VISION_DISTANCE, MAX_VISION_DISTANCE);
@@ -162,9 +149,8 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
             );
         }
 
-        private HerbivoreGenome(int agentId, Map<String, Object> newGenome) {
-            super(agentId, newGenome);
+        HerbivoreGenome(int agentId) {
+            super(agentId, createGenes());
         }
-
     }
 }
