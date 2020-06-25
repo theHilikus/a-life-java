@@ -1,6 +1,7 @@
 package com.github.thehilikus.alife.agents.animals;
 
 import com.github.thehilikus.alife.agents.animals.moods.Existing;
+import com.github.thehilikus.alife.agents.animals.motions.Legs;
 import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
 import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
 import com.github.thehilikus.alife.agents.controllers.HerbivoreMoodController;
@@ -36,8 +37,14 @@ public class HerbivoreModule {
 
     @Provides
     @AgentScope
-    static MoodController provideMoodController(int agentId, World world) {
-        return new HerbivoreMoodController(agentId, world);
+    static Legs provideLegs(int agentId, Position position, Genome genome) {
+        return new Legs(agentId, position, genome);
+    }
+
+    @Provides
+    @AgentScope
+    static MoodController provideMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome) {
+        return new HerbivoreMoodController(vision, legs, locomotion, genome);
     }
 
     @Provides
