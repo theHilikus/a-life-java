@@ -8,7 +8,7 @@ import dagger.Provides;
  * A global assigner of sequential ids
  */
 @Module
-public class IdsSource {
+public class IdsProvider {
     private static int nextId;
 
     @Provides

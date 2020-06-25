@@ -83,7 +83,7 @@ public class Simulation {
         int huntersCount = 20;
 
         if (options.isNotRandom()) {
-            RandomSource.fixSeed();
+            RandomProvider.fixSeed();
         }
 
         WorldComponent worldComponent = DaggerWorldComponent.create();

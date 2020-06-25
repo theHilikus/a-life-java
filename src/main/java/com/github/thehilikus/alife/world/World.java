@@ -134,8 +134,8 @@ public class World {
         int x;
         int y;
         do {
-            x = RandomSource.nextInt(1, getWidth() - 1);
-            y = RandomSource.nextInt(1, getHeight() - 1);
+            x = RandomProvider.nextInt(1, getWidth() - 1);
+            y = RandomProvider.nextInt(1, getHeight() - 1);
         } while (grid[y][x] != null);
 
         return new Position(x, y);

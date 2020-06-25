@@ -4,7 +4,7 @@ import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.api.Position;
-import com.github.thehilikus.alife.world.RandomSource;
+import com.github.thehilikus.alife.world.RandomProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     public StraightWalkWithRandomTurn(int agentId, Position position, Genome genome) {
         this.agentId = agentId;
         this.turningProbability = genome.getGene(Locomotion.PARAMETER_PREFIX + "turningProbability");
-        this.orientation = Orientation.fromInt(RandomSource.nextInt(4));
+        this.orientation = Orientation.fromInt(RandomProvider.nextInt(4));
         this.walker = new Legs(agentId, position, genome);
     }
 
@@ -59,7 +59,7 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     }
 
     private boolean shouldTurn() {
-        double draw = RandomSource.nextDouble(1);
+        double draw = RandomProvider.nextDouble(1);
         return draw < turningProbability;
     }
 
