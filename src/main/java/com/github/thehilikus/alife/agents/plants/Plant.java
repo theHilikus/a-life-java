@@ -1,13 +1,16 @@
 package com.github.thehilikus.alife.agents.plants;
 
 import com.diogonunes.jcdp.color.api.Ansi;
+import com.github.thehilikus.alife.agents.animals.Herbivore;
 import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.api.DaggerLivingAgentComponent;
+import com.github.thehilikus.alife.api.LivingAgentComponent;
 import com.github.thehilikus.alife.api.Position;
-import com.github.thehilikus.alife.world.IdsSource;
-import com.github.thehilikus.alife.world.World;
+import com.github.thehilikus.alife.world.WorldComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -19,18 +22,17 @@ public class Plant implements Agent.Living {
     private final int id;
     private final Position position;
 
-    public static void create(int count, World world) {
+    public static void create(int count, WorldComponent worldComponent) {
         for (int current = 0; current < count; current++) {
-            int id = IdsSource.getNextId();
-            Position startingPosition = world.getEmptyPosition();
-
-            Agent.Living newAgent = new Plant(id, startingPosition);
+            LivingAgentComponent livingAgentComponent = DaggerLivingAgentComponent.builder().worldComponent(worldComponent).build();
+            Agent.Living newAgent = livingAgentComponent.createPlant();
             LOG.info("Created {}", newAgent);
-            world.addAgent(newAgent);
+            worldComponent.createWorld().addAgent(newAgent);
         }
     }
 
-    private Plant(int id, Position position) {
+    @Inject
+    public Plant(int id, Position position) {
         this.id = id;
         this.position = position;
     }
