@@ -29,12 +29,12 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     private Mood mood;
     private final VitalsController vitals;
 
-    public static void create(int count, WorldComponent world) {
+    public static void create(int count, WorldComponent worldComponent) {
         for (int current = 0; current < count; current++) {
-            HerbivoreComponent herbivoreComponent = DaggerHerbivoreComponent.builder().worldComponent(world).build();
-            Herbivore newAgent = herbivoreComponent.createHerbivore();
+            LivingAgentComponent livingAgentComponent = DaggerLivingAgentComponent.builder().worldComponent(worldComponent).build();
+            Agent.Living newAgent = livingAgentComponent.createHerbivore();
             LOG.info("Created {}", newAgent);
-            world.createWorld().addAgent(newAgent);
+            worldComponent.createWorld().addAgent(newAgent);
         }
 
     }

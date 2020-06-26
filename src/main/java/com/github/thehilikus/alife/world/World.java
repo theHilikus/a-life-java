@@ -2,6 +2,7 @@ package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.api.AgentScope;
 import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.api.Position;
 import dagger.Module;
@@ -26,6 +27,12 @@ public class World {
     @Singleton
     static World provideWorld() {
         return new World(100, 100);
+    }
+
+    @Provides
+    @AgentScope
+    static Position provideEmptyPosition(World world) {
+        return world.getEmptyPosition();
     }
 
     public World(int width, int height) {

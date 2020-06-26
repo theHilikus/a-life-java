@@ -13,16 +13,10 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * Dependencies creator for Herbivores
+ * Dependencies provider for Herbivores
  */
 @Module
 public class HerbivoreModule {
-    @Provides
-    @AgentScope
-    static Position providePosition(World world) {
-        return world.getEmptyPosition();
-    }
-
     @Provides
     @AgentScope
     static Vision provideVision(int agentId, Genome genome, World world) {
