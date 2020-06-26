@@ -28,7 +28,7 @@ public class ScanResult implements Comparable<ScanResult> {
     @Override
     public int compareTo(ScanResult other) {
         int distanceSquared = (int) (Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
-        int otherDistanceSquared = (other.xDistance << 1) + (other.yDistance << 1);
+        int otherDistanceSquared = (int) (Math.pow(other.xDistance, 2) + Math.pow(other.yDistance, 2));
 
         return distanceSquared - otherDistanceSquared;
     }

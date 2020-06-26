@@ -48,7 +48,7 @@ public class SurroundingsVision implements Vision {
         for (int y = radius * -1; y <= radius; y++) {
             for (int x = radius * -1; x <= radius; x++) {
                 Agent foundAgent = world.getObjectRelativeTo(agentId, x, y);
-                if (foundAgent != null) {
+                if (type.isInstance(foundAgent)) {
                     result.add(new ScanResult(x, y, foundAgent));
                 }
             }
