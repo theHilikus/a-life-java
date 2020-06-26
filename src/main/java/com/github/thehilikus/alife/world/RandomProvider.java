@@ -8,9 +8,9 @@ import java.util.Random;
 /**
  * A global source of random numbers
  */
-public class RandomSource {
+public class RandomProvider {
     private static final Random random = new Random();
-    private static final Logger LOG = LoggerFactory.getLogger(RandomSource.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(RandomProvider.class.getSimpleName());
     private static final int FIXED_SEED = 311;
 
     public static void fixSeed() {

@@ -2,21 +2,38 @@ package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.api.AgentScope;
 import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.api.Position;
+import dagger.Module;
+import dagger.Provides;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
 import java.util.*;
 
 /**
  * The environment where the agents live
  */
+@Module
 public class World {
     private static final Logger LOG = LoggerFactory.getLogger(World.class.getSimpleName());
     private final Agent[][] grid;
     private final Map<Integer, Agent.Living> agents = new HashMap<>();
     private int day;
+
+    @Provides
+    @Singleton
+    static World provideWorld() {
+        return new World(100, 100);
+    }
+
+    @Provides
+    @AgentScope
+    static Position provideEmptyPosition(World world) {
+        return world.getEmptyPosition();
+    }
 
     public World(int width, int height) {
         grid = new Agent[width + 2][height + 2];
@@ -124,8 +141,8 @@ public class World {
         int x;
         int y;
         do {
-            x = RandomSource.nextInt(1, getWidth() - 1);
-            y = RandomSource.nextInt(1, getHeight() - 1);
+            x = RandomProvider.nextInt(1, getWidth() - 1);
+            y = RandomProvider.nextInt(1, getHeight() - 1);
         } while (grid[y][x] != null);
 
         return new Position(x, y);

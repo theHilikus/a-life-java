@@ -1,50 +1,35 @@
 package com.github.thehilikus.alife.agents.controllers;
 
-import com.github.thehilikus.alife.agents.animals.Herbivore;
 import com.github.thehilikus.alife.agents.animals.moods.Hunting;
 import com.github.thehilikus.alife.agents.animals.moods.Scouting;
 import com.github.thehilikus.alife.agents.animals.motions.Legs;
-import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
-import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
+import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
-import com.github.thehilikus.alife.world.World;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Controls the transitions between moods
  */
 public class HerbivoreMoodController implements MoodController {
-    private static final Logger LOG = LoggerFactory.getLogger(HerbivoreMoodController.class.getSimpleName());
-    private final World theWorld;
-    private final int agentId;
+    private final Vision vision;
+    private final Legs legs;
+    private final Locomotion locomotion;
+    private final Genome genome;
 
-    public HerbivoreMoodController(int agentId, World theWorld) {
-        this.agentId = agentId;
-        this.theWorld = theWorld;
+    public HerbivoreMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome) {
+        this.vision = vision;
+        this.legs = legs;
+        this.locomotion = locomotion;
+        this.genome = genome;
     }
 
     @Override
     public Mood startHunting(Agent.Living target) {
-        Herbivore agent = (Herbivore) theWorld.getAgent(agentId);
-
-        String currentMood = agent.getDetails().get(Mood.PARAMETER_PREFIX + "current");
-
-        Vision vision = new SurroundingsVision(agentId, agent.getGenome(), theWorld);
-        Legs legs = new Legs(agentId, agent.getMovablePosition(), agent.getGenome());
-        Hunting result = new Hunting(this, vision, legs, agent.getGenome(), target);
-        LOG.info("Agent {} transitioning from {} to {}", agentId, currentMood, result);
-
-        return result;
+        return new Hunting(this, vision, legs, genome, target);
     }
 
     @Override
     public Mood startScouting() {
-        Herbivore agent = (Herbivore) theWorld.getAgent(agentId);
-        Vision vision = new SurroundingsVision(agentId, agent.getGenome(), theWorld);
-        Locomotion locomotion = new StraightWalkWithRandomTurn(agentId, agent.getMovablePosition(), agent.getGenome());
-
-        return new Scouting(this, vision, locomotion, agent.getGenome());
+        return new Scouting(this, vision, locomotion, genome);
     }
 
     @Override
