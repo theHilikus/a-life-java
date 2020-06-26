@@ -89,7 +89,7 @@ public class Simulation {
         WorldComponent worldComponent = DaggerWorldComponent.create();
         world = worldComponent.createWorld();
         Herbivore.create(huntersCount, worldComponent);
-        Plant.create(foodCount, world);
+        Plant.create(foodCount, worldComponent);
 
         if (options.isPrintWorld()) {
             System.out.println(world.getRepresentation());
