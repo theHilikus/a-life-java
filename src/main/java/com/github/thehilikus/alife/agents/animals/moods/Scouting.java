@@ -44,7 +44,7 @@ public class Scouting implements Mood {
             } else {
                 //only found edges
                 ScanResult closestEdgeScan = foundAgents.first();
-                int maxMovement = Math.min(Math.abs(closestEdgeScan.getXDistance()), Math.abs(closestEdgeScan.getYDistance())); // FIXME: this slows down the movement even if not facing the wall
+                int maxMovement = Math.max(Math.abs(closestEdgeScan.getXDistance()) - 1, Math.abs(closestEdgeScan.getYDistance()) - 1);
                 lastMovement = locomotion.move(speedFactor, maxMovement);
             }
         } else {
