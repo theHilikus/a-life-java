@@ -33,7 +33,11 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     @Override
     public int move(double speedFactor, int maxMovement) {
         int result = 0;
-        if (shouldTurn()) {
+        if (maxMovement == 0) {
+            //we are next to the edge. Turn and move one
+            turn();
+            result = walker.move(speedFactor, orientation, 1);
+        } else if (shouldTurn()) {
             turn();
         } else {
             result = walker.move(speedFactor, orientation, maxMovement);
