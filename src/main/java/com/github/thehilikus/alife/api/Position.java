@@ -16,9 +16,7 @@ public class Position {
         this.y = y;
     }
 
-    public Position move(Orientation direction, int speed) {
-        int newX = x;
-        int newY = y;
+    public void move(Orientation direction, int speed) {
         switch (direction) {
             case NORTH:
                 y -= speed;
@@ -32,7 +30,6 @@ public class Position {
             case EAST:
                 x += speed;
         }
-        return new Position(newX, newY);
     }
 
     public int getX() {
