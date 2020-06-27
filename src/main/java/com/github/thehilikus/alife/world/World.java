@@ -97,7 +97,7 @@ public class World {
             Position.Immutable newPosition = agent.getPosition();
             Agent collidedAgent = grid[newPosition.getY()][newPosition.getX()];
             if (collidedAgent != null) {
-                newPosition = resolveCollision(agent, originalPosition, newPosition);
+                newPosition = resolveCollision(agent, originalPosition, collidedAgent);
             }
             grid[newPosition.getY()][newPosition.getX()] = agent;
             if (!originalPosition.equals(newPosition)) {
@@ -108,15 +108,16 @@ public class World {
         return alive;
     }
 
-    private Position.Immutable resolveCollision(Agent.Movable colliderAgent, Position.Immutable originalPosition, Position.Immutable newPosition) {
-        Orientation colliderOrientation = originalPosition.directionTo(newPosition);
-        Position adjustedPosition;
+    private Position.Immutable resolveCollision(Agent.Movable colliderAgent, Position.Immutable originalPosition, Agent collidedAgent) {
+        Position newPosition = colliderAgent.getMovablePosition();
+        Orientation colliderOrientation = originalPosition.directionTo(newPosition.toImmutable());
         do {
-            adjustedPosition = colliderAgent.getMovablePosition().move(colliderOrientation.opposite(), 1);
-            LOG.trace("Adjusting collision at {}", newPosition);
-        } while (grid[adjustedPosition.getY()][adjustedPosition.getX()] != null);
+            newPosition.move(colliderOrientation.opposite(), 1);
+            LOG.trace("Adjusting collision at {} between new {} and original {}", newPosition, colliderAgent.getId(), collidedAgent.getId());
+            collidedAgent = grid[newPosition.getY()][newPosition.getX()];
+        } while (collidedAgent != null);
 
-        return adjustedPosition.toImmutable();
+        return newPosition.toImmutable();
     }
 
     public void addAgent(Agent.Living agent) {
