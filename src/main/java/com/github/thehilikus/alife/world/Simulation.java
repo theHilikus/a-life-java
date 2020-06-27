@@ -56,7 +56,7 @@ public class Simulation {
         // attach the rolling file appender to the logger of your choice
         AppenderAttachable<ILoggingEvent> logbackLogger = (AppenderAttachable<ILoggingEvent>) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         logbackLogger.addAppender(fileAppender);
-        logbackLogger.detachAppender("console");
+        logbackLogger.detachAppender("CONSOLE");
     }
 
     private static CliOptions parseArguments(String[] args) {
