@@ -36,6 +36,12 @@ public class HerbivoreModule {
 
     @Provides
     @AgentScope
+    static Mood provideStartingMood(Vision vision, Genome genome, Locomotion locomotion) {
+        return new Existing(vision, genome, locomotion);
+    }
+
+    @Provides
+    @AgentScope
     static MoodController provideMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker) {
         return new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker, energyTracker);
     }
@@ -44,35 +50,5 @@ public class HerbivoreModule {
     @AgentScope
     static Genome provideGenome(int agentId) {
         return new Herbivore.HerbivoreGenome(agentId);
-    }
-
-    @Provides
-    @AgentScope
-    static Mood provideStartingMood(Vision vision, Genome genome, Locomotion locomotion) {
-        return new Existing(vision, genome, locomotion);
-    }
-
-    @Provides
-    @AgentScope
-    static VitalsController provideVitals(int agentId, MoodController moodController, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker) {
-        return new VitalsController(agentId, moodController, hungerTracker, energyTracker, ageTracker);
-    }
-
-    @Provides
-    @AgentScope
-    static HungerTracker provideHungerTracker(int agentId, Genome genome) {
-        return new HungerTracker(agentId, genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
-    }
-
-    @Provides
-    @AgentScope
-    static EnergyTracker provideEnergyTracker(int agentId, Genome genome) {
-        return new EnergyTracker(agentId, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
-    }
-
-    @Provides
-    @AgentScope
-    static AgeTracker provideAgeTracker(int agentId, Genome genome) {
-        return new AgeTracker(agentId, genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
     }
 }
