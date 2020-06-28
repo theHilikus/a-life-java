@@ -81,6 +81,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         result.putAll(vision.getParameters());
         result.putAll(locomotion.getParameters());
         result.putAll(mood.getParameters());
+        result.putAll(vitals.getParameters());
 
         return result;
     }

@@ -48,4 +48,9 @@ public class Growing implements Mood {
     public @NotNull Map<String, String> getParameters() {
         return Map.of(PARAMETER_PREFIX + "recoveryRate", Integer.toString(RECOVERY_RATE));
     }
+
+    @Override
+    public String toString() {
+        return "Growing{}";
+    }
 }
