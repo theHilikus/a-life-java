@@ -22,10 +22,10 @@ public class Hunting implements Mood {
     private final Vision vision;
     private final Legs legs;
     private final double speedFactor;
-    private final Agent target;
+    private final Agent.Eatable target;
     private int lastMovement;
 
-    public Hunting(MoodController moodController, Vision vision, Legs legs, Genome genome, Agent foodAgent) {
+    public Hunting(MoodController moodController, Vision vision, Legs legs, Genome genome, Agent.Eatable foodAgent) {
         this.moodController = moodController;
         this.agentId = vision.getAgentId();
         this.vision = vision;
@@ -58,7 +58,7 @@ public class Hunting implements Mood {
             Orientation targetDirection = legs.getPosition().directionTo(targetScan.getAgent().getPosition());
             int maxMovement = Math.max(Math.abs(targetScan.getXDistance()) - 1, Math.abs(targetScan.getYDistance()) - 1);
             if (maxMovement == 0) {
-                return moodController.startEating();
+                return moodController.startEating(target);
             } else {
                 lastMovement = legs.move(speedFactor, targetDirection, maxMovement);
             }

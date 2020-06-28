@@ -4,8 +4,7 @@ import com.github.thehilikus.alife.agents.animals.moods.Existing;
 import com.github.thehilikus.alife.agents.animals.motions.Legs;
 import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
 import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
-import com.github.thehilikus.alife.agents.controllers.HerbivoreMoodController;
-import com.github.thehilikus.alife.agents.controllers.VitalsController;
+import com.github.thehilikus.alife.agents.controllers.*;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.World;
@@ -37,8 +36,8 @@ public class HerbivoreModule {
 
     @Provides
     @AgentScope
-    static MoodController provideMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome) {
-        return new HerbivoreMoodController(vision, legs, locomotion, genome);
+    static MoodController provideMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker) {
+        return new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker);
     }
 
     @Provides
@@ -55,7 +54,25 @@ public class HerbivoreModule {
 
     @Provides
     @AgentScope
-    static VitalsController provideVitals(int agentId, MoodController moodController, Genome genome) {
-        return new VitalsController(agentId, moodController, genome);
+    static VitalsController provideVitals(int agentId, MoodController moodController, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker) {
+        return new VitalsController(agentId, moodController, hungerTracker, energyTracker, ageTracker);
+    }
+
+    @Provides
+    @AgentScope
+    static HungerTracker provideHungerTracker(int agentId, Genome genome) {
+        return new HungerTracker(agentId, genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
+    }
+
+    @Provides
+    @AgentScope
+    static EnergyTracker provideEnergyTracker(int agentId, Genome genome) {
+        return new EnergyTracker(agentId, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
+    }
+
+    @Provides
+    @AgentScope
+    static AgeTracker provideAgeTracker(int agentId, Genome genome) {
+        return new AgeTracker(agentId, genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
     }
 }

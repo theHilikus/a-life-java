@@ -36,6 +36,10 @@ public interface Agent {
         boolean tick();
     }
 
+    interface Eatable extends Living {
+        int transferEnergy(int eatSpeed);
+    }
+
     /**
      * An agent that can change positions
      */

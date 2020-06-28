@@ -1,10 +1,11 @@
 package com.github.thehilikus.alife.agents.controllers;
 
-import com.github.thehilikus.alife.agents.genetics.Genome;
+import com.github.thehilikus.alife.agents.animals.moods.Eating;
+import com.github.thehilikus.alife.agents.animals.moods.Hunting;
+import com.github.thehilikus.alife.agents.animals.moods.Scouting;
 import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.MoodController;
-import com.github.thehilikus.alife.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,12 +23,12 @@ public class VitalsController implements Component {
     private final int agentId;
     private final MoodController moodController;
 
-    public VitalsController(int agentId, MoodController moodController, Genome genome) {
+    public VitalsController(int agentId, MoodController moodController, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker) {
         this.agentId = agentId;
-        this.hungerTracker = new HungerTracker(agentId, genome);
+        this.hungerTracker = hungerTracker;
         this.moodController = moodController;
-        this.energyTracker = new EnergyTracker(agentId, genome);
-        this.ageTracker = new AgeTracker(agentId, genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
+        this.energyTracker = energyTracker;
+        this.ageTracker = ageTracker;
     }
 
     public Mood update(Mood lastMood, Mood newMood) {
@@ -40,7 +41,7 @@ public class VitalsController implements Component {
             LOG.debug("{} is tired", agentId);
             result = moodController.startSleeping();
         }
-        if (hungerTracker.isHungry()) {
+        if (hungerTracker.isHungry() && !(newMood instanceof Hunting || newMood instanceof Scouting || newMood instanceof Eating)) {
             LOG.debug("{} is hungry", agentId);
             result = moodController.startScouting();
         }
@@ -49,7 +50,7 @@ public class VitalsController implements Component {
     }
 
     public boolean isAlive() {
-        return hungerTracker.isAlive() || energyTracker.isAlive() || ageTracker.isAlive();
+        return hungerTracker.isAlive() && energyTracker.isAlive() && ageTracker.isAlive();
     }
 
     @Override

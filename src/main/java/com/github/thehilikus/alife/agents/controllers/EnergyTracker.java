@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.controllers;
 
-import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
@@ -13,6 +12,7 @@ import java.util.Map;
  * Monitors the agent's level of energy
  */
 public class EnergyTracker implements VitalSign, Component {
+    private static final int STARTING_ENERGY = 100;
     private final int agentId;
 
     @Min(0)
@@ -21,15 +21,24 @@ public class EnergyTracker implements VitalSign, Component {
 
     private final int lowEnergyThreshold;
 
-    public EnergyTracker(int agentId, Genome genome) {
+    public EnergyTracker(int agentId) {
+        this(agentId, 0);
+    }
+
+    public EnergyTracker(int agentId, int lowEnergyThreshold) {
         this.agentId = agentId;
-        currentEnergy = 100;
-        lowEnergyThreshold = genome.getGene(PARAMETER_PREFIX + "lowEnergyThreshold");
+        currentEnergy = STARTING_ENERGY;
+        this.lowEnergyThreshold = lowEnergyThreshold;
     }
 
     @Override
-    public void update(Mood currentMood) {
+    public int update(Mood currentMood) {
+        int originalEnergy = currentEnergy;
         currentEnergy += currentMood.getEnergyDelta();
+        currentEnergy = Math.max(0, currentEnergy);
+        currentEnergy = Math.min(100, currentEnergy);
+
+        return currentEnergy - originalEnergy;
     }
 
     @Override
