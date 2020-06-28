@@ -36,7 +36,6 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
             LOG.info("Created {}", newAgent);
             worldComponent.createWorld().addAgent(newAgent);
         }
-
     }
 
     @Inject
