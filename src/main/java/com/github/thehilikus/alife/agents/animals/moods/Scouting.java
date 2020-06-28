@@ -66,7 +66,7 @@ public class Scouting implements Mood {
 
     @Override
     public Ansi.FColor getTerminalColour() {
-        return Ansi.FColor.BLUE;
+        return Ansi.FColor.CYAN;
     }
 
     @Override
