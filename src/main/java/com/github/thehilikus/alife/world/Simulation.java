@@ -111,7 +111,7 @@ public class Simulation {
                 System.out.println(world.getRepresentation());
             }
         };
-        ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(tick, 0, 3, TimeUnit.SECONDS);
+        ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(tick, 0, 2, TimeUnit.SECONDS);
 
         try {
             scheduledFuture.get();
@@ -131,6 +131,10 @@ public class Simulation {
                 } else if (command.startsWith("d ")) {
                     String agentId = command.substring(2);
                     queryAgent(agentId);
+                    command = getCommand(scanner);
+                    continue;
+                } else {
+                    System.out.println("Unknown command. Ignoring it");
                 }
 
                 world.tick();
