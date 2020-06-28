@@ -59,7 +59,7 @@ public class Existing implements Mood {
 
     @Override
     public Ansi.FColor getTerminalColour() {
-        return Ansi.FColor.NONE;
+        return Ansi.FColor.WHITE;
     }
 
     @Override

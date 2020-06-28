@@ -89,6 +89,6 @@ public class Hunting implements Mood {
 
     @Override
     public Ansi.FColor getTerminalColour() {
-        return Ansi.FColor.YELLOW;
+        return Ansi.FColor.BLUE;
     }
 }
