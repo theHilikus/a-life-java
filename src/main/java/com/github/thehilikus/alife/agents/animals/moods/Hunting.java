@@ -2,6 +2,8 @@ package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.animals.motions.Legs;
+import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
+import com.github.thehilikus.alife.agents.controllers.HungerTracker;
 import com.github.thehilikus.alife.api.MoodController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
@@ -43,7 +45,7 @@ public class Hunting implements Mood {
     public Map<String, String> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "current", getClass().getSimpleName(),
-                PARAMETER_PREFIX + "huntSpeedFactor", Double.toString(speedFactor),
+                PARAMETER_PREFIX + "speedFactor", Double.toString(speedFactor),
                 PARAMETER_PREFIX + "lastMovement", Integer.toString(lastMovement)
         );
     }
@@ -72,12 +74,12 @@ public class Hunting implements Mood {
 
     @Override
     public int getHungerDelta() {
-        return Existing.HUNGER_DERIVATIVE;
+        return HungerTracker.HUNGER_DERIVATIVE;
     }
 
     @Override
     public int getEnergyDelta() {
-        return Existing.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * legs.getEnergyExpenditureFactor());
+        return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * legs.getEnergyExpenditureFactor());
     }
 
     @Override

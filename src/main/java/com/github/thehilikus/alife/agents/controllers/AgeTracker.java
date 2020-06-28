@@ -40,6 +40,9 @@ public class AgeTracker implements VitalSign, Component {
 
     @Override
     public Map<String, String> getParameters() {
-        return Map.of(PARAMETER_PREFIX + "age", Integer.toString(currentAge));
+        return Map.of(
+                PARAMETER_PREFIX + "age", Integer.toString(currentAge),
+                PARAMETER_PREFIX + "lifeExpectancy", Integer.toString(lifeExpectancy)
+        );
     }
 }

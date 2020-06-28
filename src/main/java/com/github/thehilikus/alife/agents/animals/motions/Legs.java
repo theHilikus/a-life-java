@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
+import java.util.Map;
 
 
 /**
@@ -55,5 +56,12 @@ public class Legs {
 
     public int getAgentId() {
         return agentId;
+    }
+
+    public Map<String, String> getParameters() {
+        return Map.of(
+                Locomotion.PARAMETER_PREFIX + "topSpeed", Integer.toString(topSpeed),
+                Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", Double.toString(energyExpenditureFactor)
+        );
     }
 }

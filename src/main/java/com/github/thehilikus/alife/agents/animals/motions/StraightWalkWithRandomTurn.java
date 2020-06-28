@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.DecimalMax;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -74,9 +75,11 @@ public class StraightWalkWithRandomTurn implements Locomotion {
 
     @Override
     public Map<String, String> getParameters() {
-        return Map.of(
-                PARAMETER_PREFIX + "orientation", orientation.toString(),
-                PARAMETER_PREFIX + "turningProbability", Double.toString(turningProbability)
-        );
+        Map<String, String> result = new LinkedHashMap<>();
+        result.put(PARAMETER_PREFIX + "orientation", orientation.toString());
+        result.put(PARAMETER_PREFIX + "turningProbability", Double.toString(turningProbability));
+        result.putAll(walker.getParameters());
+
+        return result;
     }
 }

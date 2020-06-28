@@ -14,6 +14,10 @@ import java.util.Map;
  * Monitors the agent's level of energy
  */
 public class EnergyTracker implements VitalSign, Component {
+    /**
+     * The number of energy points to lose per round
+     */
+    public static final int ENERGY_DERIVATIVE = -2;
     private static final Logger LOG = LoggerFactory.getLogger(EnergyTracker.class);
     private static final int STARTING_ENERGY = 100;
     private static final int RESTED_THRESHOLD = 95;
@@ -57,7 +61,11 @@ public class EnergyTracker implements VitalSign, Component {
 
     @Override
     public Map<String, String> getParameters() {
-        return Map.of(PARAMETER_PREFIX + "energy", Integer.toString(currentEnergy));
+        return Map.of(
+                PARAMETER_PREFIX + "energy", Integer.toString(currentEnergy),
+                PARAMETER_PREFIX + "energyRateOfChange", Integer.toString(EnergyTracker.ENERGY_DERIVATIVE),
+                PARAMETER_PREFIX + "lowEnergyThreshold", Integer.toString(lowEnergyThreshold)
+        );
     }
 
     public boolean isTired() {
