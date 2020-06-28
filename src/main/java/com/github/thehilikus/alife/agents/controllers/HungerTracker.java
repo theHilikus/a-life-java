@@ -59,11 +59,11 @@ public class HungerTracker implements VitalSign, Component {
     }
 
     public boolean isFull() {
-
         boolean full = currentHunger >= FULL_THRESHOLD;
         if (!full) {
             LOG.debug("Agent {} hunger: {}", agentId, currentHunger);
         }
+
         return full;
     }
 }

@@ -36,8 +36,8 @@ public class HerbivoreModule {
 
     @Provides
     @AgentScope
-    static MoodController provideMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker) {
-        return new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker);
+    static MoodController provideMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker) {
+        return new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker, energyTracker);
     }
 
     @Provides
