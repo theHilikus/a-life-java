@@ -1,9 +1,6 @@
 package com.github.thehilikus.alife.agents.controllers;
 
-import com.github.thehilikus.alife.agents.animals.moods.Eating;
-import com.github.thehilikus.alife.agents.animals.moods.Existing;
-import com.github.thehilikus.alife.agents.animals.moods.Hunting;
-import com.github.thehilikus.alife.agents.animals.moods.Scouting;
+import com.github.thehilikus.alife.agents.animals.moods.*;
 import com.github.thehilikus.alife.agents.animals.motions.Legs;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
@@ -17,13 +14,15 @@ public class HerbivoreMoodController implements MoodController {
     private final Locomotion locomotion;
     private final Genome genome;
     private final HungerTracker hungerTracker;
+    private final EnergyTracker energyTracker;
 
-    public HerbivoreMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker) {
+    public HerbivoreMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker) {
         this.vision = vision;
         this.legs = legs;
         this.locomotion = locomotion;
         this.genome = genome;
         this.hungerTracker = hungerTracker;
+        this.energyTracker = energyTracker;
     }
 
     @Override
@@ -38,7 +37,7 @@ public class HerbivoreMoodController implements MoodController {
 
     @Override
     public Mood startSleeping() {
-        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+        return new Sleeping(this, energyTracker);
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.github.thehilikus.alife.agents.controllers;
 import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -12,7 +14,9 @@ import java.util.Map;
  * Monitors the agent's level of energy
  */
 public class EnergyTracker implements VitalSign, Component {
+    private static final Logger LOG = LoggerFactory.getLogger(EnergyTracker.class);
     private static final int STARTING_ENERGY = 100;
+    private static final int RESTED_THRESHOLD = 95;
     private final int agentId;
 
     @Min(0)
@@ -58,5 +62,14 @@ public class EnergyTracker implements VitalSign, Component {
 
     public boolean isTired() {
         return currentEnergy <= lowEnergyThreshold;
+    }
+
+    public boolean isRested() {
+        boolean rested = currentEnergy >= RESTED_THRESHOLD;
+        if (!rested) {
+            LOG.debug("Agent {} energy: {}", agentId, currentEnergy);
+        }
+
+        return rested;
     }
 }
