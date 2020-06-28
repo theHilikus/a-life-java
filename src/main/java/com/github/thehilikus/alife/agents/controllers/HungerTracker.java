@@ -14,6 +14,10 @@ import java.util.Map;
  * Monitors the hunger of an agent
  */
 public class HungerTracker implements VitalSign, Component {
+    /**
+     * The number of hunger points to lose per round
+     */
+    public static final int HUNGER_DERIVATIVE = -2;
     private static final Logger LOG = LoggerFactory.getLogger(HungerTracker.class);
     private static final int STARTING_HUNGER = 50;
     private static final int FULL_THRESHOLD = 95;
@@ -51,7 +55,11 @@ public class HungerTracker implements VitalSign, Component {
 
     @Override
     public Map<String, String> getParameters() {
-        return Map.of(PARAMETER_PREFIX + "hunger", Integer.toString(currentHunger));
+        return Map.of(
+                PARAMETER_PREFIX + "hunger", Integer.toString(currentHunger),
+                VitalSign.PARAMETER_PREFIX + "hungerRateOfChange", Integer.toString(HungerTracker.HUNGER_DERIVATIVE),
+                VitalSign.PARAMETER_PREFIX + "hungryThreshold", Integer.toString(hungryThreshold)
+        );
     }
 
     public boolean isHungry() {

@@ -1,6 +1,8 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.diogonunes.jcdp.color.api.Ansi;
+import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
+import com.github.thehilikus.alife.agents.controllers.HungerTracker;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.Edge;
@@ -12,14 +14,6 @@ import java.util.SortedSet;
  * The basic behaviour of an agent, regardless of mood
  */
 public class Existing implements Mood {
-    /**
-     * The number of hunger points to lose per round
-     */
-    public static final int HUNGER_DERIVATIVE = -2;
-    /**
-     * The number of energy points to lose per round
-     */
-    public static final int ENERGY_DERIVATIVE = -2;
     private final Vision vision;
     private final int agentId;
     private final Locomotion locomotion;
@@ -49,12 +43,12 @@ public class Existing implements Mood {
 
     @Override
     public int getHungerDelta() {
-        return HUNGER_DERIVATIVE;
+        return HungerTracker.HUNGER_DERIVATIVE;
     }
 
     @Override
     public int getEnergyDelta() {
-        return ENERGY_DERIVATIVE + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
+        return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
     }
 
     @Override
@@ -70,8 +64,8 @@ public class Existing implements Mood {
     @Override
     public Map<String, String> getParameters() {
         return Map.of(
-                VitalSign.PARAMETER_PREFIX + "energyRateOfChange", Integer.toString(ENERGY_DERIVATIVE),
-                VitalSign.PARAMETER_PREFIX + "hungerRateOfChange", Integer.toString(HUNGER_DERIVATIVE)
+                PARAMETER_PREFIX + "current", getClass().getSimpleName(),
+                PARAMETER_PREFIX + "speedFactor", Double.toString(speedFactor)
         );
     }
 
