@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 /**
- * A strategy to move in the world
+ * An un-targeted strategy to move in the world
  */
 public interface Locomotion extends Component {
     /**

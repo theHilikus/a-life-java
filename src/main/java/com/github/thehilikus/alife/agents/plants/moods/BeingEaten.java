@@ -63,4 +63,12 @@ public class BeingEaten implements Mood {
                 PARAMETER_PREFIX + "bittenToday", Integer.toString(bittenToday)
         );
     }
+
+    @Override
+    public String toString() {
+        return "BeingEaten{" +
+                "daysSinceLastBite=" + daysSinceLastBite +
+                ", bittenToday=" + bittenToday +
+                '}';
+    }
 }

@@ -45,6 +45,9 @@ public class Plant implements Agent.Eatable {
         LOG.debug("#### Updating state of {} ####", this);
         Mood oldMood = mood;
         mood = oldMood.tick();
+        if (oldMood != mood) {
+            LOG.info("Transitioning from {} to {}", oldMood, mood);
+        }
         energyTracker.update(oldMood);
 
         return energyTracker.isAlive();

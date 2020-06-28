@@ -1,10 +1,7 @@
 package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.api.Agent;
-import com.github.thehilikus.alife.api.AgentScope;
-import com.github.thehilikus.alife.api.Orientation;
-import com.github.thehilikus.alife.api.Position;
+import com.github.thehilikus.alife.api.*;
 import dagger.Module;
 import dagger.Provides;
 import org.slf4j.Logger;
@@ -12,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The environment where the agents live
@@ -82,11 +80,16 @@ public class World {
                 alive = agent.tick();
             }
             if (!alive) {
-                LOG.debug("{} died", agent);
+                List<Map.Entry<String, String>> vitals = findCauseOfDeath(agent);
+                LOG.debug("{} died. Cause of death={}", agent, vitals);
                 cemetery.add(agent);
             }
         });
         cemetery.forEach(this::removeAgent);
+    }
+
+    private List<Map.Entry<String, String>> findCauseOfDeath(Agent agent) {
+        return agent.getDetails().entrySet().stream().filter(entry -> entry.getKey().startsWith(VitalSign.PARAMETER_PREFIX) && entry.getValue().equals("0")).collect(Collectors.toUnmodifiableList());
     }
 
     private boolean tickMovableAgent(Agent.Movable agent) {
