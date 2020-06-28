@@ -1,5 +1,7 @@
 package com.github.thehilikus.alife.agents.controllers;
 
+import com.github.thehilikus.alife.agents.animals.moods.Eating;
+import com.github.thehilikus.alife.agents.animals.moods.Existing;
 import com.github.thehilikus.alife.agents.animals.moods.Hunting;
 import com.github.thehilikus.alife.agents.animals.moods.Scouting;
 import com.github.thehilikus.alife.agents.animals.motions.Legs;
@@ -14,16 +16,18 @@ public class HerbivoreMoodController implements MoodController {
     private final Legs legs;
     private final Locomotion locomotion;
     private final Genome genome;
+    private final HungerTracker hungerTracker;
 
-    public HerbivoreMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome) {
+    public HerbivoreMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker) {
         this.vision = vision;
         this.legs = legs;
         this.locomotion = locomotion;
         this.genome = genome;
+        this.hungerTracker = hungerTracker;
     }
 
     @Override
-    public Mood startHunting(Agent.Living target) {
+    public Mood startHunting(Agent.Eatable target) {
         return new Hunting(this, vision, legs, genome, target);
     }
 
@@ -38,12 +42,12 @@ public class HerbivoreMoodController implements MoodController {
     }
 
     @Override
-    public Mood startEating() {
-        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+    public Mood startEating(Agent.Eatable food) {
+        return new Eating(this, vision, genome, food, hungerTracker);
     }
 
     @Override
     public Mood startIdling() {
-        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+        return new Existing(vision, genome, locomotion);
     }
 }

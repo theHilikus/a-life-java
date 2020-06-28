@@ -4,13 +4,13 @@ package com.github.thehilikus.alife.api;
  * Controller of transitions between moods
  */
 public interface MoodController {
-    Mood startHunting(Agent.Living target);
+    Mood startHunting(Agent.Eatable target);
 
     Mood startScouting();
 
     Mood startSleeping();
 
-    Mood startEating();
+    Mood startEating(Agent.Eatable food);
 
     Mood startIdling();
 }

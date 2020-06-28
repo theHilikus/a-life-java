@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.controllers;
 
-import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
@@ -14,6 +13,7 @@ import java.util.Map;
  */
 public class HungerTracker implements VitalSign, Component {
     private static final int STARTING_HUNGER = 50;
+    private static final int FULL_THRESHOLD = 95;
     private final int agentId;
 
     @Min(0)
@@ -22,15 +22,18 @@ public class HungerTracker implements VitalSign, Component {
 
     private final int hungryThreshold;
 
-    public HungerTracker(int agentId, Genome genome) {
+    public HungerTracker(int agentId, int hungryThreshold) {
         this.agentId = agentId;
         currentHunger = STARTING_HUNGER;
-        hungryThreshold = genome.getGene(PARAMETER_PREFIX + "hungryThreshold");
+        this.hungryThreshold = hungryThreshold;
     }
 
     @Override
-    public void update(Mood currentMood) {
-        currentHunger += currentMood.getHungerDelta();
+    public int update(Mood currentMood) {
+        int result = currentMood.getHungerDelta();
+        currentHunger += result;
+
+        return result;
     }
 
     @Override
@@ -50,5 +53,9 @@ public class HungerTracker implements VitalSign, Component {
 
     public boolean isHungry() {
         return currentHunger <= hungryThreshold;
+    }
+
+    public boolean isFull() {
+        return currentHunger >= FULL_THRESHOLD;
     }
 }
