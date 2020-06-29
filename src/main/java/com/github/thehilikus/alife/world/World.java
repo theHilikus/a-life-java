@@ -87,6 +87,7 @@ public class World {
             }
         });
         toRemove.forEach(this::removeAgent);
+        LOG.info("Ending day {}\n", ++day);
     }
 
     private List<Map.Entry<String, String>> findCauseOfDeath(Agent agent) {

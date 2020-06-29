@@ -36,7 +36,7 @@ public class Growing implements Mood {
 
     @Override
     public Ansi.FColor getTerminalColour() {
-        return Ansi.FColor.WHITE;
+        return Ansi.FColor.MAGENTA;
     }
 
     @Override

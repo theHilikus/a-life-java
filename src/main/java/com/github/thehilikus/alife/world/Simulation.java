@@ -110,7 +110,7 @@ public class Simulation {
                 System.out.println(world.getRepresentation());
             }
         };
-        ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(tick, 0, 2, TimeUnit.SECONDS);
+        ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(tick, 0, 500, TimeUnit.MILLISECONDS);
 
         try {
             scheduledFuture.get();
