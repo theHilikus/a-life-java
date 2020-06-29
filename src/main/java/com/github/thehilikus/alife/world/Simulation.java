@@ -63,7 +63,8 @@ public class Simulation {
 
         CliOptions result = new CliOptions();
         ParserProperties defaults = ParserProperties.defaults();
-        defaults.withUsageWidth(150);
+        final int usageWidth = 150;
+        defaults.withUsageWidth(usageWidth);
         CmdLineParser parser = new CmdLineParser(result,defaults);
         try {
             parser.parseArgument(args);
@@ -79,8 +80,6 @@ public class Simulation {
 
     private Simulation(CliOptions options) {
         this.options = options;
-        int foodCount = 50;
-        int huntersCount = 20;
 
         if (options.isNotRandom()) {
             RandomProvider.fixSeed();
@@ -88,8 +87,8 @@ public class Simulation {
 
         WorldComponent worldComponent = DaggerWorldComponent.create();
         world = worldComponent.createWorld();
-        Herbivore.create(huntersCount, worldComponent);
-        Plant.create(foodCount, worldComponent);
+        Herbivore.create(options.getHerbivoresCount(), worldComponent);
+        Plant.create(options.getPlantsCount(), worldComponent);
 
         if (options.isPrintWorld()) {
             System.out.println(world.getRepresentation());
