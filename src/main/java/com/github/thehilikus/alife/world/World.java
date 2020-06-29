@@ -166,6 +166,9 @@ public class World {
         Agent agent = agents.get(agentId);
         if (agent == null) {
             agent = cemetery.get(agentId);
+            if (agent == null) {
+                return Collections.emptyMap();
+            }
         }
         result = agent.getDetails();
 
