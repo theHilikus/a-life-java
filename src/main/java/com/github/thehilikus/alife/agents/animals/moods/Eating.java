@@ -34,7 +34,7 @@ public class Eating implements Mood {
         this.vision = vision;
         this.food = foodAgent;
         this.hungerTracker = hungerTracker;
-        this.eatSpeed = (int) Math.round((int) genome.getGene("size") * SIZE_TO_BITE_RATIO);
+        this.eatSpeed = (int) Math.max(1, Math.round((int) genome.getGene("size") * SIZE_TO_BITE_RATIO));
     }
 
     @Override
@@ -43,7 +43,7 @@ public class Eating implements Mood {
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.food.getId()).findFirst();
         if (targetOptional.isPresent()) {
             LOG.trace("Biting {}", food);
-            lastBite = food.transferEnergy(eatSpeed) * -1;
+            lastBite = food.transferEnergy(eatSpeed);
             if (hungerTracker.isFull()) {
                 LOG.debug("Agent {} is full", agentId);
                 return moodController.startIdling();
