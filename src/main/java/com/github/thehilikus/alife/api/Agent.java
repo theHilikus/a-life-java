@@ -31,9 +31,9 @@ public interface Agent {
         /**
          * Execute one turn of the agent
          *
-         * @return true if the agent is alive at the end of the turn
+         * @return null if the agent is alive at the end of the turn or the vital sign that caused the death
          */
-        boolean tick();
+        VitalSign tick();
     }
 
     interface Eatable extends Living {

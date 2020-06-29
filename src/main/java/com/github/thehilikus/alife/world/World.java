@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * The environment where the agents live
@@ -74,15 +73,14 @@ public class World {
         LOG.info("Starting day {}", ++day);
         Collection<Agent.Living> toRemove = new HashSet<>();
         agents.values().forEach(agent -> {
-            boolean alive;
+            VitalSign causeOfDeath;
             if (agent instanceof Agent.Movable) {
-                alive = tickMovableAgent((Agent.Movable) agent);
+                causeOfDeath = tickMovableAgent((Agent.Movable) agent);
             } else {
-                alive = agent.tick();
+                causeOfDeath = agent.tick();
             }
-            if (!alive) {
-                List<Map.Entry<String, String>> vitals = findCauseOfDeath(agent);
-                LOG.debug("{} died. Cause of death={}", agent, vitals);
+            if (causeOfDeath != null) {
+                LOG.debug("{} died. Cause of death={}", agent, causeOfDeath);
                 toRemove.add(agent);
             }
         });
@@ -90,15 +88,11 @@ public class World {
         LOG.info("Ending day {}\n", ++day);
     }
 
-    private List<Map.Entry<String, String>> findCauseOfDeath(Agent agent) {
-        return agent.getDetails().entrySet().stream().filter(entry -> entry.getKey().startsWith(VitalSign.PARAMETER_PREFIX) && entry.getValue().equals("0")).collect(Collectors.toUnmodifiableList());
-    }
-
-    private boolean tickMovableAgent(Agent.Movable agent) {
+    private VitalSign tickMovableAgent(Agent.Movable agent) {
         Position.Immutable originalPosition = agent.getPosition();
         grid[originalPosition.getY()][originalPosition.getX()] = null;
-        boolean alive = agent.tick();
-        if (alive) {
+        VitalSign causeOfDeath = agent.tick();
+        if (causeOfDeath == null) {
             Position.Immutable newPosition = agent.getPosition();
             Agent collidedAgent = grid[newPosition.getY()][newPosition.getX()];
             if (collidedAgent != null) {
@@ -110,7 +104,7 @@ public class World {
             }
         }
 
-        return alive;
+        return causeOfDeath;
     }
 
     private Position.Immutable resolveCollision(Agent.Movable colliderAgent, Position.Immutable originalPosition, Agent collidedAgent) {

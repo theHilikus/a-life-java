@@ -50,7 +50,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     }
 
     @Override
-    public boolean tick() {
+    public VitalSign tick() {
         LOG.debug("#### Updating state of {} ####", this);
         Mood oldMood = mood;
         mood = oldMood.tick();
@@ -63,7 +63,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
             LOG.info("Transitioning from {} to {}", oldMood, mood);
         }
 
-        return alive;
+        return alive ? null : vitals.getCauseOfDeath();
     }
 
     @Override

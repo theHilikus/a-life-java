@@ -6,6 +6,7 @@ import com.github.thehilikus.alife.agents.animals.moods.Scouting;
 import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.MoodController;
+import com.github.thehilikus.alife.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +65,19 @@ public class VitalsController implements Component {
         result.putAll(hungerTracker.getParameters());
         result.putAll(energyTracker.getParameters());
         result.putAll(ageTracker.getParameters());
+
+        return result;
+    }
+
+    public VitalSign getCauseOfDeath() {
+        VitalSign result = null;
+        if (!hungerTracker.isAlive()) {
+            result = hungerTracker;
+        } else if (!energyTracker.isAlive()) {
+            result = energyTracker;
+        } else if (!ageTracker.isAlive()) {
+            result = ageTracker;
+        }
 
         return result;
     }
