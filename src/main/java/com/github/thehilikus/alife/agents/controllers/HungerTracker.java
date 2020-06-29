@@ -36,16 +36,19 @@ public class HungerTracker implements VitalSign, Component {
     }
 
     @Override
-    public int update(Mood currentMood) {
+    public void update(Mood currentMood) {
         int result = currentMood.getHungerDelta();
         currentHunger += result;
-
-        return result;
     }
 
     @Override
     public boolean isAlive() {
         return currentHunger > 0;
+    }
+
+    @Override
+    public int getValue() {
+        return currentHunger;
     }
 
     @Override
