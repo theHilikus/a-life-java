@@ -77,4 +77,11 @@ public class HungerTracker implements VitalSign, Component {
 
         return full;
     }
+
+    @Override
+    public String toString() {
+        return "HungerTracker{" +
+                "currentHunger=" + currentHunger +
+                '}';
+    }
 }
