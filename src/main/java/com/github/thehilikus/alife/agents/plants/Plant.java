@@ -100,8 +100,9 @@ public class Plant implements Agent.Eatable {
         if (!(mood instanceof BeingEaten)) {
             mood = new BeingEaten(id);
         }
-        ((BeingEaten) mood).bite(eatSpeed);
+        int biteSize = Math.min(energyTracker.getValue(),  eatSpeed);
+        ((BeingEaten) mood).bite(biteSize);
 
-        return energyTracker.update(mood);
+        return biteSize;
     }
 }

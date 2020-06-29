@@ -22,15 +22,18 @@ public class AgeTracker implements VitalSign, Component {
     }
 
     @Override
-    public int update(Mood currentMood) {
+    public void update(Mood currentMood) {
         currentAge++;
-
-        return 1;
     }
 
     @Override
     public boolean isAlive() {
         return currentAge <= lifeExpectancy;
+    }
+
+    @Override
+    public int getValue() {
+        return currentAge;
     }
 
     @Override

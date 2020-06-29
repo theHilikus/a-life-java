@@ -40,18 +40,20 @@ public class EnergyTracker implements VitalSign, Component {
     }
 
     @Override
-    public int update(Mood currentMood) {
-        int originalEnergy = currentEnergy;
+    public void update(Mood currentMood) {
         currentEnergy += currentMood.getEnergyDelta();
         currentEnergy = Math.max(0, currentEnergy);
         currentEnergy = Math.min(100, currentEnergy);
-
-        return currentEnergy - originalEnergy;
     }
 
     @Override
     public boolean isAlive() {
         return currentEnergy > 0;
+    }
+
+    @Override
+    public int getValue() {
+        return currentEnergy;
     }
 
     @Override
