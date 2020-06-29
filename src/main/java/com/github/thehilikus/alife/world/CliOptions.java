@@ -7,6 +7,7 @@ import java.io.File;
 /**
  * A container of command line options
  */
+@SuppressWarnings({"FieldMayBeFinal", "MagicNumber"})
 public class CliOptions {
     @Option(name = "--automatic", usage = "Advance each age of the world automatically without user input")
     private boolean automatic = false;
@@ -16,6 +17,10 @@ public class CliOptions {
     private File logFile;
     @Option(name = "--not-random", usage = "Set a fixed seed to the RNG so that the runs are consistent")
     private boolean notRandom;
+    @Option(name = "--plants", usage = "The number of plants to add to the world")
+    private int plantsCount = 50;
+    @Option(name = "--herbivores", usage = "The number of herbivores to add to the world")
+    private int herbivoresCount = 20;
 
     public boolean isAutomatic() {
         return automatic;
@@ -35,5 +40,13 @@ public class CliOptions {
 
     public boolean isNotRandom() {
         return notRandom;
+    }
+
+    public int getPlantsCount() {
+        return plantsCount;
+    }
+
+    public int getHerbivoresCount() {
+        return herbivoresCount;
     }
 }
