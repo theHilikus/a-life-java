@@ -69,7 +69,7 @@ public class World {
         return grid.length;
     }
 
-    public void tick() {
+    public boolean tick() {
         LOG.info("Starting day {}", ++day);
         Collection<Agent.Living> toRemove = new HashSet<>();
         agents.values().forEach(agent -> {
@@ -85,7 +85,9 @@ public class World {
             }
         });
         toRemove.forEach(this::removeAgent);
-        LOG.info("Ending day {}\n", ++day);
+        LOG.info("Ending day {}\n", day);
+
+        return agents.values().stream().anyMatch(agent -> agent instanceof Agent.Movable);
     }
 
     private VitalSign tickMovableAgent(Agent.Movable agent) {
@@ -188,5 +190,9 @@ public class World {
             stringBuilder.append(System.lineSeparator());
         }
         return stringBuilder.toString();
+    }
+
+    public int getAge() {
+        return day;
     }
 }

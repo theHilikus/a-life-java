@@ -65,7 +65,7 @@ public class Simulation {
         ParserProperties defaults = ParserProperties.defaults();
         final int usageWidth = 150;
         defaults.withUsageWidth(usageWidth);
-        CmdLineParser parser = new CmdLineParser(result,defaults);
+        CmdLineParser parser = new CmdLineParser(result, defaults);
         try {
             parser.parseArgument(args);
             return result;
@@ -101,19 +101,25 @@ public class Simulation {
         } else {
             runManual();
         }
+        System.out.println("Ending simulation after " + world.getAge() + " days");
     }
 
     private void runAutomatic() {
         Runnable tick = () -> {
-            world.tick();
+            boolean alive = world.tick();
             if (options.isPrintWorld()) {
                 System.out.println(world.getRepresentation());
+            }
+            if (!alive) {
+                executor.shutdown();
             }
         };
         ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(tick, 0, 500, TimeUnit.MILLISECONDS);
 
         try {
             scheduledFuture.get();
+        } catch (CancellationException exc) {
+            //clean exit
         } catch (InterruptedException | ExecutionException exc) {
             LOG.error("Simulation ended with error", exc);
         }
@@ -136,13 +142,15 @@ public class Simulation {
                     System.out.println("Unknown command. Ignoring it");
                 }
 
-                world.tick();
+                boolean alive = world.tick();
+                if (!alive) {
+                    break;
+                }
                 if (options.isPrintWorld()) {
                     System.out.println(world.getRepresentation());
                 }
                 command = getCommand(scanner);
             }
-            System.out.println("Exiting simulation");
         }
     }
 
@@ -155,7 +163,7 @@ public class Simulation {
     }
 
     private void queryAgent(String agentId) {
-        if (agentId.chars().allMatch( Character::isDigit )) {
+        if (agentId.chars().allMatch(Character::isDigit)) {
             Map<String, String> agentDetails = world.getAgentDetails(Integer.parseInt(agentId));
             if (!agentDetails.isEmpty()) {
                 StringBuilder detailsBuffer = new StringBuilder();
