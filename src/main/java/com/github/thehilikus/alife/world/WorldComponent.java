@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.world;
 
+import dagger.BindsInstance;
 import dagger.Component;
 
 import javax.inject.Singleton;
@@ -11,4 +12,12 @@ import javax.inject.Singleton;
 @Component(modules = World.class)
 public interface WorldComponent {
     World createWorld();
+
+    @Component.Builder
+    interface Builder {
+        @BindsInstance
+        Builder options(CliOptions options);
+
+        WorldComponent build();
+    }
 }

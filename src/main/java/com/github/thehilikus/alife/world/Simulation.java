@@ -85,7 +85,7 @@ public class Simulation {
             RandomProvider.fixSeed();
         }
 
-        WorldComponent worldComponent = DaggerWorldComponent.create();
+        WorldComponent worldComponent = DaggerWorldComponent.builder().options(options).build();
         world = worldComponent.createWorld();
         Herbivore.create(options.getHerbivoresCount(), worldComponent);
         Plant.create(options.getPlantsCount(), worldComponent);

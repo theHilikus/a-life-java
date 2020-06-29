@@ -24,8 +24,8 @@ public class World {
 
     @Provides
     @Singleton
-    static World provideWorld() {
-        return new World(100, 100);
+    static World provideWorld(CliOptions options) {
+        return new World(options.getWorldWidth(), options.getWorldHeight());
     }
 
     @Provides
@@ -35,7 +35,7 @@ public class World {
     }
 
     public World(int width, int height) {
-        grid = new Agent[width + 2][height + 2];
+        grid = new Agent[height + 2][width + 2];
         createEdge();
         day = 0;
     }
@@ -63,11 +63,11 @@ public class World {
     }
 
     private int getWidth() {
-        return grid.length;
+        return grid[0].length;
     }
 
     private int getHeight() {
-        return grid[0].length;
+        return grid.length;
     }
 
     public void tick() {
@@ -181,8 +181,8 @@ public class World {
 
         String formatCode = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.NONE, Ansi.BColor.NONE);
         String emptySpace = Ansi.formatMessage("  ", formatCode);
-        for (int y = 0; y < getWidth(); y++) {
-            for (int x = 0; x < getHeight(); x++) {
+        for (int y = 0; y < getHeight(); y++) {
+            for (int x = 0; x < getWidth(); x++) {
                 Agent agent = grid[y][x];
                 if (agent == null) {
                     stringBuilder.append(emptySpace);
