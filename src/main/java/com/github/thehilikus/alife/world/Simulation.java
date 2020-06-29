@@ -158,10 +158,14 @@ public class Simulation {
     private void queryAgent(String agentId) {
         if (agentId.chars().allMatch( Character::isDigit )) {
             Map<String, String> agentDetails = world.getAgentDetails(Integer.parseInt(agentId));
-            StringBuilder detailsBuffer = new StringBuilder();
-            detailsBuffer.append("##### Details of agent ").append(agentId).append(" #####").append(System.lineSeparator());
-            agentDetails.forEach((key, value) -> detailsBuffer.append(key).append(": ").append(value).append(System.lineSeparator()));
-            System.out.println(detailsBuffer.toString());
+            if (!agentDetails.isEmpty()) {
+                StringBuilder detailsBuffer = new StringBuilder();
+                detailsBuffer.append("##### Details of agent ").append(agentId).append(" #####").append(System.lineSeparator());
+                agentDetails.forEach((key, value) -> detailsBuffer.append(key).append(": ").append(value).append(System.lineSeparator()));
+                System.out.println(detailsBuffer.toString());
+            } else {
+                System.out.println("No agent found with id " + agentId);
+            }
         } else {
             System.err.println("Invalid id \"" + agentId + "\". Ignoring command");
         }
