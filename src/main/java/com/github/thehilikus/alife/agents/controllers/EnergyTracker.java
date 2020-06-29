@@ -82,4 +82,11 @@ public class EnergyTracker implements VitalSign, Component {
 
         return rested;
     }
+
+    @Override
+    public String toString() {
+        return "EnergyTracker{" +
+                "currentEnergy=" + currentEnergy +
+                '}';
+    }
 }

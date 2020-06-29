@@ -12,9 +12,9 @@ import java.util.Map;
  */
 public class AgeTracker implements VitalSign, Component {
     private final int agentId;
-    private final int lifeExpectancy;
     @PositiveOrZero
     private int currentAge;
+    private final int lifeExpectancy;
 
     public AgeTracker(int agentId, int lifeExpectancy) {
         this.agentId = agentId;
@@ -47,5 +47,13 @@ public class AgeTracker implements VitalSign, Component {
                 PARAMETER_PREFIX + "age", Integer.toString(currentAge),
                 PARAMETER_PREFIX + "lifeExpectancy", Integer.toString(lifeExpectancy)
         );
+    }
+
+    @Override
+    public String toString() {
+        return "AgeTracker{" +
+                "currentAge=" + currentAge +
+                ", lifeExpectancy=" + lifeExpectancy +
+                '}';
     }
 }
