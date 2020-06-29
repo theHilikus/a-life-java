@@ -19,6 +19,7 @@ public class World {
     private static final Logger LOG = LoggerFactory.getLogger(World.class.getSimpleName());
     private final Agent[][] grid;
     private final Map<Integer, Agent.Living> agents = new HashMap<>();
+    private final Map<Integer, Agent.Living> cemetery = new HashMap<>();
     private int day;
 
     @Provides
@@ -71,7 +72,7 @@ public class World {
 
     public void tick() {
         LOG.info("Starting day {}", ++day);
-        Collection<Agent> cemetery = new HashSet<>();
+        Collection<Agent.Living> toRemove = new HashSet<>();
         agents.values().forEach(agent -> {
             boolean alive;
             if (agent instanceof Agent.Movable) {
@@ -82,10 +83,10 @@ public class World {
             if (!alive) {
                 List<Map.Entry<String, String>> vitals = findCauseOfDeath(agent);
                 LOG.debug("{} died. Cause of death={}", agent, vitals);
-                cemetery.add(agent);
+                toRemove.add(agent);
             }
         });
-        cemetery.forEach(this::removeAgent);
+        toRemove.forEach(this::removeAgent);
     }
 
     private List<Map.Entry<String, String>> findCauseOfDeath(Agent agent) {
@@ -130,15 +131,12 @@ public class World {
         agents.put(agent.getId(), agent);
     }
 
-    private void removeAgent(Agent agent) {
+    private void removeAgent(Agent.Living agent) {
         Position.Immutable position = agent.getPosition();
         LOG.info("Removing {} from world", agent);
         grid[position.getY()][position.getX()] = null;
         agents.remove(agent.getId());
-    }
-
-    public Agent.Living getAgent(int id) {
-        return agents.get(id);
+        cemetery.put(agent.getId(), agent);
     }
 
     public Position getEmptyPosition() {
@@ -164,11 +162,12 @@ public class World {
     }
 
     public Map<String, String> getAgentDetails(int agentId) {
-        Map<String, String> result = Collections.emptyMap();
+        Map<String, String> result;
         Agent agent = agents.get(agentId);
-        if (agent != null) {
-            result = agent.getDetails();
+        if (agent == null) {
+            agent = cemetery.get(agentId);
         }
+        result = agent.getDetails();
 
         return result;
     }
