@@ -18,7 +18,7 @@ public class HungerTracker implements VitalSign, Component {
      * The number of hunger points to lose per round
      */
     public static final int HUNGER_DERIVATIVE = -2;
-    private static final Logger LOG = LoggerFactory.getLogger(HungerTracker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HungerTracker.class.getSimpleName());
     private static final int STARTING_HUNGER = 50;
     private static final int FULL_THRESHOLD = 95;
     private final int agentId;
