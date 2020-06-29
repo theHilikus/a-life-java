@@ -41,7 +41,7 @@ public class Plant implements Agent.Eatable {
     }
 
     @Override
-    public boolean tick() {
+    public VitalSign tick() {
         LOG.debug("#### Updating state of {} ####", this);
         Mood oldMood = mood;
         mood = oldMood.tick();
@@ -50,7 +50,7 @@ public class Plant implements Agent.Eatable {
         }
         energyTracker.update(oldMood);
 
-        return energyTracker.isAlive();
+        return energyTracker.isAlive() ? null : energyTracker;
     }
 
     @Override
@@ -100,7 +100,7 @@ public class Plant implements Agent.Eatable {
         if (!(mood instanceof BeingEaten)) {
             mood = new BeingEaten(id);
         }
-        int biteSize = Math.min(energyTracker.getValue(),  eatSpeed);
+        int biteSize = Math.min(energyTracker.getValue(), eatSpeed);
         ((BeingEaten) mood).bite(biteSize);
 
         return biteSize;
