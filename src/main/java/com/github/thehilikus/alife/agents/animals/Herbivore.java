@@ -126,7 +126,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         private static final double MAX_SCOUT_SPEED_FACTOR = 0.5;
         private static final double MAX_HUNT_SPEED_FACTOR = 0.9;
         private static final int MAX_SIZE = 50;
-        private static final int MAX_LIFE_EXPECTANCY = 80;
+        private static final int MAX_LIFE_EXPECTANCY = 150;
         private static final int MIN_LIFE_EXPECTANCY = 50;
         private static final int MAX_LOW_ENERGY_THRESHOLD = 50;
         private static final int MAX_HUNGRY_THRESHOLD = 50;

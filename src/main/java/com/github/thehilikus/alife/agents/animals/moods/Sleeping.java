@@ -17,7 +17,7 @@ import java.util.Map;
 public class Sleeping implements Mood {
     private static final Logger LOG = LoggerFactory.getLogger(Sleeping.class.getSimpleName());
     private static final double HUNGER_SLOWDOWN_FACTOR = 0.5;
-    private static final int ENERGY_RECOVERY = 10;
+    private static final int ENERGY_RECOVERY_RATE = 10;
     private final MoodController moodController;
     private final int agentId;
     private final EnergyTracker energyTracker;
@@ -45,7 +45,7 @@ public class Sleeping implements Mood {
 
     @Override
     public int getEnergyDelta() {
-        return ENERGY_RECOVERY;
+        return ENERGY_RECOVERY_RATE;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class Sleeping implements Mood {
     public Map<String, String> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "current", getClass().getSimpleName(),
-                PARAMETER_PREFIX + "energyRecovery", Integer.toString(ENERGY_RECOVERY),
+                PARAMETER_PREFIX + "energyRecovery", Integer.toString(ENERGY_RECOVERY_RATE),
                 PARAMETER_PREFIX + "hungerSlowdownFactor", Double.toString(HUNGER_SLOWDOWN_FACTOR)
         );
     }
