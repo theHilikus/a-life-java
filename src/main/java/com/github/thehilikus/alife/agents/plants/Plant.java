@@ -48,7 +48,11 @@ public class Plant implements Agent.Eatable {
         if (oldMood != mood) {
             LOG.info("Transitioning from {} to {}", oldMood, mood);
         }
+        int energyBefore = energyTracker.getValue();
         energyTracker.update(oldMood);
+        if (energyTracker.getValue() != energyBefore) {
+            LOG.debug("Energy went from {} to {}", energyBefore, energyTracker.getValue());
+        }
 
         return energyTracker.isAlive() ? null : energyTracker;
     }
@@ -96,13 +100,14 @@ public class Plant implements Agent.Eatable {
     }
 
     @Override
-    public int transferEnergy(int eatSpeed) {
+    public int transferEnergy(int desiredBiteSIze) {
         if (!(mood instanceof BeingEaten)) {
             mood = new BeingEaten(id);
         }
-        int biteSize = Math.min(energyTracker.getValue(), eatSpeed);
-        ((BeingEaten) mood).bite(biteSize);
+        int realBiteSize = Math.min(energyTracker.getValue(), desiredBiteSIze);
+        ((BeingEaten) mood).bite(realBiteSize);
+        LOG.debug("Plant lost {} energy", realBiteSize);
 
-        return biteSize;
+        return realBiteSize;
     }
 }

@@ -3,8 +3,6 @@ package com.github.thehilikus.alife.agents.controllers;
 import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -18,9 +16,11 @@ public class HungerTracker implements VitalSign, Component {
      * The number of hunger points to lose per round
      */
     public static final int HUNGER_DERIVATIVE = -2;
-    private static final Logger LOG = LoggerFactory.getLogger(HungerTracker.class.getSimpleName());
     private static final int STARTING_HUNGER = 50;
-    private static final int FULL_THRESHOLD = 95;
+    /**
+     * The point where the agent stops eating
+     */
+    public static final int FULL_THRESHOLD = 100;
     private final int agentId;
 
     @Min(0)
@@ -70,12 +70,7 @@ public class HungerTracker implements VitalSign, Component {
     }
 
     public boolean isFull() {
-        boolean full = currentHunger >= FULL_THRESHOLD;
-        if (!full) {
-            LOG.debug("Agent {} hunger: {}", agentId, currentHunger);
-        }
-
-        return full;
+        return currentHunger >= FULL_THRESHOLD;
     }
 
     @Override
