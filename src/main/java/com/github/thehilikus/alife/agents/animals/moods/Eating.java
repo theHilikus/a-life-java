@@ -42,12 +42,12 @@ public class Eating implements Mood {
         SortedSet<ScanResult> scanResult = vision.scan(food.getClass());
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.food.getId()).findFirst();
         if (targetOptional.isPresent()) {
-            LOG.trace("Biting {}", food);
-            lastBite = food.transferEnergy(eatSpeed);
             if (hungerTracker.isFull()) {
                 LOG.debug("Agent {} is full", agentId);
                 return moodController.startIdling();
             }
+            LOG.trace("Biting {} with hunger = {}", food, hungerTracker.getValue());
+            lastBite = food.transferEnergy(eatSpeed);
         } else {
             LOG.debug("Food {} is finished", food.getId());
             return moodController.startIdling();
