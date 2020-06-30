@@ -46,8 +46,9 @@ public class Eating implements Mood {
                 LOG.debug("Agent {} is full", agentId);
                 return moodController.startIdling();
             }
-            LOG.trace("Biting {} with hunger = {}", food, hungerTracker.getValue());
-            lastBite = food.transferEnergy(eatSpeed);
+            int biteSize = Math.min(eatSpeed, HungerTracker.FULL_THRESHOLD - hungerTracker.getValue());
+            LOG.trace("Biting agent {} with bite size = {}. Current hunger = {}", food.getId(), biteSize, hungerTracker.getValue());
+            lastBite = food.transferEnergy(biteSize);
         } else {
             LOG.debug("Food {} is finished", food.getId());
             return moodController.startIdling();
