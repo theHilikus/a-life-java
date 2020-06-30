@@ -17,7 +17,7 @@ import java.util.SortedSet;
  */
 public class Eating implements Mood {
     private static final Logger LOG = LoggerFactory.getLogger(Eating.class.getSimpleName());
-    private static final double SIZE_TO_BITE_RATIO = 0.1;
+    private static final double SIZE_TO_BITE_RATIO = 0.75;
     private static final double EATING_FATIGUE_FACTOR = 1.5;
 
     private final MoodController moodController;
