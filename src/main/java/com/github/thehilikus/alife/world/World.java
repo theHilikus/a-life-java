@@ -19,7 +19,7 @@ public class World {
     private final Agent[][] grid;
     private final Map<Integer, Agent.Living> agents = new HashMap<>();
     private final Map<Integer, Agent.Living> cemetery = new HashMap<>();
-    private int day;
+    private int hour;
 
     @Provides
     @Singleton
@@ -36,7 +36,7 @@ public class World {
     public World(int width, int height) {
         grid = new Agent[height + 2][width + 2];
         createEdge();
-        day = 0;
+        hour = 0;
     }
 
     private void createEdge() {
@@ -70,7 +70,7 @@ public class World {
     }
 
     public boolean tick() {
-        LOG.info("Starting day {}", ++day);
+        LOG.info("Starting hour {}", ++hour);
         Collection<Agent.Living> toRemove = new HashSet<>();
         agents.values().forEach(agent -> {
             VitalSign causeOfDeath;
@@ -85,7 +85,7 @@ public class World {
             }
         });
         toRemove.forEach(this::removeAgent);
-        LOG.info("Ending day {}\n", day);
+        LOG.info("Ending hour {}\n", hour);
 
         return agents.values().stream().anyMatch(agent -> agent instanceof Agent.Movable);
     }
@@ -174,7 +174,7 @@ public class World {
 
     public String getRepresentation() {
         StringBuilder stringBuilder = new StringBuilder(getWidth() * getHeight() * 2);
-        stringBuilder.append("World view on day ").append(day).append(System.lineSeparator());
+        stringBuilder.append("World view on hour ").append(hour).append(System.lineSeparator());
 
         String formatCode = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.NONE, Ansi.BColor.NONE);
         String emptySpace = Ansi.formatMessage("  ", formatCode);
@@ -193,6 +193,6 @@ public class World {
     }
 
     public int getAge() {
-        return day;
+        return hour;
     }
 }

@@ -10,24 +10,24 @@ import java.util.Map;
  */
 public class BeingEaten implements Mood {
     private final int agentId;
-    private int daysSinceLastBite;
-    private int bittenToday;
+    private int hoursSinceLastBite;
+    private int bittenInHour;
 
     public BeingEaten(int agentId) {
         this.agentId = agentId;
     }
 
     public void bite(int biteSize) {
-        bittenToday += biteSize;
-        daysSinceLastBite = 0;
+        bittenInHour += biteSize;
+        hoursSinceLastBite = 0;
     }
 
     @Override
     public Mood tick() {
-        daysSinceLastBite++;
+        hoursSinceLastBite++;
 
         Mood result = this;
-        if (daysSinceLastBite > 2) {
+        if (hoursSinceLastBite > 2) {
             result = new Growing(agentId);
         }
         return result;
@@ -40,8 +40,8 @@ public class BeingEaten implements Mood {
 
     @Override
     public int getEnergyDelta() {
-        int result = bittenToday * -1;
-        bittenToday = 0;
+        int result = bittenInHour * -1;
+        bittenInHour = 0;
 
         return result;
     }
@@ -59,16 +59,16 @@ public class BeingEaten implements Mood {
     @Override
     public Map<String, String> getParameters() {
         return Map.of(
-                PARAMETER_PREFIX + "daysSinceLastBite", Integer.toString(daysSinceLastBite),
-                PARAMETER_PREFIX + "bittenToday", Integer.toString(bittenToday)
+                PARAMETER_PREFIX + "hoursSinceLastBite", Integer.toString(hoursSinceLastBite),
+                PARAMETER_PREFIX + "bittenInHour", Integer.toString(bittenInHour)
         );
     }
 
     @Override
     public String toString() {
         return "BeingEaten{" +
-                "daysSinceLastBite=" + daysSinceLastBite +
-                ", bittenToday=" + bittenToday +
+                "hoursSinceLastBite=" + hoursSinceLastBite +
+                ", bittenInHour=" + bittenInHour +
                 '}';
     }
 }
