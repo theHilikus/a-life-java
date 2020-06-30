@@ -101,7 +101,7 @@ public class Simulation {
         } else {
             runManual();
         }
-        System.out.println("Ending simulation after " + world.getAge() + " days");
+        System.out.println("Ending simulation after " + world.getAge() + " hours");
     }
 
     private void runAutomatic() {
