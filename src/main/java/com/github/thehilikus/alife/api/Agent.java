@@ -37,7 +37,7 @@ public interface Agent {
     }
 
     interface Eatable extends Living {
-        int transferEnergy(int eatSpeed);
+        int transferEnergy(int desiredBiteSize);
     }
 
     /**
