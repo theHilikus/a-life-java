@@ -3,8 +3,6 @@ package com.github.thehilikus.alife.agents.animals.moods;
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.animals.motions.Legs;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
-import com.github.thehilikus.alife.agents.controllers.HungerTracker;
-import com.github.thehilikus.alife.api.MoodController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import org.slf4j.Logger;
@@ -70,11 +68,6 @@ public class Hunting implements Mood {
         }
 
         return this;
-    }
-
-    @Override
-    public int getHungerDelta() {
-        return HungerTracker.HUNGER_DERIVATIVE;
     }
 
     @Override

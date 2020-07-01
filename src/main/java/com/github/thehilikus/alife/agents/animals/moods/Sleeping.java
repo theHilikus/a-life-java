@@ -2,7 +2,6 @@ package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
-import com.github.thehilikus.alife.agents.controllers.HungerTracker;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.MoodController;
 import org.slf4j.Logger;
@@ -40,7 +39,7 @@ public class Sleeping implements Mood {
 
     @Override
     public int getHungerDelta() {
-        return (int) Math.round(HungerTracker.HUNGER_DERIVATIVE * HUNGER_SLOWDOWN_FACTOR);
+        return (int) Math.round(HUNGER_DERIVATIVE * HUNGER_SLOWDOWN_FACTOR);
     }
 
     @Override
