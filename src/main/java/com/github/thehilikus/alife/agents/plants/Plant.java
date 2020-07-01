@@ -4,6 +4,7 @@ import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.plants.moods.BeingEaten;
 import com.github.thehilikus.alife.api.*;
+import com.github.thehilikus.alife.world.RandomProvider;
 import com.github.thehilikus.alife.world.WorldComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +19,10 @@ import java.util.Map;
  */
 public class Plant implements Agent.Eatable {
     private static final Logger LOG = LoggerFactory.getLogger(Plant.class.getSimpleName());
+    private static final int MAX_SIZE = 300;
     private final int id;
     private final Position position;
+    private final int size;
     private Mood mood;
     private final EnergyTracker energyTracker;
 
@@ -38,6 +41,7 @@ public class Plant implements Agent.Eatable {
         this.position = position;
         this.mood = startingMood;
         this.energyTracker = new EnergyTracker(id);
+        this.size = RandomProvider.nextInt(MAX_SIZE);
     }
 
     @Override
@@ -100,14 +104,19 @@ public class Plant implements Agent.Eatable {
     }
 
     @Override
-    public int transferEnergy(int desiredBiteSIze) {
+    public int transferEnergy(int desiredBiteSize) {
         if (!(mood instanceof BeingEaten)) {
             mood = new BeingEaten(id);
         }
-        int realBiteSize = Math.min(energyTracker.getValue(), desiredBiteSIze);
-        ((BeingEaten) mood).bite(realBiteSize);
-        LOG.debug("Plant lost {} energy", realBiteSize);
 
-        return realBiteSize;
+        double plantEnergyProportion = desiredBiteSize / (double) size;
+        int energyCost = (int) Math.round(plantEnergyProportion * EnergyTracker.MAX_ENERGY);
+        energyCost = Math.min(energyCost, energyTracker.getValue());
+
+        ((BeingEaten) mood).bite(energyCost);
+        LOG.debug("Plant lost {} energy", energyCost);
+
+        int actualBiteSize = (int) Math.round((energyCost / (double) EnergyTracker.MAX_ENERGY) * size);
+        return Math.min(desiredBiteSize, actualBiteSize);
     }
 }

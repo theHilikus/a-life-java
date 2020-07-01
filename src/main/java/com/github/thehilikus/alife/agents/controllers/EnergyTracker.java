@@ -21,6 +21,10 @@ public class EnergyTracker implements VitalSign, Component {
     private static final Logger LOG = LoggerFactory.getLogger(EnergyTracker.class.getSimpleName());
     private static final int STARTING_ENERGY = 100;
     private static final int RESTED_THRESHOLD = 95;
+    /**
+     * the maximum possible level of energy
+     */
+    public static final int MAX_ENERGY = 100;
     private final int agentId;
 
     @Min(0)
@@ -43,7 +47,7 @@ public class EnergyTracker implements VitalSign, Component {
     public void update(Mood currentMood) {
         currentEnergy += currentMood.getEnergyDelta();
         currentEnergy = Math.max(0, currentEnergy);
-        currentEnergy = Math.min(100, currentEnergy);
+        currentEnergy = Math.min(MAX_ENERGY, currentEnergy);
     }
 
     @Override
