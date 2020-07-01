@@ -2,9 +2,11 @@ package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
-import com.github.thehilikus.alife.agents.controllers.HungerTracker;
 import com.github.thehilikus.alife.agents.genetics.Genome;
-import com.github.thehilikus.alife.api.*;
+import com.github.thehilikus.alife.api.Locomotion;
+import com.github.thehilikus.alife.api.Mood;
+import com.github.thehilikus.alife.api.ScanResult;
+import com.github.thehilikus.alife.api.Vision;
 import com.github.thehilikus.alife.world.Edge;
 
 import java.util.Map;
@@ -39,11 +41,6 @@ public class Existing implements Mood {
         }
 
         return this;
-    }
-
-    @Override
-    public int getHungerDelta() {
-        return HungerTracker.HUNGER_DERIVATIVE;
     }
 
     @Override

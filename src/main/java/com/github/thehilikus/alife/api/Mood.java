@@ -16,7 +16,14 @@ public interface Mood extends Component {
     @NotNull
     Mood tick();
 
-    int getHungerDelta();
+    default int getHungerDelta() {
+        return HUNGER_DERIVATIVE;
+    }
+
+    /**
+     * The number of hunger points to lose per round
+     */
+    int HUNGER_DERIVATIVE = -2;
 
     /**
      * @return the number of energy points used (if negative) or gained (if positive) in the last turn
