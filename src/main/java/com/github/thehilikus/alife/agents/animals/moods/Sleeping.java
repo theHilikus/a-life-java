@@ -18,19 +18,17 @@ public class Sleeping implements Mood {
     private static final double HUNGER_SLOWDOWN_FACTOR = 0.5;
     private static final int ENERGY_RECOVERY_RATE = 10;
     private final MoodController moodController;
-    private final int agentId;
     private final EnergyTracker energyTracker;
 
     public Sleeping(MoodController moodController, EnergyTracker energyTracker) {
         this.moodController = moodController;
-        this.agentId = energyTracker.getAgentId();
         this.energyTracker = energyTracker;
     }
 
     @Override
     public @NotNull Mood tick() {
         if (energyTracker.isRested()) {
-            LOG.debug("Agent {} is rested", agentId);
+            LOG.debug("Agent {} is rested", getAgentId());
             return moodController.startIdling();
         }
 
@@ -54,7 +52,7 @@ public class Sleeping implements Mood {
 
     @Override
     public int getAgentId() {
-        return agentId;
+        return energyTracker.getAgentId();
     }
 
     @Override

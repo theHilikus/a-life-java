@@ -17,14 +17,12 @@ public class Scouting implements Mood {
     private final Vision vision;
     private final Locomotion locomotion;
     private final MoodController moodController;
-    private final int agentId;
     private int lastMovement;
     private final double speedFactor;
 
 
     public Scouting(MoodController moodController, Vision vision, Locomotion locomotion, Genome genome) {
         this.moodController = moodController;
-        this.agentId = vision.getAgentId();
         this.vision = vision;
         this.locomotion = locomotion;
         this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor");
@@ -63,7 +61,7 @@ public class Scouting implements Mood {
 
     @Override
     public int getAgentId() {
-        return agentId;
+        return vision.getAgentId();
     }
 
     @Override

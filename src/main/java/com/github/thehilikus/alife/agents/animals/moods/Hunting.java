@@ -18,7 +18,6 @@ import java.util.SortedSet;
 public class Hunting implements Mood {
     private static final Logger LOG = LoggerFactory.getLogger(Hunting.class);
     private final MoodController moodController;
-    private final int agentId;
     private final Vision vision;
     private final Legs legs;
     private final double speedFactor;
@@ -27,7 +26,6 @@ public class Hunting implements Mood {
 
     public Hunting(MoodController moodController, Vision vision, Legs legs, Genome genome, Agent.Eatable foodAgent) {
         this.moodController = moodController;
-        this.agentId = vision.getAgentId();
         this.vision = vision;
         this.legs = legs;
         this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor");
@@ -36,7 +34,7 @@ public class Hunting implements Mood {
 
     @Override
     public int getAgentId() {
-        return agentId;
+        return vision.getAgentId();
     }
 
     @Override
