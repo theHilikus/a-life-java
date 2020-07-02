@@ -31,7 +31,7 @@ public class Existing implements Mood {
 
     @Override
     public Mood tick() {
-        SortedSet<ScanResult> foundAgents = vision.scan(Edge.class);
+        SortedSet<ScanResult> foundAgents = vision.scan(Edge.class::isInstance);
         if (!foundAgents.isEmpty()) {
             ScanResult closestEdgeScan = foundAgents.first();
             int maxMovement = Math.max(Math.abs(closestEdgeScan.getXDistance()) - 1, Math.abs(closestEdgeScan.getYDistance()) - 1);

@@ -33,7 +33,7 @@ public class Scouting implements Mood {
     @Override
     public Mood tick() {
         //scout the area
-        SortedSet<ScanResult> foundAgents = vision.scan(Plant.class);
+        SortedSet<ScanResult> foundAgents = vision.scan(Plant.class::isInstance);
         if (!foundAgents.isEmpty()) {
             Optional<Plant> plantOptional = foundAgents.stream().map(ScanResult::getAgent).filter(Plant.class::isInstance).map(Plant.class::cast).findFirst();
             if (plantOptional.isPresent()) {
