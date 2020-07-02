@@ -17,14 +17,12 @@ import java.util.SortedSet;
  */
 public class Existing implements Mood {
     private final Vision vision;
-    private final int agentId;
     private final Locomotion locomotion;
     private final double speedFactor;
     private int lastMovement;
 
     public Existing(Vision vision, Genome genome, Locomotion locomotion) {
         this.vision = vision;
-        this.agentId = locomotion.getAgentId();
         this.locomotion = locomotion;
         this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor");
     }
@@ -55,7 +53,7 @@ public class Existing implements Mood {
 
     @Override
     public int getAgentId() {
-        return agentId;
+        return vision.getAgentId();
     }
 
     @Override

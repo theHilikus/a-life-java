@@ -21,7 +21,6 @@ public class Eating implements Mood {
     private static final double EATING_FATIGUE_FACTOR = 1.5;
 
     private final MoodController moodController;
-    private final int agentId;
     private final Vision vision;
     private final Agent.Eatable food;
     private final int eatSpeed;
@@ -30,7 +29,6 @@ public class Eating implements Mood {
 
     public Eating(MoodController moodController, Vision vision, Genome genome, Agent.Eatable foodAgent, HungerTracker hungerTracker) {
         this.moodController = moodController;
-        this.agentId = vision.getAgentId();
         this.vision = vision;
         this.food = foodAgent;
         this.hungerTracker = hungerTracker;
@@ -43,7 +41,7 @@ public class Eating implements Mood {
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.food.getId()).findFirst();
         if (targetOptional.isPresent()) {
             if (hungerTracker.isFull()) {
-                LOG.debug("Agent {} is full", agentId);
+                LOG.debug("Agent {} is full", getAgentId());
                 return moodController.startIdling();
             }
             int biteSize = Math.min(eatSpeed, HungerTracker.FULL_THRESHOLD - hungerTracker.getValue());
@@ -74,7 +72,7 @@ public class Eating implements Mood {
 
     @Override
     public int getAgentId() {
-        return agentId;
+        return vision.getAgentId();
     }
 
     @Override
