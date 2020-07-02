@@ -12,6 +12,7 @@ import javax.validation.constraints.Positive;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 
 /**
  * Vision that can see in a square around the agent
@@ -42,13 +43,13 @@ public class SurroundingsVision implements Vision {
     }
 
     @Override
-    public <T extends Agent> SortedSet<ScanResult> scan(Class<T> type) {
-        LOG.debug("Scanning for Agents of type {} around agent {} in a radius of {}", type.getSimpleName(), agentId, radius);
+    public SortedSet<ScanResult> scan(Predicate<Agent> test) {
+        LOG.debug("Scanning for Agents of type {} around agent {} in a radius of {}", test, agentId, radius);
         SortedSet<ScanResult> result = new TreeSet<>();
         for (int y = radius * -1; y <= radius; y++) {
             for (int x = radius * -1; x <= radius; x++) {
                 Agent foundAgent = world.getObjectRelativeTo(agentId, x, y);
-                if (type.isInstance(foundAgent)) {
+                if (test.test(foundAgent)) {
                     result.add(new ScanResult(x, y, foundAgent));
                 }
             }

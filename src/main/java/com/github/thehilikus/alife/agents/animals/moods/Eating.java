@@ -39,7 +39,7 @@ public class Eating implements Mood {
 
     @Override
     public Mood tick() {
-        SortedSet<ScanResult> scanResult = vision.scan(food.getClass());
+        SortedSet<ScanResult> scanResult = vision.scan(food.getClass()::isInstance);
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.food.getId()).findFirst();
         if (targetOptional.isPresent()) {
             if (hungerTracker.isFull()) {
