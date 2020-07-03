@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.controllers;
 
-import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
 
@@ -10,14 +9,12 @@ import java.util.Map;
 /**
  * Monitors the age of an agent
  */
-public class AgeTracker implements VitalSign, Component {
-    private final int agentId;
+public class AgeTracker implements VitalSign {
     @PositiveOrZero
     private int currentAge;
     private final int lifeExpectancy;
 
-    public AgeTracker(int agentId, int lifeExpectancy) {
-        this.agentId = agentId;
+    public AgeTracker(int lifeExpectancy) {
         this.lifeExpectancy = lifeExpectancy;
     }
 
@@ -36,12 +33,6 @@ public class AgeTracker implements VitalSign, Component {
         return currentAge;
     }
 
-    @Override
-    public int getAgentId() {
-        return agentId;
-    }
-
-    @Override
     public Map<String, String> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "age", Integer.toString(currentAge),

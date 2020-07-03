@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.controllers;
 
-import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
 import org.slf4j.Logger;
@@ -13,7 +12,7 @@ import java.util.Map;
 /**
  * Monitors the agent's level of energy
  */
-public class EnergyTracker implements VitalSign, Component {
+public class EnergyTracker implements VitalSign {
     /**
      * The number of energy points to lose per round
      */
@@ -60,12 +59,10 @@ public class EnergyTracker implements VitalSign, Component {
         return currentEnergy;
     }
 
-    @Override
     public int getAgentId() {
         return agentId;
     }
 
-    @Override
     public Map<String, String> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "energy", Integer.toString(currentEnergy),

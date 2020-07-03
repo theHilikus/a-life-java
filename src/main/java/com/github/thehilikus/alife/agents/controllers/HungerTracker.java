@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.controllers;
 
-import com.github.thehilikus.alife.api.Component;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
 
@@ -11,13 +10,12 @@ import java.util.Map;
 /**
  * Monitors the hunger of an agent
  */
-public class HungerTracker implements VitalSign, Component {
+public class HungerTracker implements VitalSign {
     private static final int STARTING_HUNGER = 50;
     /**
      * The point where the agent stops eating
      */
     public static final int FULL_THRESHOLD = 100;
-    private final int agentId;
 
     @Min(0)
     @Max(100)
@@ -25,8 +23,7 @@ public class HungerTracker implements VitalSign, Component {
 
     private final int hungryThreshold;
 
-    public HungerTracker(int agentId, int hungryThreshold) {
-        this.agentId = agentId;
+    public HungerTracker(int hungryThreshold) {
         currentHunger = STARTING_HUNGER;
         this.hungryThreshold = hungryThreshold;
     }
@@ -47,12 +44,6 @@ public class HungerTracker implements VitalSign, Component {
         return currentHunger;
     }
 
-    @Override
-    public int getAgentId() {
-        return agentId;
-    }
-
-    @Override
     public Map<String, String> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "hunger", Integer.toString(currentHunger),
