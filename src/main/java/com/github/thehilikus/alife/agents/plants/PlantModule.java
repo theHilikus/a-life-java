@@ -15,11 +15,7 @@ import javax.inject.Named;
  */
 @Module
 public class PlantModule {
-    @Provides
-    @AgentScope
-    static Position provideEmptyPosition(World world) {
-        return world.getEmptyPosition();
-    }
+
 
     @Provides
     @AgentScope

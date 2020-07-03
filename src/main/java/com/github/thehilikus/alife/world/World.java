@@ -27,12 +27,6 @@ public class World {
         return new World(options.getWorldWidth(), options.getWorldHeight());
     }
 
-    @Provides
-    @AgentScope
-    static Position provideEmptyPosition(World world) {
-        return world.getEmptyPosition();
-    }
-
     public World(int width, int height) {
         grid = new Agent[height + 2][width + 2];
         createEdge();
