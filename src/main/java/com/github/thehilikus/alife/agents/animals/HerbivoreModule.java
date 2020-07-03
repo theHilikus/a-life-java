@@ -51,4 +51,10 @@ public class HerbivoreModule {
     static Genome provideGenome(int agentId) {
         return new Herbivore.HerbivoreGenome(agentId);
     }
+
+    @Provides
+    @AgentScope
+    static Position provideEmptyPosition(World world) {
+        return world.getEmptyPosition();
+    }
 }
