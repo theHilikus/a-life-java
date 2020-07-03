@@ -20,8 +20,8 @@ public class VitalsModule {
 
     @Provides
     @AgentScope
-    public static HungerTracker provideHungerTracker(int agentId, Genome genome) {
-        return new HungerTracker(agentId, genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
+    public static HungerTracker provideHungerTracker(Genome genome) {
+        return new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
     }
 
     @Provides
@@ -32,7 +32,7 @@ public class VitalsModule {
 
     @Provides
     @AgentScope
-    public static AgeTracker provideAgeTracker(int agentId, Genome genome) {
-        return new AgeTracker(agentId, genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
+    public static AgeTracker provideAgeTracker(Genome genome) {
+        return new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
     }
 }
