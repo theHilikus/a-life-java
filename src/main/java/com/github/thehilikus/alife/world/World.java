@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The environment where the agents live
@@ -17,7 +18,7 @@ import java.util.*;
 public class World {
     private static final Logger LOG = LoggerFactory.getLogger(World.class.getSimpleName());
     private final Agent[][] grid;
-    private final Map<Integer, Agent.Living> agents = new HashMap<>();
+    private final Map<Integer, Agent.Living> agents = new ConcurrentHashMap<>();
     private final Map<Integer, Agent.Living> cemetery = new HashMap<>();
     private int hour;
 
