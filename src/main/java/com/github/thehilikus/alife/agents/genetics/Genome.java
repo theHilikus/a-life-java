@@ -31,6 +31,9 @@ public abstract class Genome implements Component {
 
     @SuppressWarnings("unchecked")
     public <T> T getGene(String name) {
+        if (!genes.containsKey(name)) {
+            throw new IllegalArgumentException("Gene does not exist: " + name);
+        }
         return (T) genes.get(name);
     }
 }

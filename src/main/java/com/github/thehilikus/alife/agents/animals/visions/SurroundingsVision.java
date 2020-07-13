@@ -44,7 +44,7 @@ public class SurroundingsVision implements Vision {
 
     @Override
     public SortedSet<ScanResult> scan(Predicate<Agent> test) {
-        LOG.debug("Scanning for Agents of type {} around agent {} in a radius of {}", test, agentId, radius);
+        LOG.debug("Scanning around agent {} in a radius of {}", agentId, radius);
         SortedSet<ScanResult> result = new TreeSet<>();
         for (int y = radius * -1; y <= radius; y++) {
             for (int x = radius * -1; x <= radius; x++) {
