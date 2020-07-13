@@ -130,6 +130,10 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         private static final int MIN_LIFE_EXPECTANCY = 50;
         private static final int MAX_LOW_ENERGY_THRESHOLD = 50;
         private static final int MAX_HUNGRY_THRESHOLD = 50;
+        private static final int MIN_TEEN_AGE = 10;
+        private static final int MAX_TEEN_AGE = 20;
+        private static final int MAX_MATING_DURATION = 7;
+        private static final int MIN_MATING_DURATION = 1;
 
         private static Map<String, Object> createGenes() {
             int visionDistance = RandomProvider.nextInt(MIN_VISION_DISTANCE, MAX_VISION_DISTANCE);
@@ -145,7 +149,9 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
                     Map.entry(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomProvider.nextDouble(MAX_HUNT_SPEED_FACTOR)),
                     Map.entry(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", RandomProvider.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY)),
                     Map.entry(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold", RandomProvider.nextInt(MAX_LOW_ENERGY_THRESHOLD)),
-                    Map.entry(VitalSign.PARAMETER_PREFIX + "hungryThreshold", RandomProvider.nextInt(MAX_HUNGRY_THRESHOLD))
+                    Map.entry(VitalSign.PARAMETER_PREFIX + "hungryThreshold", RandomProvider.nextInt(MAX_HUNGRY_THRESHOLD)),
+                    Map.entry(Agent.Evolvable.PARAMETER_PREFIX + "teenAge", RandomProvider.nextInt(MIN_TEEN_AGE, MAX_TEEN_AGE)),
+                    Map.entry(Agent.Evolvable.PARAMETER_PREFIX + "matingDuration", RandomProvider.nextInt(MIN_MATING_DURATION, MAX_MATING_DURATION))
             );
         }
 

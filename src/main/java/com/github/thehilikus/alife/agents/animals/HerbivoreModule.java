@@ -18,43 +18,31 @@ import dagger.Provides;
 public class HerbivoreModule {
     @Provides
     @AgentScope
-    static Vision provideVision(int agentId, Genome genome, World world) {
+    Vision provideVision(int agentId, Genome genome, World world) {
         return new SurroundingsVision(agentId, genome, world);
     }
 
     @Provides
     @AgentScope
-    static Locomotion provideLocomotion(int agentId, Position startingPosition, Genome genome) {
+    Locomotion provideLocomotion(int agentId, Position startingPosition, Genome genome) {
         return new StraightWalkWithRandomTurn(agentId, startingPosition, genome);
     }
 
     @Provides
     @AgentScope
-    static Legs provideLegs(int agentId, Position position, Genome genome) {
+    Legs provideLegs(int agentId, Position position, Genome genome) {
         return new Legs(agentId, position, genome);
     }
 
     @Provides
     @AgentScope
-    static Mood provideStartingMood(Vision vision, Genome genome, Locomotion locomotion) {
+    Mood provideStartingMood(Vision vision, Genome genome, Locomotion locomotion) {
         return new Existing(vision, genome, locomotion);
     }
 
     @Provides
     @AgentScope
-    static MoodController provideMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker) {
-        return new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker, energyTracker);
-    }
-
-    @Provides
-    @AgentScope
-    static Genome provideGenome(int agentId) {
-        return new Herbivore.HerbivoreGenome(agentId);
-    }
-
-    @Provides
-    @AgentScope
-    static Position provideEmptyPosition(World world) {
-        return world.getEmptyPosition();
+    MoodController provideMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, PregnancyTracker pregnancyTracker, World world) {
+        return new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker, energyTracker, ageTracker, pregnancyTracker, world);
     }
 }

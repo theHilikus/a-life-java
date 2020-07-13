@@ -21,15 +21,15 @@ public class Hunting implements Mood {
     private final Vision vision;
     private final Legs legs;
     private final double speedFactor;
-    private final Agent.Eatable target;
+    private final Agent target;
     private int lastMovement;
 
-    public Hunting(MoodController moodController, Vision vision, Legs legs, Genome genome, Agent.Eatable foodAgent) {
+    public Hunting(MoodController moodController, Vision vision, Legs legs, Genome genome, Agent target) {
         this.moodController = moodController;
         this.vision = vision;
         this.legs = legs;
         this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor");
-        this.target = foodAgent;
+        this.target = target;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Hunting implements Mood {
             Orientation targetDirection = legs.getPosition().directionTo(targetScan.getAgent().getPosition());
             int maxMovement = Math.max(Math.abs(targetScan.getXDistance()) - 1, Math.abs(targetScan.getYDistance()) - 1);
             if (maxMovement == 0) {
-                return moodController.startEating(target);
+                return reachedTarget();
             } else {
                 lastMovement = legs.move(speedFactor, targetDirection, maxMovement);
             }
@@ -68,6 +68,10 @@ public class Hunting implements Mood {
         return this;
     }
 
+    protected Mood reachedTarget() {
+        return moodController.startEating((Agent.Eatable) target);
+    }
+
     @Override
     public int getEnergyDelta() {
         return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * legs.getEnergyExpenditureFactor());
@@ -76,7 +80,7 @@ public class Hunting implements Mood {
     @Override
     public String toString() {
         return "Hunting{" +
-                "target=" + target +
+                "target=" + target.getId() +
                 '}';
     }
 

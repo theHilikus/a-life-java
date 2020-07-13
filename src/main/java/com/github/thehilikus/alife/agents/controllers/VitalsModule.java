@@ -4,6 +4,7 @@ import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.AgentScope;
 import com.github.thehilikus.alife.api.MoodController;
 import com.github.thehilikus.alife.api.VitalSign;
+import com.github.thehilikus.alife.world.World;
 import dagger.Module;
 import dagger.Provides;
 
@@ -34,5 +35,11 @@ public class VitalsModule {
     @AgentScope
     public static AgeTracker provideAgeTracker(Genome genome) {
         return new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
+    }
+
+    @Provides
+    @AgentScope
+    public static PregnancyTracker providePregnancyTracker(World world) {
+        return new PregnancyTracker(world);
     }
 }

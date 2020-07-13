@@ -60,6 +60,8 @@ public interface Agent {
      * An agent that has a genotype
      */
     interface Evolvable extends Living {
+        String PARAMETER_PREFIX = "evolution";
+
         @NotNull
         Genome getGenome();
     }
