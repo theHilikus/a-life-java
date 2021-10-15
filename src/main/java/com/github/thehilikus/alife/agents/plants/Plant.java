@@ -5,7 +5,7 @@ import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.plants.moods.BeingEaten;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.RandomProvider;
-import com.github.thehilikus.alife.world.WorldComponent;
+import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,24 +21,24 @@ public class Plant implements Agent.Eatable {
     private static final Logger LOG = LoggerFactory.getLogger(Plant.class.getSimpleName());
     private static final int MAX_SIZE = 300;
     private final int id;
-    private final Position position;
+    private Position position;
     private final int size;
     private Mood mood;
     private final EnergyTracker energyTracker;
 
-    public static void create(int count, WorldComponent worldComponent) {
+    public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
-            LivingAgentComponent livingAgentComponent = DaggerLivingAgentComponent.builder().worldComponent(worldComponent).build();
+            LivingAgentComponent livingAgentComponent = DaggerLivingAgentComponent.builder().build();
             Agent.Living newAgent = livingAgentComponent.createPlant();
             LOG.info("Created {}", newAgent);
-            worldComponent.createWorld().addAgent(newAgent);
+            world.addAgent(newAgent);
         }
     }
 
     @Inject
-    public Plant(int id, Position position, @Named("plants") Mood startingMood) {
+    public Plant(int id, @Named("plants") Mood startingMood) {
         this.id = id;
-        this.position = position;
+        this.position = World.instance.getEmptyPosition();
         this.mood = startingMood;
         this.energyTracker = new EnergyTracker(id);
         this.size = RandomProvider.nextInt(MAX_SIZE);
@@ -59,6 +59,11 @@ public class Plant implements Agent.Eatable {
         }
 
         return energyTracker.isAlive() ? null : energyTracker;
+    }
+
+    @Override
+    public void changePosition(Position newPosition, Orientation direction) {
+        position = newPosition;
     }
 
     @Override

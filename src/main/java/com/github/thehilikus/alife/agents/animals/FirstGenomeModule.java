@@ -18,9 +18,4 @@ public class FirstGenomeModule {
         return new Herbivore.HerbivoreGenome(agentId);
     }
 
-    @Provides
-    @AgentScope
-    Position provideEmptyPosition(World world) {
-        return world.getEmptyPosition();
-    }
 }

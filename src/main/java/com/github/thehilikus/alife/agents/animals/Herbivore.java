@@ -5,7 +5,7 @@ import com.github.thehilikus.alife.agents.controllers.VitalsController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.RandomProvider;
-import com.github.thehilikus.alife.world.WorldComponent;
+import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,23 +25,21 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     private final Genome genome;
 
     private final int id;
-    private final Position position;
     private Mood mood;
     private final VitalsController vitals;
 
-    public static void create(int count, WorldComponent worldComponent) {
+    public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
-            LivingAgentComponent livingAgentComponent = DaggerLivingAgentComponent.builder().worldComponent(worldComponent).build();
+            LivingAgentComponent livingAgentComponent = DaggerLivingAgentComponent.builder().build();
             Agent.Living newAgent = livingAgentComponent.createHerbivore();
             LOG.info("Created {}", newAgent);
-            worldComponent.createWorld().addAgent(newAgent);
+            world.addAgent(newAgent);
         }
     }
 
     @Inject
-    public Herbivore(int id, Position position, Vision vision, Locomotion locomotion, Mood startingMood, Genome genome, VitalsController vitals) {
+    public Herbivore(int id, Vision vision, Locomotion locomotion, Mood startingMood, Genome genome, VitalsController vitals) {
         this.id = id;
-        this.position = position;
         this.vision = vision;
         this.locomotion = locomotion;
         this.genome = genome;
@@ -75,7 +73,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     public Map<String, String> getDetails() {
         Map<String, String> result = new LinkedHashMap<>();
         result.put("type", getClass().getSimpleName());
-        result.put("position", position.getX() + ", " + position.getY());
+        result.put("position", locomotion.getPosition().getX() + ", " + locomotion.getPosition().getY());
         result.putAll(vitals.getParameters());
         result.putAll(mood.getParameters());
         result.putAll(vision.getParameters());
@@ -83,11 +81,6 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
 //        result.putAll(genome.getParameters());
 
         return result;
-    }
-
-    @Override
-    public Position getMovablePosition() {
-        return position;
     }
 
     @Override
@@ -108,7 +101,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     public String toString() {
         return "Herbivore{" +
                 "id=" + id +
-                ", position=" + position +
+                ", position=" + locomotion.getPosition() +
                 ", mood=" + mood +
                 '}';
     }
@@ -116,6 +109,16 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     @Override
     public Genome getGenome() {
         return genome;
+    }
+
+    @Override
+    public Position.Immutable getPosition() {
+        return locomotion.getPosition();
+    }
+
+    @Override
+    public void changePosition(Position newPosition, Orientation direction) {
+        locomotion.setPosition(newPosition, direction);
     }
 
     public static class HerbivoreGenome extends Genome {

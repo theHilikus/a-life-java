@@ -24,7 +24,7 @@ public class Legs {
     @DecimalMax("0.0")
     private final double energyExpenditureFactor;
 
-    private final Position position;
+    private Position position;
 
     public Legs(int agentId, Position position, Genome genome) {
         this.agentId = agentId;
@@ -52,6 +52,10 @@ public class Legs {
 
     public Position.Immutable getPosition() {
         return position.toImmutable();
+    }
+
+    public void setPosition(Position newPosition) {
+        position = newPosition;
     }
 
     public int getAgentId() {

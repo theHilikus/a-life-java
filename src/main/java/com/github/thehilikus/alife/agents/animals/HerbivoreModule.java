@@ -18,20 +18,20 @@ import dagger.Provides;
 public class HerbivoreModule {
     @Provides
     @AgentScope
-    Vision provideVision(int agentId, Genome genome, World world) {
-        return new SurroundingsVision(agentId, genome, world);
+    Vision provideVision(int agentId, Genome genome) {
+        return new SurroundingsVision(agentId, genome, World.instance);
     }
 
     @Provides
     @AgentScope
-    Locomotion provideLocomotion(int agentId, Position startingPosition, Genome genome) {
-        return new StraightWalkWithRandomTurn(agentId, startingPosition, genome);
+    Locomotion provideLocomotion(int agentId, Legs legs, Genome genome) {
+        return new StraightWalkWithRandomTurn(agentId, legs, genome);
     }
 
     @Provides
     @AgentScope
-    Legs provideLegs(int agentId, Position position, Genome genome) {
-        return new Legs(agentId, position, genome);
+    Legs provideLegs(int agentId, Genome genome) {
+        return new Legs(agentId, World.instance.getEmptyPosition(), genome);
     }
 
     @Provides
@@ -42,7 +42,7 @@ public class HerbivoreModule {
 
     @Provides
     @AgentScope
-    MoodController provideMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, PregnancyTracker pregnancyTracker, World world) {
-        return new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker, energyTracker, ageTracker, pregnancyTracker, world);
+    MoodController provideMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, PregnancyTracker pregnancyTracker) {
+        return new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker, energyTracker, ageTracker, pregnancyTracker, World.instance);
     }
 }

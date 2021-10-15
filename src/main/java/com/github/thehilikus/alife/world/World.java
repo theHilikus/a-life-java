@@ -2,30 +2,30 @@ package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.*;
-import dagger.Module;
-import dagger.Provides;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Singleton;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The environment where the agents live
  */
-@Module
 public class World {
     private static final Logger LOG = LoggerFactory.getLogger(World.class.getSimpleName());
+    /**
+     * Globally accessible reference to the world
+     */
+    public static World instance;
     private final Agent[][] grid;
     private final Map<Integer, Agent.Living> agents = new ConcurrentHashMap<>();
     private final Map<Integer, Agent.Living> cemetery = new HashMap<>();
     private int hour;
 
-    @Provides
-    @Singleton
-    static World provideWorld(CliOptions options) {
-        return new World(options.getWorldWidth(), options.getWorldHeight());
+
+    static World createWorld(CliOptions options) {
+        instance = new World(options.getWorldWidth(), options.getWorldHeight());
+        return instance;
     }
 
     public World(int width, int height) {
@@ -104,14 +104,15 @@ public class World {
         return causeOfDeath;
     }
 
-    private Position.Immutable resolveCollision(Agent.Movable colliderAgent, Position.Immutable originalPosition, Agent collidedAgent) {
-        Position newPosition = colliderAgent.getMovablePosition();
-        Orientation colliderOrientation = originalPosition.directionTo(newPosition.toImmutable());
-        do {
-            newPosition.move(colliderOrientation.opposite(), 1);
-            LOG.trace("Adjusting collision at {} between new {} and original {}", newPosition, colliderAgent.getId(), collidedAgent.getId());
-            collidedAgent = grid[newPosition.getY()][newPosition.getX()];
-        } while (collidedAgent != null);
+    private Position.Immutable resolveCollision(Agent.Living colliderAgent, Position.Immutable originalPosition, Agent collidedAgent) {
+        Position newPosition = new Position(originalPosition.getX(), originalPosition.getY());
+        Orientation newOrientation = originalPosition.directionTo(colliderAgent.getPosition()).opposite(); //TODO maybe needs to be random to avoid oscillation
+        colliderAgent.changePosition(newPosition, newOrientation);
+        LOG.trace("Adjusting collision at {} between new {} and original {}", newPosition, colliderAgent.getId(), collidedAgent.getId());
+        collidedAgent = grid[newPosition.getY()][newPosition.getX()];
+        if (collidedAgent != null) {
+            throw new UnsupportedOperationException("When resolving collision by sending agent back, the old position is already taken"); //TODO: improve instead of throwing
+        }
 
         return newPosition.toImmutable();
     }

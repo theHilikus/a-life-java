@@ -24,11 +24,11 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     private Orientation orientation;
 
 
-    public StraightWalkWithRandomTurn(int agentId, Position position, Genome genome) {
+    public StraightWalkWithRandomTurn(int agentId, Legs legs, Genome genome) {
         this.agentId = agentId;
         this.turningProbability = genome.getGene(Locomotion.PARAMETER_PREFIX + "turningProbability");
         this.orientation = Orientation.fromInt(RandomProvider.nextInt(4));
-        this.walker = new Legs(agentId, position, genome);
+        this.walker = legs;
     }
 
     @Override
@@ -55,6 +55,12 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     @Override
     public Position.Immutable getPosition() {
         return walker.getPosition();
+    }
+
+    @Override
+    public void setPosition(Position newPosition, Orientation newDirection) {
+        walker.setPosition(newPosition);
+        orientation = newDirection;
     }
 
     private void turn() {

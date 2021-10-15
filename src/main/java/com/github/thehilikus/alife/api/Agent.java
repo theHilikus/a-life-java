@@ -34,6 +34,8 @@ public interface Agent {
          * @return null if the agent is alive at the end of the turn or the vital sign that caused the death
          */
         VitalSign tick();
+
+        void changePosition(Position newPosition, Orientation direction);
     }
 
     interface Eatable extends Living {
@@ -44,16 +46,7 @@ public interface Agent {
      * An agent that can change positions
      */
     interface Movable extends Living {
-        @NotNull
-        Position getMovablePosition();
 
-        /**
-         * returns a coordinate with the current position of the agent
-         */
-        @Override
-        default Position.Immutable getPosition() {
-            return getMovablePosition().toImmutable();
-        }
     }
 
     /**

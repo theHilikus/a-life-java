@@ -39,7 +39,7 @@ public class VitalsModule {
 
     @Provides
     @AgentScope
-    public static PregnancyTracker providePregnancyTracker(World world) {
-        return new PregnancyTracker(world);
+    public static PregnancyTracker providePregnancyTracker() {
+        return new PregnancyTracker(World.instance);
     }
 }
