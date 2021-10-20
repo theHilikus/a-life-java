@@ -106,19 +106,27 @@ public class World {
 
     private Position.Immutable resolveCollision(Agent.Living colliderAgent, Position.Immutable originalPosition, Agent collidedAgent) {
         Position newPosition = new Position(originalPosition.getX(), originalPosition.getY());
-        Orientation newOrientation = originalPosition.directionTo(colliderAgent.getPosition()).opposite(); //TODO maybe needs to be random to avoid oscillation
+        Orientation newOrientation = originalPosition.directionTo(colliderAgent.getPosition()).opposite();
+        while (!isPositionEmpty(newPosition.getX(), newPosition.getY())) {
+            newPosition.move(newOrientation, 1);
+            if (grid[newPosition.getY()][newPosition.getX()] instanceof Edge) {
+                LOG.debug("Hit the edge when resolving collision");
+                newOrientation = newOrientation.turn(Orientation.WEST);
+            }
+        }
         colliderAgent.changePosition(newPosition, newOrientation);
         LOG.trace("Adjusting collision at {} between new {} and original {}", newPosition, colliderAgent.getId(), collidedAgent.getId());
-        collidedAgent = grid[newPosition.getY()][newPosition.getX()];
-        if (collidedAgent != null) {
-            throw new UnsupportedOperationException("When resolving collision by sending agent back, the old position is already taken"); //TODO: improve instead of throwing
-        }
 
         return newPosition.toImmutable();
     }
 
     public void addAgent(Agent.Living agent) {
         Position.Immutable position = agent.getPosition();
+        if (!isPositionEmpty(position.getX(), position.getY())) {
+            Position closebyPosition = new Position(position.getX(), position.getY());
+            closebyPosition.move(Orientation.WEST, 1);
+            resolveCollision(agent, closebyPosition.toImmutable(), grid[position.getY()][position.getX()]);
+        }
         LOG.info("Adding {} to world", agent);
         grid[position.getY()][position.getX()] = agent;
         agents.put(agent.getId(), agent);
@@ -138,9 +146,13 @@ public class World {
         do {
             x = RandomProvider.nextInt(1, getWidth() - 1);
             y = RandomProvider.nextInt(1, getHeight() - 1);
-        } while (grid[y][x] != null);
+        } while (!isPositionEmpty(x, y));
 
         return new Position(x, y);
+    }
+
+    private boolean isPositionEmpty(int x, int y) {
+        return grid[y][x] == null;
     }
 
     public Agent getObjectRelativeTo(int id, int xDelta, int yDelta) {
