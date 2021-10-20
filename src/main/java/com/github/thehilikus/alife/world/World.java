@@ -13,10 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class World {
     private static final Logger LOG = LoggerFactory.getLogger(World.class.getSimpleName());
-    /**
-     * Globally accessible reference to the world
-     */
-    public static World instance;
     private final Agent[][] grid;
     private final Map<Integer, Agent.Living> agents = new ConcurrentHashMap<>();
     private final Map<Integer, Agent.Living> cemetery = new HashMap<>();
@@ -24,11 +20,10 @@ public class World {
 
 
     static World createWorld(CliOptions options) {
-        instance = new World(options.getWorldWidth(), options.getWorldHeight());
-        return instance;
+        return new World(options.getWorldWidth(), options.getWorldHeight());
     }
 
-    public World(int width, int height) {
+    private World(int width, int height) {
         grid = new Agent[height + 2][width + 2];
         createEdge();
         hour = 0;
@@ -155,7 +150,7 @@ public class World {
         return grid[y][x] == null;
     }
 
-    public Agent getObjectRelativeTo(int id, int xDelta, int yDelta) {
+    public Agent getAgentRelativeTo(int id, int xDelta, int yDelta) {
         Position.Immutable center = agents.get(id).getPosition();
         int x = center.getX() + xDelta;
         int y = center.getY() + yDelta;

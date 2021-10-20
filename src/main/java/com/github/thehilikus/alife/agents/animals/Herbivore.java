@@ -1,15 +1,19 @@
 package com.github.thehilikus.alife.agents.animals;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.controllers.VitalsController;
+import com.github.thehilikus.alife.agents.animals.moods.Existing;
+import com.github.thehilikus.alife.agents.animals.motions.Legs;
+import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
+import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
+import com.github.thehilikus.alife.agents.controllers.*;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
+import com.github.thehilikus.alife.world.IdsProvider;
 import com.github.thehilikus.alife.world.RandomProvider;
 import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -30,15 +34,27 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
 
     public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
-            LivingAgentComponent livingAgentComponent = DaggerLivingAgentComponent.builder().build();
-            Agent.Living newAgent = livingAgentComponent.createHerbivore();
+            int id = IdsProvider.getNextId();
+            Genome genome = new Herbivore.HerbivoreGenome(id);
+            Vision vision = new SurroundingsVision(id, genome, world);
+            Legs legs = new Legs(id, world.getEmptyPosition(), genome);
+            Locomotion locomotion = new StraightWalkWithRandomTurn(id, legs, genome);
+            Mood startingMood = new Existing(vision, genome, locomotion);
+
+            HungerTracker hungerTracker = new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
+            EnergyTracker energyTracker = new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
+            AgeTracker ageTracker = new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
+            ReproductionTracker reproductionTracker = new ReproductionTracker();
+            MoodController moodController = new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker, energyTracker, ageTracker, reproductionTracker, world);
+            VitalsController vitals = new VitalsController(id, moodController, hungerTracker, energyTracker, ageTracker, reproductionTracker);
+
+            Living newAgent = new Herbivore(id, vision, locomotion, startingMood, genome, vitals);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }
     }
 
-    @Inject
-    public Herbivore(int id, Vision vision, Locomotion locomotion, Mood startingMood, Genome genome, VitalsController vitals) {
+    private Herbivore(int id, Vision vision, Locomotion locomotion, Mood startingMood, Genome genome, VitalsController vitals) {
         this.id = id;
         this.vision = vision;
         this.locomotion = locomotion;
