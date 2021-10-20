@@ -1,6 +1,7 @@
 package com.github.thehilikus.alife.api;
 
 import com.github.thehilikus.alife.agents.genetics.Genome;
+import com.github.thehilikus.alife.world.World;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -53,9 +54,14 @@ public interface Agent {
      * An agent that has a genotype
      */
     interface Evolvable extends Living {
+        /**
+         * The prefix for evolution parameters
+         */
         String PARAMETER_PREFIX = "evolution";
 
         @NotNull
         Genome getGenome();
+
+        Evolvable reproduce(int fatherId, World world, Genome offspringGenome);
     }
 }

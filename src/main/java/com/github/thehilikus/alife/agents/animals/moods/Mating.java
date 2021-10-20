@@ -2,7 +2,7 @@ package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
-import com.github.thehilikus.alife.agents.controllers.PregnancyTracker;
+import com.github.thehilikus.alife.agents.controllers.ReproductionTracker;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.World;
@@ -17,7 +17,7 @@ public class Mating implements Mood {
     private static final double MATE_ENERGY_FACTOR = 1.25;
     private final MoodController moodController;
     private final Genome genome;
-    private final PregnancyTracker pregnancyTracker;
+    private final ReproductionTracker reproductionTracker;
     private final Agent.Evolvable mate;
     private final Vision vision;
     private final int matingDuration;
@@ -25,11 +25,11 @@ public class Mating implements Mood {
     private int matingEnergySpent;
     private int timeWithMate;
 
-    public Mating(MoodController moodController, Vision vision, Genome genome, PregnancyTracker pregnancyTracker, Agent.Evolvable mate, World world) {
+    public Mating(MoodController moodController, Vision vision, Genome genome, ReproductionTracker reproductionTracker, Agent.Evolvable mate, World world) {
         this.moodController = moodController;
         this.vision = vision;
         this.genome = genome;
-        this.pregnancyTracker = pregnancyTracker;
+        this.reproductionTracker = reproductionTracker;
         this.mate = mate;
         this.matingDuration = genome.getGene(Agent.Evolvable.PARAMETER_PREFIX + "matingDuration");
         this.world = world;
@@ -45,13 +45,10 @@ public class Mating implements Mood {
                 LOG.debug("Mating with {}: {}/{}", mate, timeWithMate, matingDuration);
                 if (timeWithMate >= matingDuration) {
                     LOG.info("Giving birth");
-                    Genome offspringGenome = genome;
-                    OffspringComponent combinerComponent = DaggerOffspringComponent.builder()
-                            .offspringGenome(offspringGenome)
-                            .world(world)
-                            .build();
-                    Agent.Evolvable baby = combinerComponent.createOffspring();
-                    pregnancyTracker.giveBirth(baby);
+                    Genome offspringGenome = genome; //TODO: genetic operations
+
+                    Agent.Evolvable offspring = mate.reproduce(getAgentId(), world, offspringGenome);
+                    reproductionTracker.gaveBirth(mate.getId(), offspring.getId());
 
                     return moodController.startIdling();
                 }
@@ -88,7 +85,11 @@ public class Mating implements Mood {
 
     @Override
     public Map<String, String> getParameters() {
-        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+        return Map.of(
+                PARAMETER_PREFIX + "current", getClass().getSimpleName(),
+                PARAMETER_PREFIX + "matingDuration", Integer.toString(matingDuration),
+                PARAMETER_PREFIX + "mate", Integer.toString(mate.getId()),
+                PARAMETER_PREFIX + "timeWithMate", Integer.toString(timeWithMate));
     }
 
     @Override

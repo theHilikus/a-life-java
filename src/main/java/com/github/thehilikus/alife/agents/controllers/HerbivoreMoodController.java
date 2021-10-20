@@ -10,6 +10,7 @@ import com.github.thehilikus.alife.world.World;
  * Controls the transitions between moods
  */
 public class HerbivoreMoodController implements MoodController {
+    private static final int POST_REPRODUCTION_WAIT = 10;
     private final Vision vision;
     private final Legs legs;
     private final Locomotion locomotion;
@@ -17,10 +18,10 @@ public class HerbivoreMoodController implements MoodController {
     private final HungerTracker hungerTracker;
     private final EnergyTracker energyTracker;
     private final AgeTracker ageTracker;
-    private final PregnancyTracker pregnancyTracker;
+    private final ReproductionTracker reproductionTracker;
     private final World world;
 
-    public HerbivoreMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, PregnancyTracker pregnancyTracker, World world) {
+    public HerbivoreMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker, World world) {
         this.vision = vision;
         this.legs = legs;
         this.locomotion = locomotion;
@@ -28,7 +29,7 @@ public class HerbivoreMoodController implements MoodController {
         this.hungerTracker = hungerTracker;
         this.energyTracker = energyTracker;
         this.ageTracker = ageTracker;
-        this.pregnancyTracker = pregnancyTracker;
+        this.reproductionTracker = reproductionTracker;
         this.world = world;
     }
 
@@ -55,7 +56,7 @@ public class HerbivoreMoodController implements MoodController {
     @Override
     public Mood startIdling() {
         int teenAge = genome.getGene(Agent.Evolvable.PARAMETER_PREFIX + "teenAge");
-        if (ageTracker.getValue() >= teenAge) { //TODO: check last pregnancy too
+        if (ageTracker.getValue() >= teenAge && reproductionTracker.getValue() > POST_REPRODUCTION_WAIT) {
             return new InHeat(this, vision, genome, locomotion);
         } else {
             return new Existing(vision, genome, locomotion);
@@ -69,6 +70,6 @@ public class HerbivoreMoodController implements MoodController {
 
     @Override
     public Mood startMating(Agent.Evolvable mate) {
-        return new Mating(this, vision, genome, pregnancyTracker, mate, world);
+        return new Mating(this, vision, genome, reproductionTracker, mate, world);
     }
 }

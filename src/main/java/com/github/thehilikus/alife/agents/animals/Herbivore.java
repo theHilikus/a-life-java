@@ -94,7 +94,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         result.putAll(mood.getParameters());
         result.putAll(vision.getParameters());
         result.putAll(locomotion.getParameters());
-//        result.putAll(genome.getParameters());
+        result.putAll(genome.getParameters());
 
         return result;
     }
@@ -125,6 +125,31 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     @Override
     public Genome getGenome() {
         return genome;
+    }
+
+    @Override
+    public Evolvable reproduce(int fatherId, World world, Genome offspringGenome) {
+        int id = IdsProvider.getNextId();
+        Vision vision = new SurroundingsVision(id, offspringGenome, world);
+        Position offspringPosition = new Position(locomotion.getPosition().getX(), locomotion.getPosition().getY());
+        Legs offspringLegs = new Legs(id, offspringPosition, offspringGenome);
+        Locomotion offspringLocomotion = new StraightWalkWithRandomTurn(id, offspringLegs, offspringGenome);
+        offspringLocomotion.move(1, 1);
+        Mood offspringStartingMood = new Existing(vision, offspringGenome, offspringLocomotion);
+
+        HungerTracker offspringHungerTracker = new HungerTracker(offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
+        EnergyTracker offspringEnergyTracker = new EnergyTracker(id, offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
+        AgeTracker offspringAgeTracker = new AgeTracker(offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
+        ReproductionTracker offspringReproductionTracker = new ReproductionTracker();
+        MoodController offspringMoodController = new HerbivoreMoodController(vision, offspringLegs, offspringLocomotion, offspringGenome, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, world);
+        VitalsController offspringVitals = new VitalsController(id, offspringMoodController, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker);
+
+        Evolvable result = new Herbivore(id, vision, offspringLocomotion, offspringStartingMood, offspringGenome, offspringVitals);
+        LOG.info("Created offspring {}", result);
+        world.addAgent(result);
+
+        vitals.gaveBirth(fatherId, result);
+        return result;
     }
 
     @Override

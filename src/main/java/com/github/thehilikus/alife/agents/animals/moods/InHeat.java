@@ -52,7 +52,7 @@ public class InHeat implements Mood {
 
     @Override
     public Map<String, String> getParameters() {
-        throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+        return Map.of(PARAMETER_PREFIX + "current", getClass().getSimpleName());
     }
 
     @Override
