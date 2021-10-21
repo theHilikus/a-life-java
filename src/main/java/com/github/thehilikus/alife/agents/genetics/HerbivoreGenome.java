@@ -18,6 +18,7 @@ import java.util.Map;
 public class HerbivoreGenome extends Genome {
     private static final Logger LOG = LoggerFactory.getLogger(HerbivoreGenome.class);
     private static final double CROSSOVER_PROBABILITY = 0.7;
+    private static final double MUTATION_PROBABILITY = 0.05;
 
     private static final int MIN_VISION_DISTANCE = 2;
     private static final int MAX_VISION_DISTANCE = 20;
@@ -107,7 +108,21 @@ public class HerbivoreGenome extends Genome {
     }
 
     @Override
-    public Genome mutate() {
-        return this; //TODO implement
+    public void mutate() {
+        Map<String, Object> mutationsPool = createGenes();
+
+        Iterator<Map.Entry<String, Object>> currentGenesIter = getGenes().entrySet().iterator();
+        Iterator<Map.Entry<String, Object>> mutationsPoolIter = mutationsPool.entrySet().iterator();
+
+        for (int pos = 0; pos < getGenes().size(); pos++) {
+            Map.Entry<String, Object> currentGene = currentGenesIter.next();
+            Map.Entry<String, Object> mutatedGene = mutationsPoolIter.next();
+            if (!currentGene.getKey().equals(mutatedGene.getKey())) {
+                throw new IllegalStateException("Genes are not properly aligned");
+            }
+            if (RandomProvider.nextDouble(1) < MUTATION_PROBABILITY) {
+                getGenes().put(mutatedGene.getKey(), mutatedGene.getValue());
+            }
+        }
     }
 }

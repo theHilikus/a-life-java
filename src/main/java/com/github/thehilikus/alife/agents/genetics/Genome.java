@@ -29,7 +29,7 @@ public abstract class Genome {
     
     public abstract Genome crossover(Genome maternalGenome);
 
-    public abstract Genome mutate();
+    public abstract void mutate();
 
     protected Map<String, Object> getGenes() {
         return genes;
