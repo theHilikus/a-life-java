@@ -45,7 +45,8 @@ public class Mating implements Mood {
                 LOG.debug("Mating with {}: {}/{}", mate, timeWithMate, matingDuration);
                 if (timeWithMate >= matingDuration) {
                     LOG.info("Giving birth");
-                    Genome offspringGenome = genome; //TODO: genetic operations
+                    Genome offspringGenome = genome.crossover(mate.getGenome());
+                    offspringGenome.mutate();
 
                     Agent.Evolvable offspring = mate.reproduce(getAgentId(), world, offspringGenome);
                     reproductionTracker.gaveBirth(mate.getId(), offspring.getId());

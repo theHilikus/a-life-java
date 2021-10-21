@@ -7,9 +7,9 @@ import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandom
 import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
 import com.github.thehilikus.alife.agents.controllers.*;
 import com.github.thehilikus.alife.agents.genetics.Genome;
+import com.github.thehilikus.alife.agents.genetics.HerbivoreGenome;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.IdsProvider;
-import com.github.thehilikus.alife.world.RandomProvider;
 import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
             int id = IdsProvider.getNextId();
-            Genome genome = new Herbivore.HerbivoreGenome(id);
+            Genome genome = new HerbivoreGenome();
             Vision vision = new SurroundingsVision(id, genome, world);
             Legs legs = new Legs(id, world.getEmptyPosition(), genome);
             Locomotion locomotion = new StraightWalkWithRandomTurn(id, legs, genome);
@@ -162,45 +162,4 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         locomotion.setPosition(newPosition, direction);
     }
 
-    public static class HerbivoreGenome extends Genome {
-        private static final int MIN_VISION_DISTANCE = 2;
-        private static final int MAX_VISION_DISTANCE = 20;
-        private static final int MIN_TOP_SPEED = 1;
-        private static final double MAX_IDLE_SPEED_FACTOR = 0.25;
-        private static final double MAX_SCOUT_SPEED_FACTOR = 0.5;
-        private static final double MAX_HUNT_SPEED_FACTOR = 0.9;
-        private static final int MAX_SIZE = 50;
-        private static final int MAX_LIFE_EXPECTANCY = 150;
-        private static final int MIN_LIFE_EXPECTANCY = 50;
-        private static final int MAX_LOW_ENERGY_THRESHOLD = 50;
-        private static final int MAX_HUNGRY_THRESHOLD = 50;
-        private static final int MIN_TEEN_AGE = 10;
-        private static final int MAX_TEEN_AGE = 20;
-        private static final int MAX_MATING_DURATION = 7;
-        private static final int MIN_MATING_DURATION = 1;
-
-        private static Map<String, Object> createGenes() {
-            int visionDistance = RandomProvider.nextInt(MIN_VISION_DISTANCE, MAX_VISION_DISTANCE);
-            return Map.ofEntries(
-                    Map.entry("type", "Herbivore"),
-                    Map.entry("size", RandomProvider.nextInt(MAX_SIZE)),
-                    Map.entry(Vision.PARAMETER_PREFIX + "radius", visionDistance),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomProvider.nextInt(MIN_TOP_SPEED, visionDistance)), //agent can't move further than it can see
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomProvider.nextDouble(1) * -1),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomProvider.nextDouble(1)),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor", RandomProvider.nextDouble(MAX_IDLE_SPEED_FACTOR)),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomProvider.nextDouble(MAX_SCOUT_SPEED_FACTOR)),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomProvider.nextDouble(MAX_HUNT_SPEED_FACTOR)),
-                    Map.entry(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", RandomProvider.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY)),
-                    Map.entry(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold", RandomProvider.nextInt(MAX_LOW_ENERGY_THRESHOLD)),
-                    Map.entry(VitalSign.PARAMETER_PREFIX + "hungryThreshold", RandomProvider.nextInt(MAX_HUNGRY_THRESHOLD)),
-                    Map.entry(Agent.Evolvable.PARAMETER_PREFIX + "teenAge", RandomProvider.nextInt(MIN_TEEN_AGE, MAX_TEEN_AGE)),
-                    Map.entry(Agent.Evolvable.PARAMETER_PREFIX + "matingDuration", RandomProvider.nextInt(MIN_MATING_DURATION, MAX_MATING_DURATION))
-            );
-        }
-
-        HerbivoreGenome(int agentId) {
-            super(agentId, createGenes());
-        }
-    }
 }

@@ -57,7 +57,7 @@ public interface Agent {
         /**
          * The prefix for evolution parameters
          */
-        String PARAMETER_PREFIX = "evolution";
+        String PARAMETER_PREFIX = "evolution.";
 
         @NotNull
         Genome getGenome();
