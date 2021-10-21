@@ -3,10 +3,7 @@ package com.github.thehilikus.alife.agents.controllers;
 import com.github.thehilikus.alife.agents.animals.moods.Eating;
 import com.github.thehilikus.alife.agents.animals.moods.Hunting;
 import com.github.thehilikus.alife.agents.animals.moods.Scouting;
-import com.github.thehilikus.alife.api.Component;
-import com.github.thehilikus.alife.api.Mood;
-import com.github.thehilikus.alife.api.MoodController;
-import com.github.thehilikus.alife.api.VitalSign;
+import com.github.thehilikus.alife.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,24 +15,27 @@ import java.util.Map;
  */
 public class VitalsController implements Component {
     private static final Logger LOG = LoggerFactory.getLogger(VitalsController.class.getSimpleName());
+    private final MoodController moodController;
     private final HungerTracker hungerTracker;
     private final EnergyTracker energyTracker;
     private final AgeTracker ageTracker;
+    private final ReproductionTracker reproductionTracker;
     private final int agentId;
-    private final MoodController moodController;
 
-    public VitalsController(int agentId, MoodController moodController, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker) {
+    public VitalsController(int agentId, MoodController moodController, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker) {
         this.agentId = agentId;
-        this.hungerTracker = hungerTracker;
         this.moodController = moodController;
+        this.hungerTracker = hungerTracker;
         this.energyTracker = energyTracker;
         this.ageTracker = ageTracker;
+        this.reproductionTracker = reproductionTracker;
     }
 
     public Mood update(Mood lastMood, Mood newMood) {
         hungerTracker.update(lastMood);
         energyTracker.update(lastMood);
         ageTracker.update();
+        reproductionTracker.update();
 
         Mood result = newMood;
         if (energyTracker.isTired()) {
@@ -80,5 +80,9 @@ public class VitalsController implements Component {
         }
 
         return result;
+    }
+
+    public void gaveBirth(int fatherId, Agent offspring) {
+        reproductionTracker.gaveBirth(fatherId, offspring.getId());
     }
 }

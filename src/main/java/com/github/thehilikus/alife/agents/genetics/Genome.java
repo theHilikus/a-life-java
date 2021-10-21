@@ -1,7 +1,5 @@
 package com.github.thehilikus.alife.agents.genetics;
 
-import com.github.thehilikus.alife.api.Component;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -9,21 +7,13 @@ import java.util.stream.Collectors;
 /**
  * A set of parameters that control the fitness of an agent
  */
-public abstract class Genome implements Component {
-    private final int agentId;
+public abstract class Genome {
     private final Map<String, Object> genes;
 
-    protected Genome(int agentId, Map<String, Object> genes) {
-        this.agentId = agentId;
+    protected Genome(Map<String, Object> genes) {
         this.genes = genes;
     }
 
-    @Override
-    public int getAgentId() {
-        return agentId;
-    }
-
-    @Override
     public Map<String, String> getParameters() {
         Map<String, String> mapWithStrings = genes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().toString()));
         return Collections.unmodifiableMap(mapWithStrings);
@@ -35,5 +25,13 @@ public abstract class Genome implements Component {
             throw new IllegalArgumentException("Gene does not exist: " + name);
         }
         return (T) genes.get(name);
+    }
+    
+    public abstract Genome crossover(Genome maternalGenome);
+
+    public abstract void mutate();
+
+    protected Map<String, Object> getGenes() {
+        return genes;
     }
 }

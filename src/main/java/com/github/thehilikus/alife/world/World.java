@@ -2,19 +2,15 @@ package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.*;
-import dagger.Module;
-import dagger.Provides;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Singleton;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The environment where the agents live
  */
-@Module
 public class World {
     private static final Logger LOG = LoggerFactory.getLogger(World.class.getSimpleName());
     private final Agent[][] grid;
@@ -22,13 +18,12 @@ public class World {
     private final Map<Integer, Agent.Living> cemetery = new HashMap<>();
     private int hour;
 
-    @Provides
-    @Singleton
-    static World provideWorld(CliOptions options) {
+
+    static World createWorld(CliOptions options) {
         return new World(options.getWorldWidth(), options.getWorldHeight());
     }
 
-    public World(int width, int height) {
+    private World(int width, int height) {
         grid = new Agent[height + 2][width + 2];
         createEdge();
         hour = 0;
@@ -104,20 +99,29 @@ public class World {
         return causeOfDeath;
     }
 
-    private Position.Immutable resolveCollision(Agent.Movable colliderAgent, Position.Immutable originalPosition, Agent collidedAgent) {
-        Position newPosition = colliderAgent.getMovablePosition();
-        Orientation colliderOrientation = originalPosition.directionTo(newPosition.toImmutable());
-        do {
-            newPosition.move(colliderOrientation.opposite(), 1);
-            LOG.trace("Adjusting collision at {} between new {} and original {}", newPosition, colliderAgent.getId(), collidedAgent.getId());
-            collidedAgent = grid[newPosition.getY()][newPosition.getX()];
-        } while (collidedAgent != null);
+    private Position.Immutable resolveCollision(Agent.Living colliderAgent, Position.Immutable originalPosition, Agent collidedAgent) {
+        Position newPosition = new Position(originalPosition.getX(), originalPosition.getY());
+        Orientation newOrientation = originalPosition.directionTo(colliderAgent.getPosition()).opposite();
+        while (!isPositionEmpty(newPosition.getX(), newPosition.getY())) {
+            newPosition.move(newOrientation, 1);
+            if (grid[newPosition.getY()][newPosition.getX()] instanceof Edge) {
+                LOG.debug("Hit the edge when resolving collision");
+                newOrientation = newOrientation.turn(Orientation.WEST);
+            }
+        }
+        colliderAgent.changePosition(newPosition, newOrientation);
+        LOG.trace("Adjusting collision at {} between new {} and original {}", newPosition, colliderAgent.getId(), collidedAgent.getId());
 
         return newPosition.toImmutable();
     }
 
     public void addAgent(Agent.Living agent) {
         Position.Immutable position = agent.getPosition();
+        if (!isPositionEmpty(position.getX(), position.getY())) {
+            Position closebyPosition = new Position(position.getX(), position.getY());
+            closebyPosition.move(Orientation.WEST, 1);
+            resolveCollision(agent, closebyPosition.toImmutable(), grid[position.getY()][position.getX()]);
+        }
         LOG.info("Adding {} to world", agent);
         grid[position.getY()][position.getX()] = agent;
         agents.put(agent.getId(), agent);
@@ -137,12 +141,16 @@ public class World {
         do {
             x = RandomProvider.nextInt(1, getWidth() - 1);
             y = RandomProvider.nextInt(1, getHeight() - 1);
-        } while (grid[y][x] != null);
+        } while (!isPositionEmpty(x, y));
 
         return new Position(x, y);
     }
 
-    public Agent getObjectRelativeTo(int id, int xDelta, int yDelta) {
+    private boolean isPositionEmpty(int x, int y) {
+        return grid[y][x] == null;
+    }
+
+    public Agent getAgentRelativeTo(int id, int xDelta, int yDelta) {
         Position.Immutable center = agents.get(id).getPosition();
         int x = center.getX() + xDelta;
         int y = center.getY() + yDelta;

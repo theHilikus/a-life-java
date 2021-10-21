@@ -48,7 +48,7 @@ public class SurroundingsVision implements Vision {
         SortedSet<ScanResult> result = new TreeSet<>();
         for (int y = radius * -1; y <= radius; y++) {
             for (int x = radius * -1; x <= radius; x++) {
-                Agent foundAgent = world.getObjectRelativeTo(agentId, x, y);
+                Agent foundAgent = world.getAgentRelativeTo(agentId, x, y);
                 if (test.test(foundAgent)) {
                     result.add(new ScanResult(x, y, foundAgent));
                 }

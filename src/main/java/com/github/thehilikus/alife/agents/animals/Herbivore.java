@@ -1,15 +1,19 @@
 package com.github.thehilikus.alife.agents.animals;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.controllers.VitalsController;
+import com.github.thehilikus.alife.agents.animals.moods.Existing;
+import com.github.thehilikus.alife.agents.animals.motions.Legs;
+import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
+import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
+import com.github.thehilikus.alife.agents.controllers.*;
 import com.github.thehilikus.alife.agents.genetics.Genome;
+import com.github.thehilikus.alife.agents.genetics.HerbivoreGenome;
 import com.github.thehilikus.alife.api.*;
-import com.github.thehilikus.alife.world.RandomProvider;
-import com.github.thehilikus.alife.world.WorldComponent;
+import com.github.thehilikus.alife.world.IdsProvider;
+import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -25,23 +29,33 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     private final Genome genome;
 
     private final int id;
-    private final Position position;
     private Mood mood;
     private final VitalsController vitals;
 
-    public static void create(int count, WorldComponent worldComponent) {
+    public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
-            LivingAgentComponent livingAgentComponent = DaggerLivingAgentComponent.builder().worldComponent(worldComponent).build();
-            Agent.Living newAgent = livingAgentComponent.createHerbivore();
+            int id = IdsProvider.getNextId();
+            Genome genome = new HerbivoreGenome();
+            Vision vision = new SurroundingsVision(id, genome, world);
+            Legs legs = new Legs(id, world.getEmptyPosition(), genome);
+            Locomotion locomotion = new StraightWalkWithRandomTurn(id, legs, genome);
+            Mood startingMood = new Existing(vision, genome, locomotion);
+
+            HungerTracker hungerTracker = new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
+            EnergyTracker energyTracker = new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
+            AgeTracker ageTracker = new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
+            ReproductionTracker reproductionTracker = new ReproductionTracker();
+            MoodController moodController = new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker, energyTracker, ageTracker, reproductionTracker, world);
+            VitalsController vitals = new VitalsController(id, moodController, hungerTracker, energyTracker, ageTracker, reproductionTracker);
+
+            Living newAgent = new Herbivore(id, vision, locomotion, startingMood, genome, vitals);
             LOG.info("Created {}", newAgent);
-            worldComponent.createWorld().addAgent(newAgent);
+            world.addAgent(newAgent);
         }
     }
 
-    @Inject
-    public Herbivore(int id, Position position, Vision vision, Locomotion locomotion, Mood startingMood, Genome genome, VitalsController vitals) {
+    private Herbivore(int id, Vision vision, Locomotion locomotion, Mood startingMood, Genome genome, VitalsController vitals) {
         this.id = id;
-        this.position = position;
         this.vision = vision;
         this.locomotion = locomotion;
         this.genome = genome;
@@ -75,19 +89,14 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     public Map<String, String> getDetails() {
         Map<String, String> result = new LinkedHashMap<>();
         result.put("type", getClass().getSimpleName());
-        result.put("position", position.getX() + ", " + position.getY());
+        result.put("position", locomotion.getPosition().getX() + ", " + locomotion.getPosition().getY());
         result.putAll(vitals.getParameters());
         result.putAll(mood.getParameters());
         result.putAll(vision.getParameters());
         result.putAll(locomotion.getParameters());
-//        result.putAll(genome.getParameters());
+        result.putAll(genome.getParameters());
 
         return result;
-    }
-
-    @Override
-    public Position getMovablePosition() {
-        return position;
     }
 
     @Override
@@ -108,7 +117,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     public String toString() {
         return "Herbivore{" +
                 "id=" + id +
-                ", position=" + position +
+                ", position=" + locomotion.getPosition() +
                 ", mood=" + mood +
                 '}';
     }
@@ -118,39 +127,39 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         return genome;
     }
 
-    public static class HerbivoreGenome extends Genome {
-        private static final int MIN_VISION_DISTANCE = 2;
-        private static final int MAX_VISION_DISTANCE = 20;
-        private static final int MIN_TOP_SPEED = 1;
-        private static final double MAX_IDLE_SPEED_FACTOR = 0.25;
-        private static final double MAX_SCOUT_SPEED_FACTOR = 0.5;
-        private static final double MAX_HUNT_SPEED_FACTOR = 0.9;
-        private static final int MAX_SIZE = 50;
-        private static final int MAX_LIFE_EXPECTANCY = 150;
-        private static final int MIN_LIFE_EXPECTANCY = 50;
-        private static final int MAX_LOW_ENERGY_THRESHOLD = 50;
-        private static final int MAX_HUNGRY_THRESHOLD = 50;
+    @Override
+    public Evolvable reproduce(int fatherId, World world, Genome offspringGenome) {
+        int id = IdsProvider.getNextId();
+        Vision vision = new SurroundingsVision(id, offspringGenome, world);
+        Position offspringPosition = new Position(locomotion.getPosition().getX(), locomotion.getPosition().getY());
+        Legs offspringLegs = new Legs(id, offspringPosition, offspringGenome);
+        Locomotion offspringLocomotion = new StraightWalkWithRandomTurn(id, offspringLegs, offspringGenome);
+        offspringLocomotion.move(1, 1);
+        Mood offspringStartingMood = new Existing(vision, offspringGenome, offspringLocomotion);
 
-        private static Map<String, Object> createGenes() {
-            int visionDistance = RandomProvider.nextInt(MIN_VISION_DISTANCE, MAX_VISION_DISTANCE);
-            return Map.ofEntries(
-                    Map.entry("type", "Herbivore"),
-                    Map.entry("size", RandomProvider.nextInt(MAX_SIZE)),
-                    Map.entry(Vision.PARAMETER_PREFIX + "radius", visionDistance),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomProvider.nextInt(MIN_TOP_SPEED, visionDistance)), //agent can't move further than it can see
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomProvider.nextDouble(1) * -1),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomProvider.nextDouble(1)),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor", RandomProvider.nextDouble(MAX_IDLE_SPEED_FACTOR)),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomProvider.nextDouble(MAX_SCOUT_SPEED_FACTOR)),
-                    Map.entry(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomProvider.nextDouble(MAX_HUNT_SPEED_FACTOR)),
-                    Map.entry(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", RandomProvider.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY)),
-                    Map.entry(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold", RandomProvider.nextInt(MAX_LOW_ENERGY_THRESHOLD)),
-                    Map.entry(VitalSign.PARAMETER_PREFIX + "hungryThreshold", RandomProvider.nextInt(MAX_HUNGRY_THRESHOLD))
-            );
-        }
+        HungerTracker offspringHungerTracker = new HungerTracker(offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
+        EnergyTracker offspringEnergyTracker = new EnergyTracker(id, offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
+        AgeTracker offspringAgeTracker = new AgeTracker(offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
+        ReproductionTracker offspringReproductionTracker = new ReproductionTracker();
+        MoodController offspringMoodController = new HerbivoreMoodController(vision, offspringLegs, offspringLocomotion, offspringGenome, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, world);
+        VitalsController offspringVitals = new VitalsController(id, offspringMoodController, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker);
 
-        HerbivoreGenome(int agentId) {
-            super(agentId, createGenes());
-        }
+        Evolvable result = new Herbivore(id, vision, offspringLocomotion, offspringStartingMood, offspringGenome, offspringVitals);
+        LOG.info("Created offspring {}", result);
+        world.addAgent(result);
+
+        vitals.gaveBirth(fatherId, result);
+        return result;
     }
+
+    @Override
+    public Position.Immutable getPosition() {
+        return locomotion.getPosition();
+    }
+
+    @Override
+    public void changePosition(Position newPosition, Orientation direction) {
+        locomotion.setPosition(newPosition, direction);
+    }
+
 }

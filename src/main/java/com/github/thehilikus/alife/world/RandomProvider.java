@@ -33,4 +33,8 @@ public class RandomProvider {
     public static int nextInt(int lowerBound, int upperBound) {
         return random.nextInt(upperBound - lowerBound) + lowerBound;
     }
+
+    public static boolean nextBoolean() {
+        return random.nextInt(2) == 0;
+    }
 }

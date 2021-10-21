@@ -13,4 +13,8 @@ public interface MoodController {
     Mood startEating(Agent.Eatable food);
 
     Mood startIdling();
+
+    Mood startFollowing(Agent.Evolvable mate);
+
+    Mood startMating(Agent.Evolvable mate);
 }

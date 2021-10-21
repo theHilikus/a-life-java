@@ -3,14 +3,14 @@ package com.github.thehilikus.alife.agents.plants;
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.plants.moods.BeingEaten;
+import com.github.thehilikus.alife.agents.plants.moods.Growing;
 import com.github.thehilikus.alife.api.*;
+import com.github.thehilikus.alife.world.IdsProvider;
 import com.github.thehilikus.alife.world.RandomProvider;
-import com.github.thehilikus.alife.world.WorldComponent;
+import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -21,24 +21,25 @@ public class Plant implements Agent.Eatable {
     private static final Logger LOG = LoggerFactory.getLogger(Plant.class.getSimpleName());
     private static final int MAX_SIZE = 300;
     private final int id;
-    private final Position position;
+    private Position position;
     private final int size;
     private Mood mood;
     private final EnergyTracker energyTracker;
 
-    public static void create(int count, WorldComponent worldComponent) {
+    public static void create(int count, World world) {
         for (int current = 0; current < count; current++) {
-            LivingAgentComponent livingAgentComponent = DaggerLivingAgentComponent.builder().worldComponent(worldComponent).build();
-            Agent.Living newAgent = livingAgentComponent.createPlant();
+            int id = IdsProvider.getNextId();
+            Mood startingMood = new Growing(id);
+
+            Agent.Living newAgent = new Plant(id, world.getEmptyPosition(), startingMood);
             LOG.info("Created {}", newAgent);
-            worldComponent.createWorld().addAgent(newAgent);
+            world.addAgent(newAgent);
         }
     }
 
-    @Inject
-    public Plant(int id, Position position, @Named("plants") Mood startingMood) {
+    public Plant(int id, Position startingPosition, Mood startingMood) {
         this.id = id;
-        this.position = position;
+        this.position = startingPosition;
         this.mood = startingMood;
         this.energyTracker = new EnergyTracker(id);
         this.size = RandomProvider.nextInt(MAX_SIZE);
@@ -59,6 +60,11 @@ public class Plant implements Agent.Eatable {
         }
 
         return energyTracker.isAlive() ? null : energyTracker;
+    }
+
+    @Override
+    public void changePosition(Position newPosition, Orientation direction) {
+        position = newPosition;
     }
 
     @Override
