@@ -7,6 +7,8 @@
     <groupId>com.github.thehilikus.alife</groupId>
     <artifactId>artificial-life</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>Artificial Life</name>
+    <description>A playground for artificial life</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
