@@ -11,10 +11,10 @@ import java.util.Random;
 public class RandomProvider {
     private static final Random random = new Random();
     private static final Logger LOG = LoggerFactory.getLogger(RandomProvider.class.getSimpleName());
-    private static final int FIXED_SEED = 311;
 
-    public static void fixSeed() {
-        random.setSeed(FIXED_SEED);
+    public static void setSeed(long seed) {
+        LOG.info("Starting simulation with RNG seed = {}", seed);
+        random.setSeed(seed);
     }
 
     public static int nextInt(int bound) {

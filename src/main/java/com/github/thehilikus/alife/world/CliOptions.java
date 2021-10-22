@@ -12,7 +12,7 @@ public class CliOptions {
     @Option(name = "--automatic", usage = "Advance each age of the world automatically without user input")
     private boolean automatic = false;
     @Option(name = "--print-world", usage = "Show a representation of the world in STDOUT")
-    private boolean printWorld = true;
+    private boolean printWorld = false;
     @Option(name = "--log-file", metaVar = "<logFile>", usage = "File to log to. Disables logging to the console")
     private File logFile;
     @Option(name = "--not-random", usage = "Set a fixed seed to the RNG so that the runs are consistent")

@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
@@ -25,6 +26,7 @@ public class Simulation {
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private final World world;
     private final CliOptions options;
+    private static final int FIXED_SEED = 311;
 
     public static void main(String[] args) {
         CliOptions options = parseArguments(args);
@@ -82,10 +84,10 @@ public class Simulation {
         this.options = options;
 
         if (options.isNotRandom()) {
-            RandomProvider.fixSeed();
+            RandomProvider.setSeed(FIXED_SEED);
+        } else {
+            RandomProvider.setSeed(new Random().nextLong());
         }
-
-
 
         world = World.createWorld(options);
         Herbivore.create(options.getHerbivoresCount(), world);
