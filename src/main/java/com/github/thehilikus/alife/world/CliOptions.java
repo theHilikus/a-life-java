@@ -7,7 +7,7 @@ import java.io.File;
 /**
  * A container of command line options
  */
-@SuppressWarnings({"FieldMayBeFinal", "MagicNumber"})
+@SuppressWarnings("ALL")
 public class CliOptions {
     @Option(name = "--automatic", usage = "Advance each age of the world automatically without user input")
     private boolean automatic = false;
@@ -25,6 +25,8 @@ public class CliOptions {
     private int worldWidth = 100;
     @Option(name = "--world-height", usage = "The number of vertical positions")
     private int worldHeight = 100;
+    @Option(name = "--graphical", usage = "Opens a graphical interface to visualize the simulation")
+    private boolean graphical = false;
 
     public boolean isAutomatic() {
         return automatic;
@@ -60,5 +62,9 @@ public class CliOptions {
 
     public int getWorldHeight() {
         return worldHeight;
+    }
+
+    public boolean isGraphical() {
+        return graphical;
     }
 }

@@ -5,6 +5,8 @@ import com.github.thehilikus.alife.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,6 +26,7 @@ public class World {
     }
 
     private World(int width, int height) {
+        LOG.info("Creating world of {}x{}", width, height);
         grid = new Agent[height + 2][width + 2];
         createEdge();
         hour = 0;
@@ -197,5 +200,34 @@ public class World {
 
     public int getAge() {
         return hour;
+    }
+
+    public class WorldView extends JPanel {
+        public WorldView(int width, int height) {
+            setPreferredSize(new Dimension(width, height));
+            setBackground(Color.WHITE);
+        }
+
+        public void refresh() {
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            AgentsView agentsView = new AgentsView();
+            for (int y = 1; y < World.this.getHeight() - 1; y++) { //don't draw edges
+                for (int x = 1; x < World.this.getWidth() - 1; x++) {
+                    Agent agent = grid[y][x];
+                    if (agent != null) {
+                        agentsView.draw(g2d, agent);
+                    }
+                }
+            }
+        }
+
     }
 }

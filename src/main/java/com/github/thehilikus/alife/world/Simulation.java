@@ -13,6 +13,7 @@ import org.kohsuke.args4j.ParserProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
@@ -27,6 +28,8 @@ public class Simulation {
     private final World world;
     private final CliOptions options;
     private static final int FIXED_SEED = 311;
+    private final SimulationView view;
+
 
     public static void main(String[] args) {
         CliOptions options = parseArguments(args);
@@ -96,6 +99,14 @@ public class Simulation {
         if (options.isPrintWorld()) {
             System.out.println(world.getRepresentation());
         }
+        if (options.isGraphical()) {
+            view = new SimulationView(world.new WorldView(options.getWorldWidth(), options.getWorldHeight()));
+            SwingUtilities.invokeLater(() -> {
+                view.setVisible(true);
+            });
+        }  else {
+            view = null;
+        }
     }
 
     private void start() {
@@ -112,6 +123,9 @@ public class Simulation {
             boolean alive = world.tick();
             if (options.isPrintWorld()) {
                 System.out.println(world.getRepresentation());
+            }
+            if (options.isGraphical()) {
+                view.refresh();
             }
             if (!alive) {
                 executor.shutdown();
@@ -151,6 +165,9 @@ public class Simulation {
                 }
                 if (options.isPrintWorld()) {
                     System.out.println(world.getRepresentation());
+                }
+                if (options.isGraphical()) {
+                    view.refresh();
                 }
                 command = getCommand(scanner);
             }
