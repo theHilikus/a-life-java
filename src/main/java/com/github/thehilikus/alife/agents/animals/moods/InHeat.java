@@ -53,7 +53,7 @@ public class InHeat implements Mood {
 
     @Override
     public Map<String, String> getParameters() {
-        return Map.of(PARAMETER_PREFIX + "current", getClass().getSimpleName());
+        return Map.of();
     }
 
     @Override

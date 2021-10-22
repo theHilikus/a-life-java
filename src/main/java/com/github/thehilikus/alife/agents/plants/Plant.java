@@ -77,6 +77,10 @@ public class Plant implements Agent.Eatable {
         Map<String, String> result = new LinkedHashMap<>();
         result.put("type", getClass().getSimpleName());
         result.put("position", position.getX() + ", " + position.getY());
+        result.put(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
+
+        result.putAll(mood.getParameters());
+        result.putAll(energyTracker.getParameters());
 
         return result;
     }
