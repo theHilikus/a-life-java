@@ -204,7 +204,9 @@ public class World {
 
     public class WorldView extends JPanel {
         public WorldView(int width, int height) {
-            setPreferredSize(new Dimension(width, height));
+            final int edgePadding = 20;
+            setPreferredSize(new Dimension(width+ edgePadding, height+ edgePadding));
+            setBorder(BorderFactory.createLineBorder(Color.BLACK));
             setBackground(Color.WHITE);
         }
 
