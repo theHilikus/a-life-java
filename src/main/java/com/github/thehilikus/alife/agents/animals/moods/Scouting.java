@@ -5,6 +5,7 @@ import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.api.*;
+import com.github.thehilikus.alife.world.Edge;
 
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +32,7 @@ public class Scouting implements Mood {
     @Override
     public Mood tick() {
         //scout the area
-        SortedSet<ScanResult> foundAgents = vision.scan(Plant.class::isInstance);
+        SortedSet<ScanResult> foundAgents = vision.scan(agent -> agent instanceof Plant || agent instanceof Edge);
         if (!foundAgents.isEmpty()) {
             Optional<Plant> plantOptional = foundAgents.stream().map(ScanResult::getAgent).filter(Plant.class::isInstance).map(Plant.class::cast).findFirst();
             if (plantOptional.isPresent()) {
