@@ -63,6 +63,11 @@ public class StraightWalkWithRandomTurn implements Locomotion {
         orientation = newDirection;
     }
 
+    @Override
+    public Orientation getOrientation() {
+        return orientation;
+    }
+
     private void turn() {
         Orientation direction = Orientation.WEST;
         LOG.info("Turning {}", direction);

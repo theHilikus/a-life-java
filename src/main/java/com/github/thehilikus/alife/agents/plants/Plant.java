@@ -37,7 +37,7 @@ public class Plant implements Agent.Eatable {
         }
     }
 
-    public Plant(int id, Position startingPosition, Mood startingMood) {
+    private Plant(int id, Position startingPosition, Mood startingMood) {
         this.id = id;
         this.position = startingPosition;
         this.mood = startingMood;

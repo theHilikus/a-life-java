@@ -2,6 +2,7 @@ package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.api.Position;
 
 import java.util.Collections;

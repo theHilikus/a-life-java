@@ -40,6 +40,7 @@ public class AgentsView {
         Objects.requireNonNull(moodColor, "Mood color was empty for " + moodName);
 
         g2d.translate(agent.getPosition().getX(), agent.getPosition().getY());
+        g2d.rotate(agent.getOrientation().toRadians());
         g2d.setColor(moodColor);
         g2d.fill(agentShape);
         g2d.setColor(Color.BLACK);
