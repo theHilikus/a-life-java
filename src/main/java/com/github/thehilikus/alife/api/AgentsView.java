@@ -3,6 +3,7 @@ package com.github.thehilikus.alife.api;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
 import java.util.Map;
 import java.util.Objects;
 
@@ -10,11 +11,23 @@ import java.util.Objects;
  * A class in charge of drawing different agents
  */
 public class AgentsView {
-    private final static int MAX_SIZE = 10;
-    private final Map<String, Shape> shapes = Map.of(
-            "Herbivore", new Polygon(new int[]{0, MAX_SIZE, MAX_SIZE / 2}, new int[]{0, 0, -MAX_SIZE}, 3),
-            "Plant", new Ellipse2D.Double(0, 0, MAX_SIZE, MAX_SIZE)
+    private final static int SIZE = 6;
+    private final static Map<String, Shape> shapes = Map.of(
+            "Herbivore", createHerbivoreShape(),
+            "Plant", new Ellipse2D.Double(0, 0, 2 * SIZE, 2 * SIZE)
     );
+
+
+    @SuppressWarnings("MagicNumber")
+    private static Path2D createHerbivoreShape() {
+        Path2D triangle = new Path2D.Double();
+        triangle.moveTo(-SIZE, 2.5 * SIZE / 3);
+        triangle.lineTo(SIZE, 2.5 * SIZE / 3);
+        triangle.lineTo(0, -5.0 * SIZE / 3);
+        triangle.closePath();
+
+        return triangle;
+    }
 
     private final Map<String, Color> moodColours = Map.of(
             "Eating", Color.GREEN,
