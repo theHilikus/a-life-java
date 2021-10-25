@@ -57,10 +57,10 @@ public class BeingEaten implements Mood {
     }
 
     @Override
-    public Map<String, String> getParameters() {
+    public Map<String, Object> getParameters() {
         return Map.of(
-                PARAMETER_PREFIX + "hoursSinceLastBite", Integer.toString(hoursSinceLastBite),
-                PARAMETER_PREFIX + "bittenInHour", Integer.toString(bittenInHour)
+                PARAMETER_PREFIX + "hoursSinceLastBite", hoursSinceLastBite,
+                PARAMETER_PREFIX + "bittenInHour", bittenInHour
         );
     }
 

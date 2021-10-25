@@ -60,8 +60,8 @@ public class VitalsController implements Component {
     }
 
     @Override
-    public Map<String, String> getParameters() {
-        Map<String, String> result = new LinkedHashMap<>();
+    public Map<String, Object> getParameters() {
+        Map<String, Object> result = new LinkedHashMap<>();
         result.putAll(hungerTracker.getParameters());
         result.putAll(energyTracker.getParameters());
         result.putAll(ageTracker.getParameters());

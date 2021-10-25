@@ -63,11 +63,11 @@ public class EnergyTracker implements VitalSign {
         return agentId;
     }
 
-    public Map<String, String> getParameters() {
+    public Map<String, Object> getParameters() {
         return Map.of(
-                PARAMETER_PREFIX + "energy", Integer.toString(currentEnergy),
-                PARAMETER_PREFIX + "energyRateOfChange", Integer.toString(EnergyTracker.ENERGY_DERIVATIVE),
-                PARAMETER_PREFIX + "lowEnergyThreshold", Integer.toString(lowEnergyThreshold)
+                PARAMETER_PREFIX + "energy", currentEnergy,
+                PARAMETER_PREFIX + "energyRateOfChange", EnergyTracker.ENERGY_DERIVATIVE,
+                PARAMETER_PREFIX + "lowEnergyThreshold", lowEnergyThreshold
         );
     }
 

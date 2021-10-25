@@ -161,8 +161,8 @@ public class World {
         return grid[y][x];
     }
 
-    public Map<String, String> getAgentDetails(int agentId) {
-        Map<String, String> result;
+    public Map<String, Object> getAgentDetails(int agentId) {
+        Map<String, Object> result;
         Agent agent = agents.get(agentId);
         if (agent == null) {
             agent = cemetery.get(agentId);

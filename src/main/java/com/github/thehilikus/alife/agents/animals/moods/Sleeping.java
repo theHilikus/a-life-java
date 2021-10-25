@@ -56,10 +56,10 @@ public class Sleeping implements Mood {
     }
 
     @Override
-    public Map<String, String> getParameters() {
+    public Map<String, Object> getParameters() {
         return Map.of(
-                PARAMETER_PREFIX + "energyRecovery", Integer.toString(ENERGY_RECOVERY_RATE),
-                PARAMETER_PREFIX + "hungerSlowdownFactor", Double.toString(HUNGER_SLOWDOWN_FACTOR)
+                PARAMETER_PREFIX + "energyRecovery", ENERGY_RECOVERY_RATE,
+                PARAMETER_PREFIX + "hungerSlowdownFactor", HUNGER_SLOWDOWN_FACTOR
         );
     }
 

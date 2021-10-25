@@ -80,10 +80,10 @@ public class StraightWalkWithRandomTurn implements Locomotion {
     }
 
     @Override
-    public Map<String, String> getParameters() {
-        Map<String, String> result = new LinkedHashMap<>();
-        result.put(PARAMETER_PREFIX + "orientation", orientation.toString());
-        result.put(PARAMETER_PREFIX + "turningProbability", Double.toString(turningProbability));
+    public Map<String, Object> getParameters() {
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put(PARAMETER_PREFIX + "orientation", orientation);
+        result.put(PARAMETER_PREFIX + "turningProbability", turningProbability);
         result.putAll(walker.getParameters());
 
         return result;

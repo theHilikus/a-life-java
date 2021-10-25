@@ -62,10 +62,10 @@ public class Legs {
         return agentId;
     }
 
-    public Map<String, String> getParameters() {
+    public Map<String, Object> getParameters() {
         return Map.of(
-                Locomotion.PARAMETER_PREFIX + "topSpeed", Integer.toString(topSpeed),
-                Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", Double.toString(energyExpenditureFactor)
+                Locomotion.PARAMETER_PREFIX + "topSpeed", topSpeed,
+                Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", energyExpenditureFactor
         );
     }
 }

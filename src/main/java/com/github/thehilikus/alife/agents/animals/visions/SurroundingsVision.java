@@ -38,8 +38,8 @@ public class SurroundingsVision implements Vision {
     }
 
     @Override
-    public Map<String, String> getParameters() {
-        return Map.of(PARAMETER_PREFIX + "radius", Integer.toString(radius));
+    public Map<String, Object> getParameters() {
+        return Map.of(PARAMETER_PREFIX + "radius", radius);
     }
 
     @Override

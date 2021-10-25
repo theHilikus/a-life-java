@@ -23,7 +23,7 @@ public class Edge implements Agent {
     }
 
     @Override
-    public Map<String, String> getDetails() {
+    public Map<String, Object> getDetails() {
         return Collections.emptyMap();
     }
 

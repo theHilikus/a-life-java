@@ -52,7 +52,7 @@ public class InHeat implements Mood {
     }
 
     @Override
-    public Map<String, String> getParameters() {
+    public Map<String, Object> getParameters() {
         return Map.of();
     }
 

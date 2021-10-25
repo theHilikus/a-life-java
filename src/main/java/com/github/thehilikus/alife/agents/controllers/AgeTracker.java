@@ -33,10 +33,10 @@ public class AgeTracker implements VitalSign {
         return currentAge;
     }
 
-    public Map<String, String> getParameters() {
+    public Map<String, Object> getParameters() {
         return Map.of(
-                PARAMETER_PREFIX + "age", Integer.toString(currentAge),
-                PARAMETER_PREFIX + "lifeExpectancy", Integer.toString(lifeExpectancy)
+                PARAMETER_PREFIX + "age", currentAge,
+                PARAMETER_PREFIX + "lifeExpectancy", lifeExpectancy
         );
     }
 

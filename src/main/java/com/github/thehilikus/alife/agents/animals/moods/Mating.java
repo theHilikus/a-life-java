@@ -85,11 +85,11 @@ public class Mating implements Mood {
     }
 
     @Override
-    public Map<String, String> getParameters() {
+    public Map<String, Object> getParameters() {
         return Map.of(
-                PARAMETER_PREFIX + "matingDuration", Integer.toString(matingDuration),
-                PARAMETER_PREFIX + "mate", Integer.toString(mate.getId()),
-                PARAMETER_PREFIX + "timeWithMate", Integer.toString(timeWithMate));
+                PARAMETER_PREFIX + "matingDuration", matingDuration,
+                PARAMETER_PREFIX + "mate", mate.getId(),
+                PARAMETER_PREFIX + "timeWithMate", timeWithMate);
     }
 
     @Override

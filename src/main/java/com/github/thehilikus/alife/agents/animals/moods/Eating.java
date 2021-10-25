@@ -76,10 +76,10 @@ public class Eating implements Mood {
     }
 
     @Override
-    public Map<String, String> getParameters() {
+    public Map<String, Object> getParameters() {
         return Map.of(
-                PARAMETER_PREFIX + "eatSpeed", Integer.toString(eatSpeed),
-                PARAMETER_PREFIX + "lastBite", Integer.toString(lastBite)
+                PARAMETER_PREFIX + "eatSpeed", eatSpeed,
+                PARAMETER_PREFIX + "lastBite", lastBite
         );
     }
 

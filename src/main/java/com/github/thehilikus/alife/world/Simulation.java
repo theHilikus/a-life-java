@@ -167,7 +167,7 @@ public class Simulation {
 
     private void queryAgent(String agentId) {
         if (agentId.chars().allMatch(Character::isDigit)) {
-            Map<String, String> agentDetails = world.getAgentDetails(Integer.parseInt(agentId));
+            Map<String, Object> agentDetails = world.getAgentDetails(Integer.parseInt(agentId));
             if (!agentDetails.isEmpty()) {
                 StringBuilder detailsBuffer = new StringBuilder();
                 detailsBuffer.append("##### Details of agent ").append(agentId).append(" #####").append(System.lineSeparator());

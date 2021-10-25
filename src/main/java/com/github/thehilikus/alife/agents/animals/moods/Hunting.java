@@ -38,10 +38,10 @@ public class Hunting implements Mood {
     }
 
     @Override
-    public Map<String, String> getParameters() {
+    public Map<String, Object> getParameters() {
         return Map.of(
-                PARAMETER_PREFIX + "speedFactor", Double.toString(speedFactor),
-                PARAMETER_PREFIX + "lastMovement", Integer.toString(lastMovement)
+                PARAMETER_PREFIX + "speedFactor", speedFactor,
+                PARAMETER_PREFIX + "lastMovement", lastMovement
         );
     }
 

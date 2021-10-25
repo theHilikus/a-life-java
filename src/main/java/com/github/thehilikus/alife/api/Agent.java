@@ -15,7 +15,7 @@ public interface Agent {
     int getId();
 
     @NotNull
-    Map<String, String> getDetails();
+    Map<String, Object> getDetails();
 
     Position.Immutable getPosition();
 

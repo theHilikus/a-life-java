@@ -14,8 +14,8 @@ public abstract class Genome {
         this.genes = genes;
     }
 
-    public Map<String, String> getParameters() {
-        Map<String, String> mapWithStrings = genes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().toString()));
+    public Map<String, Object> getParameters() {
+        Map<String, Object> mapWithStrings = genes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return Collections.unmodifiableMap(mapWithStrings);
     }
 

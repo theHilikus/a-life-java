@@ -12,5 +12,5 @@ public interface Component {
     int getAgentId();
 
     @NotNull
-    Map<String, String> getParameters();
+    Map<String, Object> getParameters();
 }
