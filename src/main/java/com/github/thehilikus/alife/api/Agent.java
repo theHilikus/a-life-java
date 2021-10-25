@@ -5,6 +5,7 @@ import com.github.thehilikus.alife.world.World;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import java.awt.*;
 import java.util.Map;
 
 /**
@@ -62,5 +63,11 @@ public interface Agent {
         Genome getGenome();
 
         Evolvable reproduce(int fatherId, World world, Genome offspringGenome);
+    }
+
+    interface View {
+        void drawInConsole(StringBuilder builder, Agent agent);
+
+        void drawIn2DGraphics(Graphics2D g2d, Agent agent);
     }
 }

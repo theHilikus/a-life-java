@@ -9,11 +9,11 @@ import java.awt.*;
 /**
  * The main graphical view of the application
  */
-public class SimulationView extends JFrame {
-    private final World.WorldView worldView;
-    private static final Logger LOG = LoggerFactory.getLogger(SimulationView.class);
+public class SimulationGraphicalView extends JFrame {
+    private final World.GraphicalView worldView;
+    private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalView.class);
 
-    public SimulationView(World.WorldView worldView) throws HeadlessException {
+    public SimulationGraphicalView(World.GraphicalView worldView) throws HeadlessException {
         super("Artificial Life");
         this.worldView = worldView;
 
