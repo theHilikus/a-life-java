@@ -2,7 +2,10 @@ package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.views.AgentsView;
-import com.github.thehilikus.alife.api.*;
+import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.api.Orientation;
+import com.github.thehilikus.alife.api.Position;
+import com.github.thehilikus.alife.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -217,9 +220,9 @@ public class World {
 
         private final Agent.View agentsView = new AgentsView();
 
-        public GraphicalView(int width, int height) {
+        public GraphicalView() {
             final int edgePadding = 20;
-            setPreferredSize(new Dimension(width+ edgePadding, height+ edgePadding));
+            setPreferredSize(new Dimension(World.this.getWidth() + edgePadding, World.this.getHeight() + edgePadding));
             setBorder(BorderFactory.createLineBorder(Color.BLACK));
             setBackground(Color.WHITE);
         }

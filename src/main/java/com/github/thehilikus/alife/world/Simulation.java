@@ -7,6 +7,7 @@ import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.spi.AppenderAttachable;
 import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.agents.animals.Herbivore;
+import com.github.thehilikus.alife.world.ui.SimulationGraphicalView;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ParserProperties;
@@ -104,7 +105,7 @@ public class Simulation {
             consoleView = null;
         }
         if (options.isGraphical()) {
-            graphicalView = new SimulationGraphicalView(world.new GraphicalView(options.getWorldWidth(), options.getWorldHeight()));
+            graphicalView = new SimulationGraphicalView(world.new GraphicalView());
             SwingUtilities.invokeLater(() -> graphicalView.setVisible(true));
         }  else {
             graphicalView = null;
