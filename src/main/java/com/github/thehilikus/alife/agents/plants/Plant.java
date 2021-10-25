@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.plants;
 
-import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.plants.moods.BeingEaten;
 import com.github.thehilikus.alife.agents.plants.moods.Growing;
@@ -19,7 +18,6 @@ import java.util.Map;
  */
 public class Plant implements Agent.Eatable {
     private static final Logger LOG = LoggerFactory.getLogger(Plant.class.getSimpleName());
-    private static final int MAX_SIZE = 300;
     private final int id;
     private Position position;
     private final int size;
@@ -88,21 +86,6 @@ public class Plant implements Agent.Eatable {
     @Override
     public Position.Immutable getPosition() {
         return position.toImmutable();
-    }
-
-    @Override
-    public String getStringRepresentation() {
-        Ansi.Attribute agentTypeStyle = Ansi.Attribute.NONE;
-
-        Ansi.FColor moodColour = mood.getTerminalColour();
-        Ansi.BColor background = Ansi.BColor.GREEN;
-        String formatCode = Ansi.generateCode(agentTypeStyle, moodColour, background);
-        String idString = Integer.toString(id);
-        if (id < 10) {
-            idString = ' ' + idString;
-        }
-
-        return Ansi.formatMessage(idString, formatCode);
     }
 
     @Override

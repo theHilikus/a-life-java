@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.animals;
 
-import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.animals.moods.Existing;
 import com.github.thehilikus.alife.agents.animals.motions.Legs;
 import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
@@ -104,20 +103,6 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     }
 
     @Override
-    public String getStringRepresentation() {
-        Ansi.Attribute agentTypeStyle = Ansi.Attribute.BOLD;
-
-        Ansi.FColor moodColour = mood.getTerminalColour();
-        Ansi.BColor background = Ansi.BColor.NONE;
-        String formatCode = Ansi.generateCode(agentTypeStyle, moodColour, background);
-        String idString = Integer.toString(id);
-        if (id < 10) {
-            idString = ' ' + idString;
-        }
-        return Ansi.formatMessage(idString, formatCode);
-    }
-
-    @Override
     public String toString() {
         return "Herbivore{" +
                 "id=" + id +
@@ -162,13 +147,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     }
 
     @Override
-    public Orientation getOrientation() {
-        return locomotion.getOrientation();
-    }
-
-    @Override
     public void changePosition(Position newPosition, Orientation direction) {
         locomotion.setPosition(newPosition, direction);
     }
-
 }

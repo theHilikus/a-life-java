@@ -26,7 +26,6 @@ public class HerbivoreGenome extends Genome {
     private static final double MAX_IDLE_SPEED_FACTOR = 0.25;
     private static final double MAX_SCOUT_SPEED_FACTOR = 0.5;
     private static final double MAX_HUNT_SPEED_FACTOR = 0.9;
-    private static final int MAX_SIZE = 50;
     private static final int MAX_LIFE_EXPECTANCY = 150;
     private static final int MIN_LIFE_EXPECTANCY = 50;
     private static final int MAX_LOW_ENERGY_THRESHOLD = 50;
@@ -41,7 +40,7 @@ public class HerbivoreGenome extends Genome {
         int visionDistance = RandomProvider.nextInt(MIN_VISION_DISTANCE, maxVisionDistance);
         Map<String, Object> result = new HashMap<>();
         result.put("type", "Herbivore");
-        result.put("size", RandomProvider.nextInt(MAX_SIZE));
+        result.put("size", RandomProvider.nextInt(Agent.Living.MAX_SIZE));
         result.put(Vision.PARAMETER_PREFIX + "radius", visionDistance);
         result.put(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomProvider.nextInt(MIN_TOP_SPEED, visionDistance)); //agent can't move further than it can see
         result.put(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomProvider.nextDouble(1) * -1);

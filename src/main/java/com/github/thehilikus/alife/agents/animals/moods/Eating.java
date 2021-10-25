@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
-import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.controllers.HungerTracker;
 import com.github.thehilikus.alife.agents.genetics.Genome;
@@ -63,11 +62,6 @@ public class Eating implements Mood {
     @Override
     public int getEnergyDelta() {
         return (int) Math.round(EnergyTracker.ENERGY_DERIVATIVE * EATING_FATIGUE_FACTOR);
-    }
-
-    @Override
-    public Ansi.FColor getTerminalColour() {
-        return Ansi.FColor.GREEN;
     }
 
     @Override

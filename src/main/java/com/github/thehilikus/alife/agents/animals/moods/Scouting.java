@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
-import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.agents.plants.Plant;
@@ -53,11 +52,6 @@ public class Scouting implements Mood {
     @Override
     public int getEnergyDelta() {
         return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
-    }
-
-    @Override
-    public Ansi.FColor getTerminalColour() {
-        return Ansi.FColor.CYAN;
     }
 
     @Override

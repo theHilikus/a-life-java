@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.plants.moods;
 
-import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Mood;
 
 import java.util.Map;
@@ -44,11 +43,6 @@ public class BeingEaten implements Mood {
         bittenInHour = 0;
 
         return result;
-    }
-
-    @Override
-    public Ansi.FColor getTerminalColour() {
-        return Ansi.FColor.YELLOW;
     }
 
     @Override

@@ -19,15 +19,10 @@ public interface Agent {
 
     Position.Immutable getPosition();
 
-    default Orientation getOrientation() {
-        return Orientation.NORTH;
-    }
-
     /**
-     * A textual representation of the agent with its id. The style represents the type of agent, the colour
-     * represents its current mood
+     * Max size for any agent
      */
-    String getStringRepresentation();
+    int MAX_SIZE = 100;
 
     /**
      * An agent that does actions in every turn

@@ -1,8 +1,6 @@
 package com.github.thehilikus.alife.world;
 
-import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Agent;
-import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.api.Position;
 
 import java.util.Collections;
@@ -31,11 +29,5 @@ public class Edge implements Agent {
     @Override
     public Position.Immutable getPosition() {
         return position;
-    }
-
-    @Override
-    public String getStringRepresentation() {
-        String formatCode = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.WHITE, Ansi.BColor.WHITE);
-        return Ansi.formatMessage("  ", formatCode);
     }
 }
