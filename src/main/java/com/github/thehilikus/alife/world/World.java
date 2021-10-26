@@ -220,6 +220,8 @@ public class World {
 
         private final Agent.View agentsView = new AgentsView();
 
+        private final Map<Shape, Agent> agentsShapes = new HashMap<>();
+
         public GraphicalView() {
             final int edgePadding = 20;
             setPreferredSize(new Dimension(World.this.getWidth() + edgePadding, World.this.getHeight() + edgePadding));
@@ -237,15 +239,33 @@ public class World {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+            agentsShapes.clear();
             for (int y = 1; y < World.this.getHeight() - 1; y++) { //don't draw edges
                 for (int x = 1; x < World.this.getWidth() - 1; x++) {
                     Agent agent = grid[y][x];
                     if (agent != null) {
-                        agentsView.drawIn2DGraphics(g2d, agent);
+                        Shape agentShape = agentsView.drawIn2DGraphics(g2d, agent);
+                        agentsShapes.put(agentShape, agent);
                     }
                 }
             }
         }
 
+        public Agent getAgentInCoordinates(Point point) {
+            Agent result = null;
+            double shortestDistance = Double.MAX_VALUE;
+            for (Map.Entry<Shape, Agent> agentShape : agentsShapes.entrySet()) {
+                if (agentShape.getKey().contains(point)) {
+                    Position.Immutable agentPosition = agentShape.getValue().getPosition();
+                    double distanceToAgent = point.distanceSq(agentPosition.getX(), agentPosition.getY());
+                    if (distanceToAgent < shortestDistance) {
+                        shortestDistance = distanceToAgent;
+                        result = agentShape.getValue();
+                    }
+                }
+            }
+
+            return result;
+        }
     }
 }

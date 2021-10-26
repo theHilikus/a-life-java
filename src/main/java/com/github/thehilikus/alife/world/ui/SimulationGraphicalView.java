@@ -21,12 +21,14 @@ public class SimulationGraphicalView extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
         add(worldView, BorderLayout.CENTER);
-        add(createInfoPanel(), BorderLayout.LINE_END);
+        InfoPanel infoPanel = createInfoPanel();
+        add(infoPanel, BorderLayout.LINE_END);
+        worldView.addMouseListener(new SimulationGraphicalController(worldView, infoPanel));
         pack();
         setLocationRelativeTo(null);
     }
 
-    private JPanel createInfoPanel() {
+    private InfoPanel createInfoPanel() {
         InfoPanel result = new InfoPanel();
         LayoutManager layout = new BoxLayout(result, BoxLayout.PAGE_AXIS);
         result.setLayout(layout);
