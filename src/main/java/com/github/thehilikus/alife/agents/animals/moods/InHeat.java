@@ -31,7 +31,8 @@ public class InHeat implements Mood {
             Agent closestMate = potentialMates.first().getAgent();
             return moodController.startFollowing((Agent.Evolvable) closestMate);
         } else {
-            return existing.tick();
+            existing.tick();
+            return this;
         }
     }
 
