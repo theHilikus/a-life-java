@@ -13,6 +13,7 @@ import java.awt.*;
 public class SimulationGraphicalView extends JFrame {
     private final World.GraphicalView worldView;
     private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalView.class);
+    private final SimulationGraphicalController controller;
 
     public SimulationGraphicalView(World.GraphicalView worldView) throws HeadlessException {
         super("Artificial Life");
@@ -23,7 +24,8 @@ public class SimulationGraphicalView extends JFrame {
         add(worldView, BorderLayout.CENTER);
         InfoPanel infoPanel = createInfoPanel();
         add(infoPanel, BorderLayout.LINE_END);
-        worldView.addMouseListener(new SimulationGraphicalController(worldView, infoPanel));
+        controller = new SimulationGraphicalController(worldView, infoPanel);
+        worldView.addMouseListener(controller);
         pack();
         setLocationRelativeTo(null);
     }
@@ -40,6 +42,7 @@ public class SimulationGraphicalView extends JFrame {
     public void refresh() {
         try {
             worldView.refresh();
+            controller.refreshSelectedAgentDetails();
         } catch (Exception exc) {
             LOG.error("Error refreshing the view", exc);
         }

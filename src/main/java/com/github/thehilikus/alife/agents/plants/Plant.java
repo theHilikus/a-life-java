@@ -73,6 +73,7 @@ public class Plant implements Agent.Eatable {
     @Override
     public Map<String, Object> getDetails() {
         Map<String, Object> result = new LinkedHashMap<>();
+        result.put("id", id);
         result.put("type", getClass().getSimpleName());
         result.put("size", size);
         result.put("position", position.getX() + ", " + position.getY());

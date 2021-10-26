@@ -15,6 +15,7 @@ public class SimulationGraphicalController implements MouseListener {
     private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class);
     private final World.GraphicalView worldView;
     private final InfoPanel infoPanel;
+    private Agent selectedAgent;
 
     public SimulationGraphicalController(World.GraphicalView worldView, InfoPanel infoPanel) {
         this.worldView = worldView;
@@ -23,10 +24,16 @@ public class SimulationGraphicalController implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        Agent agentClicked = worldView.getAgentInCoordinates(e.getPoint());
-        if (agentClicked != null) {
-            LOG.debug("Displaying details of agent {}", agentClicked);
-            infoPanel.showAgentDetails(agentClicked.getDetails());
+        selectedAgent = worldView.getAgentInCoordinates(e.getPoint());
+        if (selectedAgent != null) {
+            LOG.debug("Displaying details of agent {}", selectedAgent);
+            refreshSelectedAgentDetails();
+        }
+    }
+
+    public void refreshSelectedAgentDetails() {
+        if (selectedAgent != null) {
+            infoPanel.showAgentDetails(selectedAgent.getDetails());
         }
     }
 
