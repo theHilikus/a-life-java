@@ -21,7 +21,10 @@ public class PlantView implements Agent.View {
             "Growing", Ansi.FColor.BLACK
     );
 
-    private final Map<String, Color> graphicalMoodColours = Map.of(
+    /**
+     * Mapping of moods to colours
+     */
+    public static final Map<String, Color> graphicalMoodColours = Map.of(
             "BeingEaten", Color.YELLOW,
             "Growing", Color.GREEN
     );

@@ -1,5 +1,6 @@
-package com.github.thehilikus.alife.world;
+package com.github.thehilikus.alife.world.ui;
 
+import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +21,18 @@ public class SimulationGraphicalView extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
         add(worldView, BorderLayout.CENTER);
+        add(createInfoPanel(), BorderLayout.LINE_END);
         pack();
         setLocationRelativeTo(null);
+    }
+
+    private JPanel createInfoPanel() {
+        InfoPanel result = new InfoPanel();
+        LayoutManager layout = new BoxLayout(result, BoxLayout.PAGE_AXIS);
+        result.setLayout(layout);
+        result.populate();
+
+        return result;
     }
 
     public void refresh() {
@@ -30,6 +41,5 @@ public class SimulationGraphicalView extends JFrame {
         } catch (Exception exc) {
             LOG.error("Error refreshing the view", exc);
         }
-
     }
 }

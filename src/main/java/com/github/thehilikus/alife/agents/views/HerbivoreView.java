@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public class HerbivoreView implements Agent.View {
 
-    private final Map<String, Ansi.FColor> consoleMoodColours = Map.of(
+    private static final Map<String, Ansi.FColor> consoleMoodColours = Map.of(
             "Eating", Ansi.FColor.GREEN,
             "Existing", Ansi.FColor.WHITE,
             "Hunting", Ansi.FColor.BLUE,
@@ -26,7 +26,10 @@ public class HerbivoreView implements Agent.View {
             "Sleeping", Ansi.FColor.YELLOW
     );
 
-    private final Map<String, Color> graphicalMoodColours = Map.of(
+    /**
+     * Mapping of moods to colours
+     */
+    public static final Map<String, Color> graphicalMoodColours = Map.of(
             "Eating", Color.GREEN,
             "Existing", Color.GRAY,
             "Hunting", Color.BLUE,
