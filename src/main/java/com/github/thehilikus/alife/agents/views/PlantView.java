@@ -50,12 +50,12 @@ public class PlantView implements Agent.View {
     }
 
     @Override
-    public void drawIn2DGraphics(Graphics2D g2d, Agent plant) {
+    public Shape drawIn2DGraphics(Graphics2D g2d, Agent plant) {
         Map<String, Object> details = plant.getDetails();
 
         int agentSize = (int) details.get("size");
         double representationSize = Math.max((double) agentSize / Agent.Living.MAX_SIZE * AgentsView.MAX_REPRESENTATION_SIZE, AgentsView.MIN_REPRESENTATION_SIZE);
-        Shape agentShape = new Ellipse2D.Double(0, 0, representationSize * 2, representationSize * 2);
+        Shape agentShape = new Ellipse2D.Double(plant.getPosition().getX(), plant.getPosition().getY(), representationSize * 2, representationSize * 2);
 
         String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);
@@ -64,11 +64,12 @@ public class PlantView implements Agent.View {
         float vitality = ((Integer) details.get(VitalSign.PARAMETER_PREFIX + "energy")).floatValue() / EnergyTracker.MAX_ENERGY;
         Color plantColor = new Color(rgbColorComponents[0], rgbColorComponents[1], rgbColorComponents[2], vitality);
 
-        g2d.translate(plant.getPosition().getX(), plant.getPosition().getY());
         g2d.setColor(plantColor);
         g2d.fill(agentShape);
         g2d.setColor(Color.BLACK);
         g2d.draw(agentShape);
+
+        return agentShape;
     }
 
 }

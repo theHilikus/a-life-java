@@ -6,6 +6,7 @@ import com.github.thehilikus.alife.agents.controllers.HungerTracker;
 import com.github.thehilikus.alife.api.*;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.util.Map;
 import java.util.Objects;
@@ -60,12 +61,13 @@ public class HerbivoreView implements Agent.View {
     }
 
     @Override
-    public void drawIn2DGraphics(Graphics2D g2d, Agent agent) {
+    public Shape drawIn2DGraphics(Graphics2D g2d, Agent agent) {
         Map<String, Object> details = agent.getDetails();
 
         int agentSize = (int) details.get("size");
         double representationSize = Math.max((double) agentSize / Agent.Living.MAX_SIZE * AgentsView.MAX_REPRESENTATION_SIZE, AgentsView.MIN_REPRESENTATION_SIZE);
-        Shape agentShape = createHerbivoreShape(representationSize);
+        Orientation direction = (Orientation) details.get(Locomotion.PARAMETER_PREFIX + "orientation");
+        Shape agentShape = createHerbivoreShape(agent.getPosition().getX(), agent.getPosition().getY(), direction, representationSize);
 
         String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);
@@ -74,14 +76,12 @@ public class HerbivoreView implements Agent.View {
         float vitality = calculateVitality(details);
         Color agentColor = new Color(rgbColorComponents[0], rgbColorComponents[1], rgbColorComponents[2], vitality);
 
-        double direction = ((Orientation) details.get(Locomotion.PARAMETER_PREFIX + "orientation")).toRadians();
-
-        g2d.translate(agent.getPosition().getX(), agent.getPosition().getY());
-        g2d.rotate(direction);
         g2d.setColor(agentColor);
         g2d.fill(agentShape);
         g2d.setColor(Color.BLACK);
         g2d.draw(agentShape);
+
+        return agentShape;
     }
 
     private float calculateVitality(Map<String, Object> details) {
@@ -91,12 +91,18 @@ public class HerbivoreView implements Agent.View {
         return Math.min(energy, hunger);
     }
 
-    private Path2D createHerbivoreShape(double representationSize) {
+    private Path2D createHerbivoreShape(int x, int y, Orientation direction, double representationSize) {
         Path2D triangle = new Path2D.Double();
         triangle.moveTo(-representationSize, 2.5 * representationSize / 3);
         triangle.lineTo(representationSize, 2.5 * representationSize / 3);
         triangle.lineTo(0, -5.0 * representationSize / 3);
         triangle.closePath();
+
+
+        AffineTransform transform = new AffineTransform();
+        transform.translate(x, y);
+        transform.rotate(direction.toRadians());
+        triangle.transform(transform);
 
         return triangle;
     }

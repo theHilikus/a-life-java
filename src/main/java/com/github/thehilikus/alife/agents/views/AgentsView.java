@@ -37,13 +37,15 @@ public class AgentsView implements Agent.View {
     }
 
     @Override
-    public void drawIn2DGraphics(Graphics2D g2d, Agent agent) {
+    public Shape drawIn2DGraphics(Graphics2D g2d, Agent agent) {
         AffineTransform transform = g2d.getTransform();
 
         Agent.View view = agentsViews.get(agent.getClass());
         Objects.requireNonNull(view, "No view found that can draw " + agent);
-        view.drawIn2DGraphics(g2d, agent);
+        Shape result = view.drawIn2DGraphics(g2d, agent);
 
         g2d.setTransform(transform);
+
+        return result;
     }
 }

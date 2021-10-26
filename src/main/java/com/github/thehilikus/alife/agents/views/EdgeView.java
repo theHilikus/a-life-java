@@ -16,7 +16,7 @@ public class EdgeView implements Agent.View {
     }
 
     @Override
-    public void drawIn2DGraphics(Graphics2D g2d, Agent agent) {
+    public Shape drawIn2DGraphics(Graphics2D g2d, Agent agent) {
         throw new UnsupportedOperationException("Edge is not drawn in graphical view");
     }
 }
