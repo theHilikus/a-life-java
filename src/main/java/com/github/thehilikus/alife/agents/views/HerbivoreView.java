@@ -38,7 +38,7 @@ public class HerbivoreView implements Agent.View {
             "InHeatChasing", Color.MAGENTA,
             "Mating", Color.RED,
             "Scouting", Color.CYAN,
-            "Sleeping", Color.LIGHT_GRAY
+            "Sleeping", Color.ORANGE
     );
 
     @Override
