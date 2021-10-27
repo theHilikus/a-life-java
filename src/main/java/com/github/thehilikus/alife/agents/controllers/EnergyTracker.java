@@ -19,7 +19,6 @@ public class EnergyTracker implements VitalSign {
     public static final int ENERGY_DERIVATIVE = -2;
     private static final Logger LOG = LoggerFactory.getLogger(EnergyTracker.class.getSimpleName());
     private static final int STARTING_ENERGY = 100;
-    private static final int RESTED_THRESHOLD = 95;
     /**
      * the maximum possible level of energy
      */
@@ -27,7 +26,7 @@ public class EnergyTracker implements VitalSign {
     private final int agentId;
 
     @Min(0)
-    @Max(100)
+    @Max(MAX_ENERGY)
     private int currentEnergy;
 
     private final int lowEnergyThreshold;
@@ -76,7 +75,7 @@ public class EnergyTracker implements VitalSign {
     }
 
     public boolean isRested() {
-        boolean rested = currentEnergy >= RESTED_THRESHOLD;
+        boolean rested = currentEnergy >= MAX_ENERGY;
         if (!rested) {
             LOG.debug("Agent {} energy: {}", agentId, currentEnergy);
         }
