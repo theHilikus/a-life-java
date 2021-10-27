@@ -9,8 +9,8 @@ import java.io.File;
  */
 @SuppressWarnings("ALL")
 public class CliOptions {
-    @Option(name = "--automatic", usage = "Advance each age of the world automatically without user input")
-    private boolean automatic = false;
+    @Option(name = "--automatic", metaVar = "<automatic>", usage = "Automatically advance each age of the world every <automatic> millis")
+    private int automatic;
     @Option(name = "--print-world", usage = "Show a representation of the world in STDOUT")
     private boolean printWorld = false;
     @Option(name = "--log-file", metaVar = "<logFile>", usage = "File to log to. Disables logging to the console")
@@ -28,7 +28,7 @@ public class CliOptions {
     @Option(name = "--graphical", usage = "Opens a graphical interface to visualize the simulation")
     private boolean graphical = false;
 
-    public boolean isAutomatic() {
+    public int getAutomatic() {
         return automatic;
     }
 
@@ -40,7 +40,7 @@ public class CliOptions {
         return logFile;
     }
 
-    public void setAutomatic(boolean automatic) {
+    public void setAutomatic(int automatic) {
         this.automatic = automatic;
     }
 

@@ -61,6 +61,7 @@ public class Simulation {
         fileAppender.start();
 
         // attach the rolling file appender to the logger of your choice
+        @SuppressWarnings("unchecked")
         AppenderAttachable<ILoggingEvent> logbackLogger = (AppenderAttachable<ILoggingEvent>) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         logbackLogger.addAppender(fileAppender);
         logbackLogger.detachAppender("CONSOLE");
@@ -107,21 +108,21 @@ public class Simulation {
         if (options.isGraphical()) {
             graphicalView = new SimulationGraphicalView(world.new GraphicalView());
             SwingUtilities.invokeLater(() -> graphicalView.setVisible(true));
-        }  else {
+        } else {
             graphicalView = null;
         }
     }
 
     private void start() {
-        if (options.isAutomatic()) {
-            runAutomatic();
+        if (options.getAutomatic() != 0) {
+            runAutomatic(options.getAutomatic());
         } else {
             runManual();
         }
         System.out.println("Ending simulation after " + world.getAge() + " hours");
     }
 
-    private void runAutomatic() {
+    private void runAutomatic(int refreshDelay) {
         Runnable tick = () -> {
             boolean alive = world.tick();
             if (options.isPrintWorld()) {
@@ -134,7 +135,7 @@ public class Simulation {
                 executor.shutdown();
             }
         };
-        ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(tick, 0, 500, TimeUnit.MILLISECONDS);
+        ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(tick, 0, refreshDelay, TimeUnit.MILLISECONDS);
 
         try {
             scheduledFuture.get();
@@ -150,7 +151,8 @@ public class Simulation {
             String command = getCommand(scanner);
             while (!command.equals("q")) {
                 if (command.equals("a")) {
-                    options.setAutomatic(true);
+                    final int defaultRefresh = 500;
+                    options.setAutomatic(defaultRefresh);
                     start();
                     break;
                 } else if (command.startsWith("d ")) {
