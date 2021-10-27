@@ -109,7 +109,7 @@ public class World {
     private Position.Immutable resolveCollision(Agent.Living colliderAgent, Position.Immutable originalPosition, Agent collidedAgent) {
         Position newPosition = new Position(originalPosition.getX(), originalPosition.getY());
         Orientation newOrientation = originalPosition.directionTo(colliderAgent.getPosition()).opposite();
-        while (!isPositionEmpty(newPosition.getX(), newPosition.getY())) {
+        while (isPositionOccupied(newPosition.getX(), newPosition.getY())) {
             newPosition.move(newOrientation, 1);
             if (grid[newPosition.getY()][newPosition.getX()] instanceof Edge) {
                 LOG.debug("Hit the edge when resolving collision");
@@ -124,7 +124,7 @@ public class World {
 
     public void addAgent(Agent.Living agent) {
         Position.Immutable position = agent.getPosition();
-        if (!isPositionEmpty(position.getX(), position.getY())) {
+        if (isPositionOccupied(position.getX(), position.getY())) {
             Position closebyPosition = new Position(position.getX(), position.getY());
             closebyPosition.move(Orientation.WEST, 1);
             resolveCollision(agent, closebyPosition.toImmutable(), grid[position.getY()][position.getX()]);
@@ -148,13 +148,13 @@ public class World {
         do {
             x = RandomProvider.nextInt(1, getWidth() - 1);
             y = RandomProvider.nextInt(1, getHeight() - 1);
-        } while (!isPositionEmpty(x, y));
+        } while (isPositionOccupied(x, y));
 
         return new Position(x, y);
     }
 
-    private boolean isPositionEmpty(int x, int y) {
-        return grid[y][x] == null;
+    private boolean isPositionOccupied(int x, int y) {
+        return grid[y][x] != null;
     }
 
     public Agent getAgentRelativeTo(int id, int xDelta, int yDelta) {
