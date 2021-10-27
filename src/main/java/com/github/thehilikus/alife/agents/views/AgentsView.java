@@ -6,7 +6,6 @@ import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.world.Edge;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.util.Map;
 import java.util.Objects;
 
@@ -38,13 +37,13 @@ public class AgentsView implements Agent.View {
 
     @Override
     public Shape drawIn2DGraphics(Graphics2D g2d, Agent agent) {
-        AffineTransform transform = g2d.getTransform();
+        Stroke originalStroke = g2d.getStroke();
 
         Agent.View view = agentsViews.get(agent.getClass());
         Objects.requireNonNull(view, "No view found that can draw " + agent);
         Shape result = view.drawIn2DGraphics(g2d, agent);
 
-        g2d.setTransform(transform);
+        g2d.setStroke(originalStroke);
 
         return result;
     }

@@ -16,6 +16,7 @@ import java.util.Objects;
  */
 public class HerbivoreView implements Agent.View {
 
+    private static final double OLD_AGE_PROPORTION = 0.20;
     private static final Map<String, Ansi.FColor> consoleMoodColours = Map.of(
             "Eating", Ansi.FColor.GREEN,
             "Existing", Ansi.FColor.WHITE,
@@ -76,9 +77,20 @@ public class HerbivoreView implements Agent.View {
         float vitality = calculateVitality(details);
         Color agentColor = new Color(rgbColorComponents[0], rgbColorComponents[1], rgbColorComponents[2], vitality);
 
+        if ((int) details.get(VitalSign.PARAMETER_PREFIX + "age") >= (int) details.get(Agent.Evolvable.PARAMETER_PREFIX + "teenAge")) {
+            g2d.setStroke(new BasicStroke(2));
+        }
+
         g2d.setColor(agentColor);
         g2d.fill(agentShape);
-        g2d.setColor(Color.BLACK);
+        int lifeExpectancy = (int) details.get(VitalSign.PARAMETER_PREFIX + "lifeExpectancy");
+        double lifeLeftProportion = (lifeExpectancy - (int) details.get(VitalSign.PARAMETER_PREFIX + "age")) / (double) lifeExpectancy;
+        if (lifeLeftProportion < OLD_AGE_PROPORTION) {
+            g2d.setColor(Color.LIGHT_GRAY);
+        } else {
+            g2d.setColor(Color.BLACK);
+        }
+
         g2d.draw(agentShape);
 
         return agentShape;
