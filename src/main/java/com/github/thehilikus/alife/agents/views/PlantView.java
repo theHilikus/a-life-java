@@ -50,7 +50,7 @@ public class PlantView implements Agent.View {
     }
 
     @Override
-    public Shape drawIn2DGraphics(Graphics2D g2d, Agent plant) {
+    public Shape drawIn2DGraphics(Graphics2D g2d, Agent plant, boolean selected) {
         Map<String, Object> details = plant.getDetails();
 
         int agentSize = (int) details.get("size");

@@ -28,13 +28,12 @@ public class SimulationGraphicalController implements MouseListener {
         if (selectedAgent != null) {
             LOG.debug("Displaying details of agent {}", selectedAgent);
             refreshSelectedAgentDetails();
+            worldView.setSelectedAgent(selectedAgent.getId());
         }
     }
 
     public void refreshSelectedAgentDetails() {
-        if (selectedAgent != null) {
-            infoPanel.showAgentDetails(selectedAgent.getDetails());
-        }
+        infoPanel.showAgentDetails(selectedAgent.getDetails());
     }
 
     @Override

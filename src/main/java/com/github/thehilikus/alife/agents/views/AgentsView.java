@@ -36,12 +36,12 @@ public class AgentsView implements Agent.View {
     }
 
     @Override
-    public Shape drawIn2DGraphics(Graphics2D g2d, Agent agent) {
+    public Shape drawIn2DGraphics(Graphics2D g2d, Agent agent, boolean selected) {
         Stroke originalStroke = g2d.getStroke();
 
         Agent.View view = agentsViews.get(agent.getClass());
         Objects.requireNonNull(view, "No view found that can draw " + agent);
-        Shape result = view.drawIn2DGraphics(g2d, agent);
+        Shape result = view.drawIn2DGraphics(g2d, agent, selected);
 
         g2d.setStroke(originalStroke);
 

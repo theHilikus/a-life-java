@@ -221,6 +221,7 @@ public class World {
         private final Agent.View agentsView = new AgentsView();
 
         private final Map<Shape, Agent> agentsShapes = new HashMap<>();
+        private int agentSelectedId = -1;
 
         public GraphicalView() {
             final int edgePadding = 20;
@@ -244,7 +245,7 @@ public class World {
                 for (int x = 1; x < World.this.getWidth() - 1; x++) {
                     Agent agent = grid[y][x];
                     if (agent != null) {
-                        Shape agentShape = agentsView.drawIn2DGraphics(g2d, agent);
+                        Shape agentShape = agentsView.drawIn2DGraphics(g2d, agent, agent.getId() == agentSelectedId);
                         agentsShapes.put(agentShape, agent);
                     }
                 }
@@ -266,6 +267,11 @@ public class World {
             }
 
             return result;
+        }
+
+        public void setSelectedAgent(int selectedId) {
+            agentSelectedId = selectedId;
+            refresh();
         }
     }
 }

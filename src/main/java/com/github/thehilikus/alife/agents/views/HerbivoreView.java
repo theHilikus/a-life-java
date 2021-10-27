@@ -62,38 +62,69 @@ public class HerbivoreView implements Agent.View {
     }
 
     @Override
-    public Shape drawIn2DGraphics(Graphics2D g2d, Agent agent) {
+    public Shape drawIn2DGraphics(Graphics2D g2d, Agent agent, boolean selected) {
         Map<String, Object> details = agent.getDetails();
 
-        int agentSize = (int) details.get("size");
-        double representationSize = Math.max((double) agentSize / Agent.Living.MAX_SIZE * AgentsView.MAX_REPRESENTATION_SIZE, AgentsView.MIN_REPRESENTATION_SIZE);
-        Orientation direction = (Orientation) details.get(Locomotion.PARAMETER_PREFIX + "orientation");
-        Shape agentShape = createHerbivoreShape(agent.getPosition().getX(), agent.getPosition().getY(), direction, representationSize);
+        if (selected) {
+            drawVision(g2d, details, agent.getPosition());
+        }
 
-        String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
-        Color moodColor = graphicalMoodColours.get(moodName);
-        Objects.requireNonNull(moodColor, "Mood color was empty for " + moodName);
-        float[] rgbColorComponents = moodColor.getRGBColorComponents(null);
-        float vitality = calculateVitality(details);
-        Color agentColor = new Color(rgbColorComponents[0], rgbColorComponents[1], rgbColorComponents[2], vitality);
+        Color agentColor = computeAgentColor(details);
+        g2d.setColor(agentColor);
 
         if ((int) details.get(VitalSign.PARAMETER_PREFIX + "age") >= (int) details.get(Agent.Evolvable.PARAMETER_PREFIX + "teenAge")) {
             g2d.setStroke(new BasicStroke(2));
         }
 
-        g2d.setColor(agentColor);
+        Shape agentShape = createHerbivoreShape(details, agent.getPosition());
         g2d.fill(agentShape);
-        int lifeExpectancy = (int) details.get(VitalSign.PARAMETER_PREFIX + "lifeExpectancy");
-        double lifeLeftProportion = (lifeExpectancy - (int) details.get(VitalSign.PARAMETER_PREFIX + "age")) / (double) lifeExpectancy;
-        if (lifeLeftProportion < OLD_AGE_PROPORTION) {
-            g2d.setColor(Color.LIGHT_GRAY);
-        } else {
-            g2d.setColor(Color.BLACK);
-        }
+
+        Color borderColor = computeBorderColor(details);
+        g2d.setColor(borderColor);
 
         g2d.draw(agentShape);
 
         return agentShape;
+    }
+
+    private void drawVision(Graphics2D g2d, Map<String, Object> details, Position.Immutable position) {
+        int distance = (int) details.get(Vision.PARAMETER_PREFIX + "distance");
+        int x = position.getX() - distance / 2;
+        int y = position.getY() - distance / 2;
+        Shape vision = new Rectangle(x, y, distance, distance);
+
+        g2d.setColor(Color.BLUE);
+        g2d.draw(vision);
+    }
+
+    @SuppressWarnings("MagicNumber")
+    private Shape createHerbivoreShape(Map<String, Object> details, Position.Immutable position) {
+        int agentSize = (int) details.get("size");
+        double representationSize = Math.max((double) agentSize / Agent.Living.MAX_SIZE * AgentsView.MAX_REPRESENTATION_SIZE, AgentsView.MIN_REPRESENTATION_SIZE);
+        Orientation direction = (Orientation) details.get(Locomotion.PARAMETER_PREFIX + "orientation");
+
+        Path2D triangle = new Path2D.Double();
+        triangle.moveTo(-representationSize, 2.5 * representationSize / 3);
+        triangle.lineTo(representationSize, 2.5 * representationSize / 3);
+        triangle.lineTo(0, -5.0 * representationSize / 3);
+        triangle.closePath();
+
+        AffineTransform transform = new AffineTransform();
+        transform.translate(position.getX(), position.getY());
+        transform.rotate(direction.toRadians());
+        triangle.transform(transform);
+
+        return triangle;
+    }
+
+    private Color computeAgentColor(Map<String, Object> details) {
+        String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
+        Color moodColor = graphicalMoodColours.get(moodName);
+        Objects.requireNonNull(moodColor, "Mood color was empty for " + moodName);
+        float[] rgbColorComponents = moodColor.getRGBColorComponents(null);
+        float vitality = calculateVitality(details);
+
+        return new Color(rgbColorComponents[0], rgbColorComponents[1], rgbColorComponents[2], vitality);
     }
 
     private float calculateVitality(Map<String, Object> details) {
@@ -103,19 +134,13 @@ public class HerbivoreView implements Agent.View {
         return Math.min(energy, hunger);
     }
 
-    private Path2D createHerbivoreShape(int x, int y, Orientation direction, double representationSize) {
-        Path2D triangle = new Path2D.Double();
-        triangle.moveTo(-representationSize, 2.5 * representationSize / 3);
-        triangle.lineTo(representationSize, 2.5 * representationSize / 3);
-        triangle.lineTo(0, -5.0 * representationSize / 3);
-        triangle.closePath();
-
-
-        AffineTransform transform = new AffineTransform();
-        transform.translate(x, y);
-        transform.rotate(direction.toRadians());
-        triangle.transform(transform);
-
-        return triangle;
+    private Color computeBorderColor(Map<String, Object> details) {
+        int lifeExpectancy = (int) details.get(VitalSign.PARAMETER_PREFIX + "lifeExpectancy");
+        double lifeLeftProportion = (lifeExpectancy - (int) details.get(VitalSign.PARAMETER_PREFIX + "age")) / (double) lifeExpectancy;
+        if (lifeLeftProportion < OLD_AGE_PROPORTION) {
+            return Color.LIGHT_GRAY;
+        } else {
+            return Color.BLACK;
+        }
     }
 }
