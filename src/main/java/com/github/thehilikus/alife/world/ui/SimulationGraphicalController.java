@@ -33,7 +33,9 @@ public class SimulationGraphicalController implements MouseListener {
     }
 
     public void refreshSelectedAgentDetails() {
-        infoPanel.showAgentDetails(selectedAgent.getDetails());
+        if (selectedAgent != null) {
+            infoPanel.showAgentDetails(selectedAgent.getDetails());
+        }
     }
 
     @Override
