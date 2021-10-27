@@ -26,12 +26,16 @@ public class RandomProvider {
         return fixed;
     }
 
+    public static double nextDouble(double lowerBound, double upperBound) {
+        return lowerBound + random.nextDouble() * (upperBound - lowerBound);
+    }
+
     public static double nextDouble(double bound) {
-        return random.nextDouble() * bound;
+        return nextDouble(0, bound);
     }
 
     public static int nextInt(int lowerBound, int upperBound) {
-        return random.nextInt(upperBound - lowerBound) + lowerBound;
+        return lowerBound + random.nextInt(upperBound - lowerBound);
     }
 
     public static boolean nextBoolean() {
