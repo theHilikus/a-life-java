@@ -33,6 +33,7 @@ public class AgeTracker implements VitalSign {
         return currentAge;
     }
 
+    @Override
     public Map<String, Object> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "age", currentAge,

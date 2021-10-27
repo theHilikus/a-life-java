@@ -4,14 +4,16 @@ import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Records information about an agent's pregnancy
  */
 public class ReproductionTracker implements VitalSign {
     private int timeSinceReproduction;
-    private final Collection<String> encounters = new ArrayList<>();
+    private final List<Integer> offspring = new ArrayList<>();
+    private final List<Integer> mates = new ArrayList<>();
 
     @Override
     public void update(Mood currentMood) {
@@ -29,7 +31,17 @@ public class ReproductionTracker implements VitalSign {
     }
 
     public void gaveBirth(int otherParentId, int offspringId) {
-        encounters.add("With parent " + otherParentId + " had offspring " + offspringId);
+        offspring.add(offspringId);
+        mates.add(otherParentId);
         timeSinceReproduction = 0;
+    }
+
+    @Override
+    public Map<String, Object> getParameters() {
+        return Map.of(
+                PARAMETER_PREFIX + "timeSinceReproduction", timeSinceReproduction,
+                PARAMETER_PREFIX + "mates", mates,
+                PARAMETER_PREFIX + "offspring", offspring
+        );
     }
 }

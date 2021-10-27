@@ -62,6 +62,7 @@ public class EnergyTracker implements VitalSign {
         return agentId;
     }
 
+    @Override
     public Map<String, Object> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "energy", currentEnergy,

@@ -1,5 +1,7 @@
 package com.github.thehilikus.alife.api;
 
+import java.util.Map;
+
 /**
  * A metric that affects the agent regardless of mood
  */
@@ -22,4 +24,6 @@ public interface VitalSign {
     boolean isAlive();
 
     int getValue();
+
+    Map<String, Object> getParameters();
 }

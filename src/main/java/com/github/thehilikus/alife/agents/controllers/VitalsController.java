@@ -65,6 +65,7 @@ public class VitalsController implements Component {
         result.putAll(hungerTracker.getParameters());
         result.putAll(energyTracker.getParameters());
         result.putAll(ageTracker.getParameters());
+        result.putAll(reproductionTracker.getParameters());
 
         return result;
     }
