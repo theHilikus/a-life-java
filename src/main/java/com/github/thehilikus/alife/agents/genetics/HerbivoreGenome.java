@@ -37,11 +37,12 @@ public class HerbivoreGenome extends Genome {
     private static int maxVisionDistance;
 
     private static Map<String, Object> createGenes() {
-        int visionDistance = RandomProvider.nextInt(MIN_VISION_DISTANCE, maxVisionDistance);
         Map<String, Object> result = new HashMap<>();
+        int size = RandomProvider.nextInt(Agent.Living.MAX_SIZE);
+        result.put("size", size);
+        int visionDistance = RandomProvider.nextInt(Math.max(MIN_VISION_DISTANCE, size), maxVisionDistance); //vision should cover at least its body
         result.put("type", "Herbivore");
-        result.put("size", RandomProvider.nextInt(Agent.Living.MAX_SIZE));
-        result.put(Vision.PARAMETER_PREFIX + "radius", visionDistance);
+        result.put(Vision.PARAMETER_PREFIX + "distance", visionDistance);
         result.put(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomProvider.nextInt(MIN_TOP_SPEED, visionDistance)); //agent can't move further than it can see
         result.put(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomProvider.nextDouble(1) * -1);
         result.put(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomProvider.nextDouble(1));
