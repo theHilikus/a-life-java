@@ -33,6 +33,8 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     private final VitalsController vitals;
 
     public static void create(int count, World world) {
+        HerbivoreGenome.configureEnvironmentalLimits(world);
+
         for (int current = 0; current < count; current++) {
             int id = IdsProvider.getNextId();
             Genome genome = new HerbivoreGenome();

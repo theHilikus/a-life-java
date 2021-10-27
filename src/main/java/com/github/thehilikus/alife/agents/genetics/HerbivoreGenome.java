@@ -5,6 +5,7 @@ import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Vision;
 import com.github.thehilikus.alife.api.VitalSign;
 import com.github.thehilikus.alife.world.RandomProvider;
+import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +21,7 @@ public class HerbivoreGenome extends Genome {
     private static final double CROSSOVER_PROBABILITY = 0.7;
     private static final double MUTATION_PROBABILITY = 0.05;
 
-    private static final int MIN_VISION_DISTANCE = 2;
-    private static final int MAX_VISION_DISTANCE = 20;
+    private static final int MIN_VISION_DISTANCE = 5;
     private static final int MIN_TOP_SPEED = 1;
     private static final double MAX_IDLE_SPEED_FACTOR = 0.25;
     private static final double MAX_SCOUT_SPEED_FACTOR = 0.5;
@@ -31,13 +31,14 @@ public class HerbivoreGenome extends Genome {
     private static final int MIN_LIFE_EXPECTANCY = 50;
     private static final int MAX_LOW_ENERGY_THRESHOLD = 50;
     private static final int MAX_HUNGRY_THRESHOLD = 50;
-    private static final int MIN_TEEN_AGE = 10;
-    private static final int MAX_TEEN_AGE = 20;
+    private static final double MIN_TEEN_AGE_PROPORTION = 0.1;
+    private static final double MAX_TEEN_AGE_PROPORTION = 0.5;
     private static final int MAX_MATING_DURATION = 7;
     private static final int MIN_MATING_DURATION = 1;
+    private static int maxVisionDistance;
 
     private static Map<String, Object> createGenes() {
-        int visionDistance = RandomProvider.nextInt(MIN_VISION_DISTANCE, MAX_VISION_DISTANCE);
+        int visionDistance = RandomProvider.nextInt(MIN_VISION_DISTANCE, maxVisionDistance);
         Map<String, Object> result = new HashMap<>();
         result.put("type", "Herbivore");
         result.put("size", RandomProvider.nextInt(MAX_SIZE));
@@ -48,10 +49,11 @@ public class HerbivoreGenome extends Genome {
         result.put(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor", RandomProvider.nextDouble(MAX_IDLE_SPEED_FACTOR));
         result.put(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomProvider.nextDouble(MAX_SCOUT_SPEED_FACTOR));
         result.put(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomProvider.nextDouble(MAX_HUNT_SPEED_FACTOR));
-        result.put(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", RandomProvider.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY));
+        int lifeExpectancy = RandomProvider.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY);
+        result.put(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", lifeExpectancy);
         result.put(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold", RandomProvider.nextInt(MAX_LOW_ENERGY_THRESHOLD));
         result.put(VitalSign.PARAMETER_PREFIX + "hungryThreshold", RandomProvider.nextInt(MAX_HUNGRY_THRESHOLD));
-        result.put(Agent.Evolvable.PARAMETER_PREFIX + "teenAge", RandomProvider.nextInt(MIN_TEEN_AGE, MAX_TEEN_AGE));
+        result.put(Agent.Evolvable.PARAMETER_PREFIX + "teenAge", (int) (lifeExpectancy * RandomProvider.nextDouble(MIN_TEEN_AGE_PROPORTION, MAX_TEEN_AGE_PROPORTION)));
         result.put(Agent.Evolvable.PARAMETER_PREFIX + "matingDuration", RandomProvider.nextInt(MIN_MATING_DURATION, MAX_MATING_DURATION));
 
         return result;
@@ -63,6 +65,10 @@ public class HerbivoreGenome extends Genome {
 
     private HerbivoreGenome(Map<String, Object> genes) {
         super(genes);
+    }
+
+    public static void configureEnvironmentalLimits(World world) {
+        maxVisionDistance = Math.max(world.getWidth(), world.getHeight()) / 2; //max vision is half the world
     }
 
     @Override

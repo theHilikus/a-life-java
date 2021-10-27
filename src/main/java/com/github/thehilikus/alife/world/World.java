@@ -51,11 +51,11 @@ public class World {
         }
     }
 
-    private int getWidth() {
+    public int getWidth() {
         return grid[0].length;
     }
 
-    private int getHeight() {
+    public int getHeight() {
         return grid.length;
     }
 
