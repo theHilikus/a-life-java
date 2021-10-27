@@ -1,10 +1,11 @@
 package com.github.thehilikus.alife.agents.controllers;
 
+import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -12,8 +13,8 @@ import java.util.Map;
  */
 public class ReproductionTracker implements VitalSign {
     private int timeSinceReproduction;
-    private final List<Integer> offspring = new ArrayList<>();
-    private final List<Integer> mates = new ArrayList<>();
+    private final Collection<Integer> offspring = new ArrayList<>();
+    private final Collection<Integer> mates = new ArrayList<>();
 
     @Override
     public void update(Mood currentMood) {
@@ -39,9 +40,9 @@ public class ReproductionTracker implements VitalSign {
     @Override
     public Map<String, Object> getParameters() {
         return Map.of(
-                PARAMETER_PREFIX + "timeSinceReproduction", timeSinceReproduction,
-                PARAMETER_PREFIX + "mates", mates,
-                PARAMETER_PREFIX + "offspring", offspring
+                Agent.Evolvable.PARAMETER_PREFIX + "timeSinceReproduction", timeSinceReproduction,
+                Agent.Evolvable.PARAMETER_PREFIX + "mates", mates,
+                Agent.Evolvable.PARAMETER_PREFIX + "offspring", offspring
         );
     }
 }

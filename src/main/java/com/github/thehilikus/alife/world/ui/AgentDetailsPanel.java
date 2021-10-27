@@ -30,7 +30,12 @@ public class AgentDetailsPanel extends PropertySheetPanel {
             property.setCategory(category.substring(0, 1).toUpperCase() + category.substring(1));
             property.setDisplayName(name);
             property.setName(name);
-            property.setValue(detailsEntry.getValue());
+
+            Object value = detailsEntry.getValue();
+            if (value instanceof Double) {
+                value = String.format("%.3f", value);
+            }
+            property.setValue(value);
 
             tableModel.addProperty(property);
         }

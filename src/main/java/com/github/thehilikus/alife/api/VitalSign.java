@@ -9,7 +9,7 @@ public interface VitalSign {
     /**
      * The prefix for vital sign parameters
      */
-    String PARAMETER_PREFIX = "vital.";
+    String PARAMETER_PREFIX = "vitals.";
 
     /**
      * Updates the vital sign based on the mood
