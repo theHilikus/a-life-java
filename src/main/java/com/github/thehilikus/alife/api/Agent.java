@@ -5,6 +5,7 @@ import com.github.thehilikus.alife.world.World;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import java.awt.*;
 import java.util.Map;
 
 /**
@@ -20,10 +21,9 @@ public interface Agent {
     Position.Immutable getPosition();
 
     /**
-     * A textual representation of the agent with its id. The style represents the type of agent, the colour
-     * represents its current mood
+     * Max size for any agent
      */
-    String getStringRepresentation();
+    int MAX_SIZE = 100;
 
     /**
      * An agent that does actions in every turn
@@ -57,11 +57,17 @@ public interface Agent {
         /**
          * The prefix for evolution parameters
          */
-        String PARAMETER_PREFIX = "evolution.";
+        String PARAMETER_PREFIX = "reproduction.";
 
         @NotNull
         Genome getGenome();
 
         Evolvable reproduce(int fatherId, World world, Genome offspringGenome);
+    }
+
+    interface View {
+        void drawInConsole(StringBuilder builder, Agent agent);
+
+        Shape drawIn2DGraphics(Graphics2D g2d, Agent agent, boolean selected);
     }
 }

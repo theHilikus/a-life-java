@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
-import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.animals.Herbivore;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
@@ -39,11 +38,6 @@ public class InHeat implements Mood {
     @Override
     public int getEnergyDelta() {
         return existing.getEnergyDelta();
-    }
-
-    @Override
-    public Ansi.FColor getTerminalColour() {
-        return existing.getTerminalColour();
     }
 
     @Override

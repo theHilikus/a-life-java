@@ -29,4 +29,21 @@ public enum Orientation {
     public Orientation opposite() {
         return turn(WEST).turn(WEST);
     }
+
+    public double toRadians() {
+        double result = 0;
+        switch (this) {
+            case WEST:
+                result = 3.0 / 2 * Math.PI;
+                break;
+            case SOUTH:
+                result = Math.PI;
+                break;
+            case EAST:
+                result = Math.PI / 2;
+                break;
+        }
+
+        return result;
+    }
 }

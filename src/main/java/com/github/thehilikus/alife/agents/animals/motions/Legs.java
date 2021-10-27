@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -25,6 +26,7 @@ public class Legs {
     private final double energyExpenditureFactor;
 
     private Position position;
+    private Orientation lastMoveDirection;
 
     public Legs(int agentId, Position position, Genome genome) {
         this.agentId = agentId;
@@ -41,6 +43,7 @@ public class Legs {
         } else {
             LOG.info("Walking {} only {} spaces because it is close to the target", direction, movementDelta);
         }
+        lastMoveDirection = direction;
         position.move(direction, movementDelta);
 
         return movementDelta;
@@ -63,9 +66,13 @@ public class Legs {
     }
 
     public Map<String, Object> getParameters() {
-        return Map.of(
-                Locomotion.PARAMETER_PREFIX + "topSpeed", topSpeed,
-                Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", energyExpenditureFactor
-        );
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put(Locomotion.PARAMETER_PREFIX + "topSpeed", topSpeed);
+        result.put(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", energyExpenditureFactor);
+        if (lastMoveDirection != null) {
+            result.put(Locomotion.PARAMETER_PREFIX + "orientation", lastMoveDirection);
+        }
+
+        return result;
     }
 }

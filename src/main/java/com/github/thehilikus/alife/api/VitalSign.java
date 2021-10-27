@@ -1,5 +1,7 @@
 package com.github.thehilikus.alife.api;
 
+import java.util.Map;
+
 /**
  * A metric that affects the agent regardless of mood
  */
@@ -7,7 +9,7 @@ public interface VitalSign {
     /**
      * The prefix for vital sign parameters
      */
-    String PARAMETER_PREFIX = "vital.";
+    String PARAMETER_PREFIX = "vitals.";
 
     /**
      * Updates the vital sign based on the mood
@@ -22,4 +24,6 @@ public interface VitalSign {
     boolean isAlive();
 
     int getValue();
+
+    Map<String, Object> getParameters();
 }

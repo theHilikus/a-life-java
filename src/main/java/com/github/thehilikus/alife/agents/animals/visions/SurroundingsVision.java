@@ -23,12 +23,12 @@ public class SurroundingsVision implements Vision {
     private final int agentId;
 
     @Positive
-    private final int radius;
+    private final int distance;
     private final World world;
 
     public SurroundingsVision(int agentId, Genome genome, World world) {
         this.agentId = agentId;
-        this.radius = genome.getGene(Vision.PARAMETER_PREFIX + "radius");
+        this.distance = genome.getGene(Vision.PARAMETER_PREFIX + "distance");
         this.world = world;
     }
 
@@ -39,15 +39,15 @@ public class SurroundingsVision implements Vision {
 
     @Override
     public Map<String, Object> getParameters() {
-        return Map.of(PARAMETER_PREFIX + "radius", radius);
+        return Map.of(PARAMETER_PREFIX + "distance", distance);
     }
 
     @Override
     public SortedSet<ScanResult> scan(Predicate<Agent> test) {
-        LOG.debug("Scanning around agent {} in a radius of {}", agentId, radius);
+        LOG.debug("Scanning around agent {} with distance = {}", agentId, distance);
         SortedSet<ScanResult> result = new TreeSet<>();
-        for (int y = radius * -1; y <= radius; y++) {
-            for (int x = radius * -1; x <= radius; x++) {
+        for (int y = distance * -1; y <= distance; y++) {
+            for (int x = distance * -1; x <= distance; x++) {
                 Agent foundAgent = world.getAgentRelativeTo(agentId, x, y);
                 if (test.test(foundAgent)) {
                     result.add(new ScanResult(x, y, foundAgent));

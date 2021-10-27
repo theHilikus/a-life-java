@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.plants.moods;
 
-import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Mood;
 
 import javax.validation.constraints.NotNull;
@@ -32,11 +31,6 @@ public class Growing implements Mood {
     @Override
     public int getEnergyDelta() {
         return RECOVERY_RATE;
-    }
-
-    @Override
-    public Ansi.FColor getTerminalColour() {
-        return Ansi.FColor.BLACK;
     }
 
     @Override

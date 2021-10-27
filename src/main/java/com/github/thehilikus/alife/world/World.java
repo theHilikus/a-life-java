@@ -1,10 +1,16 @@
 package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.api.*;
+import com.github.thehilikus.alife.agents.views.AgentsView;
+import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.api.Orientation;
+import com.github.thehilikus.alife.api.Position;
+import com.github.thehilikus.alife.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,6 +30,7 @@ public class World {
     }
 
     private World(int width, int height) {
+        LOG.info("Creating world of {}x{}", width, height);
         grid = new Agent[height + 2][width + 2];
         createEdge();
         hour = 0;
@@ -175,27 +182,96 @@ public class World {
         return result;
     }
 
-    public String getRepresentation() {
-        StringBuilder stringBuilder = new StringBuilder(getWidth() * getHeight() * 2);
-        stringBuilder.append("World view on hour ").append(hour).append(System.lineSeparator());
-
-        String formatCode = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.NONE, Ansi.BColor.NONE);
-        String emptySpace = Ansi.formatMessage("  ", formatCode);
-        for (int y = 0; y < getHeight(); y++) {
-            for (int x = 0; x < getWidth(); x++) {
-                Agent agent = grid[y][x];
-                if (agent == null) {
-                    stringBuilder.append(emptySpace);
-                } else {
-                    stringBuilder.append(agent.getStringRepresentation());
-                }
-            }
-            stringBuilder.append(System.lineSeparator());
-        }
-        return stringBuilder.toString();
-    }
-
     public int getAge() {
         return hour;
+    }
+
+    public class ConsoleView {
+
+        private final Agent.View agentsView = new AgentsView();
+
+        public void draw() {
+            String textualRepresentation = getWorldRepresentation();
+            System.out.println(textualRepresentation);
+        }
+
+        public String getWorldRepresentation() {
+            StringBuilder stringBuilder = new StringBuilder(getWidth() * getHeight() * 2);
+            stringBuilder.append("World view on hour ").append(hour).append(System.lineSeparator());
+
+            String formatCode = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.NONE, Ansi.BColor.NONE);
+            String emptySpace = Ansi.formatMessage("  ", formatCode);
+            for (int y = 0; y < getHeight(); y++) {
+                for (int x = 0; x < getWidth(); x++) {
+                    Agent agent = grid[y][x];
+                    if (agent == null) {
+                        stringBuilder.append(emptySpace);
+                    } else {
+                        agentsView.drawInConsole(stringBuilder, agent);
+                    }
+                }
+                stringBuilder.append(System.lineSeparator());
+            }
+            return stringBuilder.toString();
+        }
+    }
+
+    public class GraphicalView extends JPanel {
+
+        private final Agent.View agentsView = new AgentsView();
+
+        private final Map<Shape, Agent> agentsShapes = new HashMap<>();
+        private int agentSelectedId = -1;
+
+        public GraphicalView() {
+            final int edgePadding = 20;
+            setPreferredSize(new Dimension(World.this.getWidth() + edgePadding, World.this.getHeight() + edgePadding));
+            setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            setBackground(Color.WHITE);
+        }
+
+        public void refresh() {
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            agentsShapes.clear();
+            for (int y = 1; y < World.this.getHeight() - 1; y++) { //don't draw edges
+                for (int x = 1; x < World.this.getWidth() - 1; x++) {
+                    Agent agent = grid[y][x];
+                    if (agent != null) {
+                        Shape agentShape = agentsView.drawIn2DGraphics(g2d, agent, agent.getId() == agentSelectedId);
+                        agentsShapes.put(agentShape, agent);
+                    }
+                }
+            }
+        }
+
+        public Agent getAgentInCoordinates(Point point) {
+            Agent result = null;
+            double shortestDistance = Double.MAX_VALUE;
+            for (Map.Entry<Shape, Agent> agentShape : agentsShapes.entrySet()) {
+                if (agentShape.getKey().contains(point)) {
+                    Position.Immutable agentPosition = agentShape.getValue().getPosition();
+                    double distanceToAgent = point.distanceSq(agentPosition.getX(), agentPosition.getY());
+                    if (distanceToAgent < shortestDistance) {
+                        shortestDistance = distanceToAgent;
+                        result = agentShape.getValue();
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public void setSelectedAgent(int selectedId) {
+            agentSelectedId = selectedId;
+            refresh();
+        }
     }
 }

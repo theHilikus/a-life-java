@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
-import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.controllers.ReproductionTracker;
 import com.github.thehilikus.alife.agents.genetics.Genome;
@@ -72,11 +71,6 @@ public class Mating implements Mood {
     @Override
     public int getEnergyDelta() {
         return EnergyTracker.ENERGY_DERIVATIVE + matingEnergySpent;
-    }
-
-    @Override
-    public Ansi.FColor getTerminalColour() {
-        return Ansi.FColor.RED;
     }
 
     @Override

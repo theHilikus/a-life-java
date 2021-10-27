@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
-import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.animals.motions.Legs;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.Agent;
@@ -21,12 +20,6 @@ public class InHeatChasing extends Hunting {
         this.moodController = moodController;
         this.mate = mate;
     }
-
-    @Override
-    public Ansi.FColor getTerminalColour() {
-        return Ansi.FColor.MAGENTA;
-    }
-
     @Override
     protected Mood reachedTarget() {
         return moodController.startMating(mate);

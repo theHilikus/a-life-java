@@ -1,7 +1,5 @@
 package com.github.thehilikus.alife.api;
 
-import com.diogonunes.jcdp.color.api.Ansi;
-
 import javax.validation.constraints.NotNull;
 
 /**
@@ -29,6 +27,4 @@ public interface Mood extends Component {
      * @return the number of energy points used (if negative) or gained (if positive) in the last turn
      */
     int getEnergyDelta();
-
-    Ansi.FColor getTerminalColour();
 }

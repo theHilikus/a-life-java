@@ -7,12 +7,14 @@ import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.spi.AppenderAttachable;
 import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.agents.animals.Herbivore;
+import com.github.thehilikus.alife.world.ui.SimulationGraphicalView;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ParserProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
@@ -27,6 +29,9 @@ public class Simulation {
     private final World world;
     private final CliOptions options;
     private static final int FIXED_SEED = 311;
+    private final SimulationGraphicalView graphicalView;
+    private final World.ConsoleView consoleView;
+
 
     public static void main(String[] args) {
         CliOptions options = parseArguments(args);
@@ -94,7 +99,16 @@ public class Simulation {
         Plant.create(options.getPlantsCount(), world);
 
         if (options.isPrintWorld()) {
-            System.out.println(world.getRepresentation());
+            consoleView = world.new ConsoleView();
+            consoleView.draw();
+        } else {
+            consoleView = null;
+        }
+        if (options.isGraphical()) {
+            graphicalView = new SimulationGraphicalView(world.new GraphicalView());
+            SwingUtilities.invokeLater(() -> graphicalView.setVisible(true));
+        }  else {
+            graphicalView = null;
         }
     }
 
@@ -111,7 +125,10 @@ public class Simulation {
         Runnable tick = () -> {
             boolean alive = world.tick();
             if (options.isPrintWorld()) {
-                System.out.println(world.getRepresentation());
+                consoleView.draw();
+            }
+            if (options.isGraphical()) {
+                graphicalView.refresh();
             }
             if (!alive) {
                 executor.shutdown();
@@ -150,7 +167,10 @@ public class Simulation {
                     break;
                 }
                 if (options.isPrintWorld()) {
-                    System.out.println(world.getRepresentation());
+                    consoleView.draw();
+                }
+                if (options.isGraphical()) {
+                    graphicalView.refresh();
                 }
                 command = getCommand(scanner);
             }
@@ -159,7 +179,7 @@ public class Simulation {
 
     private String getCommand(Scanner scanner) {
         String command;
-        System.out.println("Enter command to run");
+        System.out.println("Enter command to run (a = 'continue automatically', d <id> ='details of agent', q = 'quit'");
         System.out.print("> ");
         command = scanner.nextLine();
         return command;
@@ -172,7 +192,7 @@ public class Simulation {
                 StringBuilder detailsBuffer = new StringBuilder();
                 detailsBuffer.append("##### Details of agent ").append(agentId).append(" #####").append(System.lineSeparator());
                 agentDetails.forEach((key, value) -> detailsBuffer.append(key).append(": ").append(value).append(System.lineSeparator()));
-                System.out.println(detailsBuffer.toString());
+                System.out.println(detailsBuffer);
             } else {
                 System.out.println("No agent found with id " + agentId);
             }
