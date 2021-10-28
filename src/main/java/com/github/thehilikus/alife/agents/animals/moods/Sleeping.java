@@ -13,6 +13,7 @@ import java.util.Map;
  * An agent recovering energy
  */
 public class Sleeping implements Mood {
+    public static final int PRIORITY = 90;
     private static final Logger LOG = LoggerFactory.getLogger(Sleeping.class.getSimpleName());
     private static final double HUNGER_SLOWDOWN_FACTOR = 0.5;
     private static final int ENERGY_RECOVERY_RATE = 10;
@@ -42,6 +43,11 @@ public class Sleeping implements Mood {
     @Override
     public int getEnergyDelta() {
         return ENERGY_RECOVERY_RATE;
+    }
+
+    @Override
+    public int getPriority() {
+        return PRIORITY;
     }
 
     @Override

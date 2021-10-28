@@ -34,6 +34,11 @@ public class Growing implements Mood {
     }
 
     @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
     public @PositiveOrZero int getAgentId() {
         return agentId;
     }

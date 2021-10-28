@@ -15,6 +15,8 @@ import java.util.SortedSet;
  * The basic behaviour of an agent, regardless of mood
  */
 public class Existing implements Mood {
+    private static final int PRIORITY = 10;
+
     private final Vision vision;
     private final Locomotion locomotion;
     private final double speedFactor;
@@ -43,6 +45,11 @@ public class Existing implements Mood {
     @Override
     public int getEnergyDelta() {
         return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
+    }
+
+    @Override
+    public int getPriority() {
+        return PRIORITY;
     }
 
     @Override

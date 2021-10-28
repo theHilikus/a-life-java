@@ -1,8 +1,7 @@
 package com.github.thehilikus.alife.agents.controllers;
 
-import com.github.thehilikus.alife.agents.animals.moods.Eating;
-import com.github.thehilikus.alife.agents.animals.moods.Hunting;
 import com.github.thehilikus.alife.agents.animals.moods.Scouting;
+import com.github.thehilikus.alife.agents.animals.moods.Sleeping;
 import com.github.thehilikus.alife.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +39,15 @@ public class VitalsController implements Component {
         Mood result = newMood;
         if (energyTracker.isTired()) {
             LOG.debug("{} is tired", agentId);
-            result = moodController.startSleeping();
+            if (newMood.getPriority() < Sleeping.PRIORITY) {
+                result = moodController.startSleeping();
+            }
         }
-        if (hungerTracker.isHungry() && !(newMood instanceof Hunting || newMood instanceof Scouting || newMood instanceof Eating)) {
+        if (hungerTracker.isHungry()) {
             LOG.debug("{} is hungry", agentId);
-            result = moodController.startScouting();
+            if (newMood.getPriority() < Scouting.PRIORITY) {
+                result = moodController.startScouting();
+            }
         }
 
         return result;

@@ -14,6 +14,7 @@ import java.util.SortedSet;
  * When looking for food but it has not been found
  */
 public class Scouting implements Mood {
+    public static final int PRIORITY = 80;
     private final Vision vision;
     private final Locomotion locomotion;
     private final MoodController moodController;
@@ -52,6 +53,11 @@ public class Scouting implements Mood {
     @Override
     public int getEnergyDelta() {
         return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
+    }
+
+    @Override
+    public int getPriority() {
+        return PRIORITY;
     }
 
     @Override

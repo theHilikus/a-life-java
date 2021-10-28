@@ -15,6 +15,7 @@ import java.util.SortedSet;
  * When an agent is reproducing
  */
 public class Mating implements Mood {
+    private static final int PRIORITY = 65;
     private static final Logger LOG = LoggerFactory.getLogger(Mating.class.getSimpleName());
     private static final double MATE_ENERGY_FACTOR = 1.25;
     private final MoodController moodController;
@@ -74,6 +75,11 @@ public class Mating implements Mood {
     @Override
     public int getEnergyDelta() {
         return EnergyTracker.ENERGY_DERIVATIVE + matingEnergySpent;
+    }
+
+    @Override
+    public int getPriority() {
+        return PRIORITY;
     }
 
     @Override

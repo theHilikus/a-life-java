@@ -46,6 +46,11 @@ public class BeingEaten implements Mood {
     }
 
     @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
     public int getAgentId() {
         return agentId;
     }

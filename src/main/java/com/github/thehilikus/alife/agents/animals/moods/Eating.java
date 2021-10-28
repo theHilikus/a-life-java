@@ -18,6 +18,7 @@ public class Eating implements Mood {
     private static final Logger LOG = LoggerFactory.getLogger(Eating.class.getSimpleName());
     private static final double SIZE_TO_BITE_RATIO = 0.75;
     private static final double EATING_FATIGUE_FACTOR = 1.5;
+    private static final int PRIORITY = 85;
 
     private final MoodController moodController;
     private final Vision vision;
@@ -62,6 +63,11 @@ public class Eating implements Mood {
     @Override
     public int getEnergyDelta() {
         return (int) Math.round(EnergyTracker.ENERGY_DERIVATIVE * EATING_FATIGUE_FACTOR);
+    }
+
+    @Override
+    public int getPriority() {
+        return PRIORITY;
     }
 
     @Override

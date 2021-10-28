@@ -11,7 +11,7 @@ import com.github.thehilikus.alife.api.Vision;
  * When an agent has found a potential mate
  */
 public class InHeatChasing extends Hunting {
-
+    private static final int PRIORITY = 62;
     private final MoodController moodController;
     private final Agent.Evolvable mate;
 
@@ -30,5 +30,10 @@ public class InHeatChasing extends Hunting {
         return "InHeatChasing{" +
                 "mate=" + mate.getId() +
                 '}';
+    }
+
+    @Override
+    public int getPriority() {
+        return PRIORITY;
     }
 }

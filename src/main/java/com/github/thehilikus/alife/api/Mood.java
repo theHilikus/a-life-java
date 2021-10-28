@@ -27,4 +27,6 @@ public interface Mood extends Component {
      * @return the number of energy points used (if negative) or gained (if positive) in the last turn
      */
     int getEnergyDelta();
+
+    int getPriority();
 }

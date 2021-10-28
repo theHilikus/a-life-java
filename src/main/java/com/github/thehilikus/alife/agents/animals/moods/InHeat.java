@@ -12,7 +12,7 @@ import java.util.SortedSet;
  * When an agent is looking for a suitable mate to reproduce
  */
 public class InHeat implements Mood {
-
+    private static final int PRIORITY = 60;
     private final Existing existing;
     private final MoodController moodController;
     private final Vision vision;
@@ -38,6 +38,11 @@ public class InHeat implements Mood {
     @Override
     public int getEnergyDelta() {
         return existing.getEnergyDelta();
+    }
+
+    @Override
+    public int getPriority() {
+        return PRIORITY;
     }
 
     @Override

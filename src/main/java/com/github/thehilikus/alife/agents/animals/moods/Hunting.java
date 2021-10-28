@@ -15,6 +15,7 @@ import java.util.SortedSet;
  * When food has been located
  */
 public class Hunting implements Mood {
+    private static final int PRIORITY = 82;
     private static final Logger LOG = LoggerFactory.getLogger(Hunting.class);
     private final MoodController moodController;
     private final Vision vision;
@@ -75,6 +76,11 @@ public class Hunting implements Mood {
     @Override
     public int getEnergyDelta() {
         return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * legs.getEnergyExpenditureFactor());
+    }
+
+    @Override
+    public int getPriority() {
+        return PRIORITY;
     }
 
     @Override
