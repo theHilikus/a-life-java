@@ -40,7 +40,9 @@ public class Hunting implements Mood {
     public Map<String, Object> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "speedFactor", speedFactor,
-                PARAMETER_PREFIX + "lastMovement", lastMovement
+                PARAMETER_PREFIX + "lastMovement", lastMovement,
+                PARAMETER_PREFIX + "target", target.getId(),
+                PARAMETER_PREFIX + "targetPosition", target.getPosition()
         );
     }
 

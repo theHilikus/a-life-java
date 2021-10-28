@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.SortedSet;
 
+/**
+ * When an agent is reproducing
+ */
 public class Mating implements Mood {
     private static final Logger LOG = LoggerFactory.getLogger(Mating.class.getSimpleName());
     private static final double MATE_ENERGY_FACTOR = 1.25;
