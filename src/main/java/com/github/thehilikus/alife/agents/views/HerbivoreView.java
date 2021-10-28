@@ -103,9 +103,9 @@ public class HerbivoreView implements Agent.View {
         Orientation direction = (Orientation) details.get(Locomotion.PARAMETER_PREFIX + "orientation");
 
         Path2D triangle = new Path2D.Double();
-        triangle.moveTo(-agentSize/2.0, 2.5 * agentSize / 6);
-        triangle.lineTo(agentSize/2.0, 2.5 * agentSize / 6);
-        triangle.lineTo(0, -5.0 * agentSize / 6);
+        triangle.moveTo(-agentSize / 2.0, agentSize / 2.4);
+        triangle.lineTo(agentSize / 2.0, agentSize / 2.4);
+        triangle.lineTo(0, agentSize / -1.2);
         triangle.closePath();
 
         AffineTransform transform = new AffineTransform();
