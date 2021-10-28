@@ -54,8 +54,7 @@ public class PlantView implements Agent.View {
         Map<String, Object> details = plant.getDetails();
 
         int agentSize = (int) details.get("size");
-        double representationSize = Math.max((double) agentSize / Agent.Living.MAX_SIZE * AgentsView.MAX_REPRESENTATION_SIZE, AgentsView.MIN_REPRESENTATION_SIZE);
-        Shape agentShape = new Ellipse2D.Double(plant.getPosition().getX(), plant.getPosition().getY(), representationSize * 2, representationSize * 2);
+        Shape agentShape = new Ellipse2D.Double(plant.getPosition().getX(), plant.getPosition().getY(), agentSize, agentSize);
 
         String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);

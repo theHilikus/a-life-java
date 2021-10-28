@@ -21,9 +21,9 @@ public interface Agent {
     Position.Immutable getPosition();
 
     /**
-     * Max size for any agent
+     * Min size for any agent
      */
-    int MAX_SIZE = 100;
+    int MIN_SIZE = 4;
 
     /**
      * An agent that does actions in every turn

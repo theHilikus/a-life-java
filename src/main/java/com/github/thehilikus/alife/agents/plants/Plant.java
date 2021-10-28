@@ -29,18 +29,20 @@ public class Plant implements Agent.Eatable {
             int id = IdsProvider.getNextId();
             Mood startingMood = new Growing(id);
 
-            Agent.Living newAgent = new Plant(id, world.getEmptyPosition(), startingMood);
+            final double maxSizeProportionToWorld = 0.09;
+            int maxSize = (int) (Math.min(world.getWidth(), world.getHeight()) * maxSizeProportionToWorld);
+            Agent.Living newAgent = new Plant(id, world.getEmptyPosition(), startingMood, maxSize);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }
     }
 
-    private Plant(int id, Position startingPosition, Mood startingMood) {
+    private Plant(int id, Position startingPosition, Mood startingMood, int maxSize) {
         this.id = id;
         this.position = startingPosition;
         this.mood = startingMood;
         this.energyTracker = new EnergyTracker(id);
-        this.size = RandomProvider.nextInt(MAX_SIZE);
+        this.size = RandomProvider.nextInt(Agent.MIN_SIZE, maxSize);
     }
 
     @Override

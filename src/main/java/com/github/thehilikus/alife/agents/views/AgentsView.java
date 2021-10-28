@@ -13,15 +13,6 @@ import java.util.Objects;
  * The top class to represent agents in different media
  */
 public class AgentsView implements Agent.View {
-    /**
-     * The maximum size for shapes in the UI
-     */
-    public final static int MAX_REPRESENTATION_SIZE = 25;
-    /**
-     * The minimum size for shapes in the UI
-     */
-    public final static int MIN_REPRESENTATION_SIZE = 3;
-
     private final Map<Class<? extends Agent>, Agent.View> agentsViews = Map.of(
             Edge.class, new EdgeView(),
             Plant.class, new PlantView(),

@@ -100,7 +100,6 @@ public class HerbivoreView implements Agent.View {
     @SuppressWarnings("MagicNumber")
     private Shape createHerbivoreShape(Map<String, Object> details, Position.Immutable position) {
         int agentSize = (int) details.get("size");
-        double representationSize = Math.max((double) agentSize / Agent.Living.MAX_SIZE * AgentsView.MAX_REPRESENTATION_SIZE, AgentsView.MIN_REPRESENTATION_SIZE);
         Orientation direction = (Orientation) details.get(Locomotion.PARAMETER_PREFIX + "orientation");
 
         Path2D triangle = new Path2D.Double();
