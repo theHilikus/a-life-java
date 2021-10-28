@@ -7,6 +7,7 @@ import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.spi.AppenderAttachable;
 import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.agents.animals.Herbivore;
+import com.github.thehilikus.alife.world.ui.SimulationGraphicalController;
 import com.github.thehilikus.alife.world.ui.SimulationGraphicalView;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -29,7 +30,7 @@ public class Simulation {
     private final World world;
     private final CliOptions options;
     private static final int FIXED_SEED = 311;
-    private final SimulationGraphicalView graphicalView;
+    private final Control control;
     private final World.ConsoleView consoleView;
 
 
@@ -99,6 +100,8 @@ public class Simulation {
         Herbivore.create(options.getHerbivoresCount(), world);
         Plant.create(options.getPlantsCount(), world);
 
+        control = new Control(world);
+
         if (options.isPrintWorld()) {
             consoleView = world.new ConsoleView();
             consoleView.draw();
@@ -106,11 +109,21 @@ public class Simulation {
             consoleView = null;
         }
         if (options.isGraphical()) {
-            graphicalView = new SimulationGraphicalView(world.new GraphicalView());
-            SwingUtilities.invokeLater(() -> graphicalView.setVisible(true));
-        } else {
-            graphicalView = null;
+            initGui();
         }
+    }
+
+    private void initGui() {
+        LOG.info("Initializing GUI");
+
+        World.GraphicalView worldView = world.new GraphicalView();
+        SimulationGraphicalView simulationView = new SimulationGraphicalView(worldView);
+        SimulationGraphicalController graphicalController = new SimulationGraphicalController(worldView, simulationView.getInfoPanel(), control);
+        simulationView.addActionListener(graphicalController);
+        worldView.addMouseListener(graphicalController);
+        world.setTickListener(graphicalController);
+
+        SwingUtilities.invokeLater(() -> simulationView.setVisible(true));
     }
 
     private void start() {
@@ -127,9 +140,6 @@ public class Simulation {
             boolean alive = world.tick();
             if (options.isPrintWorld()) {
                 consoleView.draw();
-            }
-            if (options.isGraphical()) {
-                graphicalView.refresh();
             }
             if (!alive) {
                 executor.shutdown();
@@ -171,9 +181,6 @@ public class Simulation {
                 if (options.isPrintWorld()) {
                     consoleView.draw();
                 }
-                if (options.isGraphical()) {
-                    graphicalView.refresh();
-                }
                 command = getCommand(scanner);
             }
         }
@@ -200,6 +207,60 @@ public class Simulation {
             }
         } else {
             System.err.println("Invalid id \"" + agentId + "\". Ignoring command");
+        }
+    }
+
+    public static class Control {
+        private static final Logger LOG = LoggerFactory.getLogger(Control.class);
+
+        private final World world;
+        private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        private ScheduledFuture<?> scheduledFuture;
+        private int refreshDelay;
+
+        public Control(World world) {
+            this.world = world;
+        }
+
+        public void start() {
+            LOG.info("Starting continuous simulation with refresh delay = {}", refreshDelay);
+            Runnable tick = () -> {
+                boolean alive = world.tick();
+                if (!alive) {
+                    executor.shutdown();
+                }
+            };
+            scheduledFuture = executor.scheduleAtFixedRate(tick, 0, refreshDelay, TimeUnit.MILLISECONDS);
+        }
+
+        public void pause() {
+            LOG.info("Pausing simulation");
+            scheduledFuture.cancel(true);
+            scheduledFuture = null;
+        }
+
+        public void reset() {
+            LOG.info("Resetting simulation");
+            if (isRunning()) {
+                pause();
+            }
+            throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+        }
+
+        public boolean tick() {
+            LOG.info("Advancing a single tick");
+            return world.tick();
+        }
+
+        public boolean isRunning() {
+            return scheduledFuture != null;
+        }
+
+        public void setRefreshDelay(int refreshDelay) {
+            if (this.refreshDelay != refreshDelay) {
+                LOG.info("Changing refresh delay from {}ms to {}ms", this.refreshDelay, refreshDelay);
+                this.refreshDelay = refreshDelay;
+            }
         }
     }
 }
