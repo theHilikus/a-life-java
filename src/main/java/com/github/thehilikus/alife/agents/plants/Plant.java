@@ -42,7 +42,7 @@ public class Plant implements Agent.Eatable {
         this.position = startingPosition;
         this.mood = startingMood;
         this.energyTracker = new EnergyTracker(id);
-        this.size = RandomProvider.nextInt(Agent.MIN_SIZE, maxSize);
+        this.size = RandomProvider.nextInt(Agent.MIN_SIZE, Math.max(maxSize, Agent.MIN_SIZE + 1));
     }
 
     @Override

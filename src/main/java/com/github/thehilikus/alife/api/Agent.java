@@ -23,7 +23,7 @@ public interface Agent {
     /**
      * Min size for any agent
      */
-    int MIN_SIZE = 4;
+    int MIN_SIZE = 6;
 
     /**
      * An agent that does actions in every turn
