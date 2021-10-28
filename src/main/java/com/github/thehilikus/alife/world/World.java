@@ -23,6 +23,7 @@ public class World {
     private final Map<Integer, Agent.Living> agents = new ConcurrentHashMap<>();
     private final Map<Integer, Agent.Living> cemetery = new HashMap<>();
     private int hour;
+    private TickListener tickListener;
 
 
     static World createWorld(CliOptions options) {
@@ -83,6 +84,7 @@ public class World {
         });
         toRemove.forEach(this::removeAgent);
         LOG.info("Ending hour {}\n", hour);
+        tickListener.ticked();
 
         return agents.values().stream().anyMatch(agent -> agent instanceof Agent.Movable);
     }
@@ -186,6 +188,10 @@ public class World {
         return hour;
     }
 
+    public void setTickListener(TickListener listener) {
+        tickListener = listener;
+    }
+
     public class ConsoleView {
 
         private final Agent.View agentsView = new AgentsView();
@@ -236,6 +242,9 @@ public class World {
 
         @Override
         protected void paintComponent(Graphics g) {
+            if (!SwingUtilities.isEventDispatchThread()) {
+                throw new IllegalStateException("Don't draw outside the EDT");
+            }
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -273,5 +282,9 @@ public class World {
             agentSelectedId = selectedId;
             refresh();
         }
+    }
+
+    public interface TickListener {
+        void ticked();
     }
 }
