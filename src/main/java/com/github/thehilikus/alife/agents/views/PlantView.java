@@ -54,7 +54,9 @@ public class PlantView implements Agent.View {
         Map<String, Object> details = plant.getDetails();
 
         int agentSize = (int) details.get("size");
-        Shape agentShape = new Ellipse2D.Double(plant.getPosition().getX(), plant.getPosition().getY(), agentSize, agentSize);
+        //noinspection MagicNumber
+        double radius = agentSize / 2.0;
+        Shape agentShape = new Ellipse2D.Double(plant.getPosition().getX() - radius, plant.getPosition().getY() - radius, agentSize, agentSize);
 
         String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);
