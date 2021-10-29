@@ -54,18 +54,16 @@ public class PlantView implements Agent.View {
         Map<String, Object> details = plant.getDetails();
 
         int agentSize = (int) details.get("size");
+        float vitality = ((Integer) details.get(VitalSign.PARAMETER_PREFIX + "energy")).floatValue() / EnergyTracker.MAX_ENERGY;
         //noinspection MagicNumber
-        double radius = agentSize / 2.0;
-        Shape agentShape = new Ellipse2D.Double(plant.getPosition().getX() - radius, plant.getPosition().getY() - radius, agentSize, agentSize);
+        double radius = agentSize / 2.0 * vitality;
+        Shape agentShape = new Ellipse2D.Double(plant.getPosition().getX() - radius, plant.getPosition().getY() - radius, radius * 2, radius * 2);
 
         String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);
         Objects.requireNonNull(moodColor, "Mood color was empty for " + moodName);
-        float[] rgbColorComponents = moodColor.getRGBColorComponents(null);
-        float vitality = ((Integer) details.get(VitalSign.PARAMETER_PREFIX + "energy")).floatValue() / EnergyTracker.MAX_ENERGY;
-        Color plantColor = new Color(rgbColorComponents[0], rgbColorComponents[1], rgbColorComponents[2], vitality);
 
-        g2d.setColor(plantColor);
+        g2d.setColor(moodColor);
         g2d.fill(agentShape);
         g2d.setColor(Color.BLACK);
         g2d.draw(agentShape);
