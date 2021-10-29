@@ -84,7 +84,9 @@ public class World {
         });
         toRemove.forEach(this::removeAgent);
         LOG.info("Ending hour {}\n", hour);
-        tickListener.ticked();
+        if (tickListener != null) {
+            tickListener.ticked();
+        }
 
         return agents.values().stream().anyMatch(agent -> agent instanceof Agent.Movable);
     }
