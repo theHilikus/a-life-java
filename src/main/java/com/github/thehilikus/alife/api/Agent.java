@@ -68,6 +68,8 @@ public interface Agent {
     interface View {
         void drawInConsole(StringBuilder builder, Agent agent);
 
-        Shape drawIn2DGraphics(Graphics2D g2d, Agent agent, boolean selected);
+        Shape drawKeyframe(Graphics2D g2d, Agent agent, boolean selected);
+
+        void drawTweenFrame(Graphics2D g2d, Agent agent, double percentToKeyFrame);
     }
 }

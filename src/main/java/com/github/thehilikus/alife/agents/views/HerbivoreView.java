@@ -8,6 +8,7 @@ import com.github.thehilikus.alife.api.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,6 +43,8 @@ public class HerbivoreView implements Agent.View {
             "Sleeping", Color.ORANGE
     );
 
+    private final Map<Agent, Frame> lastKeyframes = new HashMap<>();
+
     @Override
     public void drawInConsole(StringBuilder builder, Agent agent) {
         Ansi.Attribute agentTypeStyle = Ansi.Attribute.BOLD;
@@ -62,33 +65,68 @@ public class HerbivoreView implements Agent.View {
     }
 
     @Override
-    public Shape drawIn2DGraphics(Graphics2D g2d, Agent agent, boolean selected) {
+    public Shape drawKeyframe(Graphics2D g2d, Agent agent, boolean selected) {
         Map<String, Object> details = agent.getDetails();
 
+        Position.Immutable position = (Position.Immutable) details.get("position");
         if (selected) {
             drawVision(g2d, details, agent.getPosition());
             Position.Immutable targetPosition = (Position.Immutable) details.get(Mood.PARAMETER_PREFIX + "targetPosition");
             if (targetPosition != null) {
-                drawPathToTarget(g2d, (Position.Immutable) details.get("position"), targetPosition);
+                drawPathToTarget(g2d, position, targetPosition);
             }
         }
 
+        Frame keyframe = new Frame();
+        keyframe.addFixedProperty("size", details.get("size"));
+        keyframe.addPropertyToInterpolate("position", details.get("position"));
+        keyframe.addPropertyToInterpolate("orientation", ((Orientation)details.get(Locomotion.PARAMETER_PREFIX + "orientation")).toRadians());
         Color agentColor = computeAgentColor(details);
         g2d.setColor(agentColor);
+        keyframe.addPropertyToInterpolate("color", agentColor);
 
         if ((int) details.get(VitalSign.PARAMETER_PREFIX + "age") >= (int) details.get(Agent.Evolvable.PARAMETER_PREFIX + "teenAge")) {
-            g2d.setStroke(new BasicStroke(2));
+            Stroke stroke = new BasicStroke(2);
+            g2d.setStroke(stroke);
+            keyframe.addFixedProperty("stroke", stroke);
         }
 
-        Shape agentShape = createHerbivoreShape(details, agent.getPosition());
+        Shape agentShape = createHerbivoreShape(keyframe);
         g2d.fill(agentShape);
 
         Color borderColor = computeBorderColor(details);
         g2d.setColor(borderColor);
-
+        keyframe.addFixedProperty("borderColor", borderColor);
         g2d.draw(agentShape);
 
+        lastKeyframes.put(agent, keyframe);
         return agentShape;
+    }
+
+    @Override
+    public void drawTweenFrame(Graphics2D g2d, Agent agent, double percentToKeyFrame) {
+        Frame previousKeyframe = lastKeyframes.get(agent);
+        Frame newKeyframe = new Frame();
+        newKeyframe.addPropertyToInterpolate("position", agent.getDetails().get("position"));
+        newKeyframe.addPropertyToInterpolate("orientation", ((Orientation)agent.getDetails().get(Locomotion.PARAMETER_PREFIX + "orientation")).toRadians());
+        Color newAgentColor = computeAgentColor(agent.getDetails());
+        newKeyframe.addPropertyToInterpolate("color", newAgentColor);
+
+        Frame tweenFrame = previousKeyframe.interpolate(newKeyframe, percentToKeyFrame);
+
+        Color agentColor = previousKeyframe.getInterpolatedProperty("color");
+        g2d.setColor(agentColor);
+        Stroke stroke = previousKeyframe.getFixedProperty("stroke");
+        if (stroke != null) {
+            g2d.setStroke(stroke);
+        }
+        Shape agentShape = createHerbivoreShape(tweenFrame);
+        g2d.fill(agentShape);
+
+        Color borderColor = previousKeyframe.getFixedProperty("borderColor");
+        g2d.setColor(borderColor);
+
+        g2d.draw(agentShape);
     }
 
     private void drawVision(Graphics2D g2d, Map<String, Object> details, Position.Immutable position) {
@@ -107,19 +145,23 @@ public class HerbivoreView implements Agent.View {
     }
 
     @SuppressWarnings("MagicNumber")
-    private Shape createHerbivoreShape(Map<String, Object> details, Position.Immutable position) {
-        int agentSize = (int) details.get("size");
-        Orientation direction = (Orientation) details.get(Locomotion.PARAMETER_PREFIX + "orientation");
+    private Shape createHerbivoreShape(Frame frame) {
+        int size = frame.getFixedProperty("size");
 
         Path2D triangle = new Path2D.Double();
-        triangle.moveTo(-agentSize / 2.0, agentSize / 2.4);
-        triangle.lineTo(agentSize / 2.0, agentSize / 2.4);
-        triangle.lineTo(0, agentSize / -1.2);
+        triangle.moveTo(-size / 2.0, size / 2.4);
+        triangle.lineTo(size / 2.0, size / 2.4);
+        triangle.lineTo(0, size / -1.2);
         triangle.closePath();
 
         AffineTransform transform = new AffineTransform();
+
+        Position.Immutable position = frame.getInterpolatedProperty("position");
         transform.translate(position.getX(), position.getY());
-        transform.rotate(direction.toRadians());
+
+        double orientation = frame.getInterpolatedProperty("orientation");
+        transform.rotate(orientation);
+
         triangle.transform(transform);
 
         return triangle;

@@ -11,7 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
@@ -210,12 +213,17 @@ public class World {
         }
     }
 
-    public class GraphicalView extends JPanel {
+    public class GraphicalView extends JPanel implements ActionListener {
 
+        private static final int FRAME_RATE = 30;
         private final Agent.View agentsView = new AgentsView();
 
         private final Map<Shape, Agent> agentsShapes = new HashMap<>();
         private int agentSelectedId = -1;
+        private Timer animationClock;
+        private int currentFrame = 0;
+        private int totalFrames;
+        private int refreshDelay;
 
         public GraphicalView() {
             final int edgePadding = 20;
@@ -225,7 +233,10 @@ public class World {
         }
 
         public void refresh() {
-            repaint();
+            totalFrames = (int) ((double) refreshDelay / 1000 * FRAME_RATE);
+            currentFrame = 0;
+            animationClock = new Timer(1000 / totalFrames, this);
+            animationClock.start();
         }
 
         @Override
@@ -235,23 +246,43 @@ public class World {
             }
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             agentsShapes.clear();
 
-            paintAgents(g2d, true);
-            paintAgents(g2d, false);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            if (currentFrame == totalFrames) {
+                paintAgentsKeyframes(g2d, true); //paint plants first for proper z-ordering
+                paintAgentsKeyframes(g2d, false);
+                if (animationClock != null) {
+                    animationClock.stop();
+                }
+            } else {
+                currentFrame++;
+                paintAgentsTweenFrames(g2d, true, (double) currentFrame / totalFrames);
+                paintAgentsTweenFrames(g2d, false, (double) currentFrame / totalFrames);
+            }
         }
 
-        private void paintAgents(Graphics2D g2d, boolean plantsOnly) {
+        private void paintAgentsKeyframes(Graphics2D g2d, boolean plantsOnly) {
             for (Agent agent : livingAgents) {
                 if (plantsOnly && agent instanceof Plant) {
-                    Shape agentShape = agentsView.drawIn2DGraphics(g2d, agent, agent.getId() == agentSelectedId);
+                    Shape agentShape = agentsView.drawKeyframe(g2d, agent, agent.getId() == agentSelectedId);
                     agentsShapes.put(agentShape, agent);
                 }
                 if (!plantsOnly && !(agent instanceof Plant)) {
-                    Shape agentShape = agentsView.drawIn2DGraphics(g2d, agent, agent.getId() == agentSelectedId);
+                    Shape agentShape = agentsView.drawKeyframe(g2d, agent, agent.getId() == agentSelectedId);
                     agentsShapes.put(agentShape, agent);
+                }
+            }
+        }
+
+        private void paintAgentsTweenFrames(Graphics2D g2d, boolean plantsOnly, double percentToKeyFrame) {
+            for (Agent agent : livingAgents) {
+                if (plantsOnly && agent instanceof Plant) {
+                    agentsView.drawTweenFrame(g2d, agent, percentToKeyFrame);
+                }
+                if (!plantsOnly && !(agent instanceof Plant)) {
+                    agentsView.drawTweenFrame(g2d, agent, percentToKeyFrame);
                 }
             }
         }
@@ -275,12 +306,22 @@ public class World {
 
         public void setSelectedAgent(int selectedId) {
             agentSelectedId = selectedId;
-            refresh();
+            repaint();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            repaint();
+        }
+
+        public void setRefreshDelay(int refreshDelay) {
+            this.refreshDelay = refreshDelay;
         }
     }
 
     public interface WorldListener {
         void ticked();
+
         void ended();
     }
 }

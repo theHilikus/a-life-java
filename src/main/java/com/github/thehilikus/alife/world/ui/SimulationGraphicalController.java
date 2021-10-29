@@ -106,6 +106,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
         JSlider slider = (JSlider) e.getSource();
         if (!slider.getValueIsAdjusting()) {
             control.setRefreshDelay(slider.getValue());
+            worldView.setRefreshDelay(slider.getValue());
         }
     }
 }
