@@ -46,8 +46,9 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
             EnergyTracker energyTracker = new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
             AgeTracker ageTracker = new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
             ReproductionTracker reproductionTracker = new ReproductionTracker();
-            MoodController moodController = new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker, energyTracker, ageTracker, reproductionTracker, world);
-            VitalsController vitals = new VitalsController(id, moodController, hungerTracker, energyTracker, ageTracker, reproductionTracker);
+            SizeTracker sizeTracker = new SizeTracker(genome.getGene("maxSize"));
+            MoodController moodController = new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker, energyTracker, ageTracker, reproductionTracker, sizeTracker, world);
+            VitalsController vitals = new VitalsController(id, moodController, hungerTracker, energyTracker, ageTracker, reproductionTracker, sizeTracker);
 
             Living newAgent = new Herbivore(id, vision, locomotion, startingMood, genome, vitals);
             LOG.info("Created {}", newAgent);
@@ -131,8 +132,9 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         EnergyTracker offspringEnergyTracker = new EnergyTracker(id, offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
         AgeTracker offspringAgeTracker = new AgeTracker(offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
         ReproductionTracker offspringReproductionTracker = new ReproductionTracker();
-        MoodController offspringMoodController = new HerbivoreMoodController(vision, offspringLegs, offspringLocomotion, offspringGenome, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, world);
-        VitalsController offspringVitals = new VitalsController(id, offspringMoodController, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker);
+        SizeTracker offspringSizeTracker = new SizeTracker(offspringGenome.getGene("maxSize"));
+        MoodController offspringMoodController = new HerbivoreMoodController(vision, offspringLegs, offspringLocomotion, offspringGenome, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, offspringSizeTracker, world);
+        VitalsController offspringVitals = new VitalsController(id, offspringMoodController, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, offspringSizeTracker);
 
         Evolvable result = new Herbivore(id, vision, offspringLocomotion, offspringStartingMood, offspringGenome, offspringVitals);
         LOG.info("Created offspring {}", result);

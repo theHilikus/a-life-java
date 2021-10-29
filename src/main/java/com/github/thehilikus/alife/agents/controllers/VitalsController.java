@@ -19,15 +19,17 @@ public class VitalsController implements Component {
     private final EnergyTracker energyTracker;
     private final AgeTracker ageTracker;
     private final ReproductionTracker reproductionTracker;
+    private final SizeTracker sizeTracker;
     private final int agentId;
 
-    public VitalsController(int agentId, MoodController moodController, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker) {
+    public VitalsController(int agentId, MoodController moodController, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker, SizeTracker sizeTracker) {
         this.agentId = agentId;
         this.moodController = moodController;
         this.hungerTracker = hungerTracker;
         this.energyTracker = energyTracker;
         this.ageTracker = ageTracker;
         this.reproductionTracker = reproductionTracker;
+        this.sizeTracker = sizeTracker;
     }
 
     public Mood update(Mood lastMood, Mood newMood) {
@@ -35,6 +37,7 @@ public class VitalsController implements Component {
         energyTracker.update(lastMood);
         ageTracker.update();
         reproductionTracker.update();
+        sizeTracker.update();
 
         Mood result = newMood;
         if (energyTracker.isTired()) {
@@ -69,6 +72,7 @@ public class VitalsController implements Component {
         result.putAll(energyTracker.getParameters());
         result.putAll(ageTracker.getParameters());
         result.putAll(reproductionTracker.getParameters());
+        result.putAll(sizeTracker.getParameters());
 
         return result;
     }

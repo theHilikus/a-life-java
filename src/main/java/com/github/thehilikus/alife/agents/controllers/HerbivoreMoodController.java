@@ -19,9 +19,10 @@ public class HerbivoreMoodController implements MoodController {
     private final EnergyTracker energyTracker;
     private final AgeTracker ageTracker;
     private final ReproductionTracker reproductionTracker;
+    private final SizeTracker sizeTracker;
     private final World world;
 
-    public HerbivoreMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker, World world) {
+    public HerbivoreMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker, SizeTracker sizeTracker, World world) {
         this.vision = vision;
         this.legs = legs;
         this.locomotion = locomotion;
@@ -30,6 +31,7 @@ public class HerbivoreMoodController implements MoodController {
         this.energyTracker = energyTracker;
         this.ageTracker = ageTracker;
         this.reproductionTracker = reproductionTracker;
+        this.sizeTracker = sizeTracker;
         this.world = world;
     }
 
@@ -50,7 +52,7 @@ public class HerbivoreMoodController implements MoodController {
 
     @Override
     public Mood startEating(Agent.Eatable food) {
-        return new Eating(this, vision, genome, food, hungerTracker);
+        return new Eating(this, vision, sizeTracker, food, hungerTracker);
     }
 
     @Override
