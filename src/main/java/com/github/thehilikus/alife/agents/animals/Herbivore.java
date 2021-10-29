@@ -38,7 +38,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
             int id = IdsProvider.getNextId();
             Genome genome = new HerbivoreGenome();
             Vision vision = new SurroundingsVision(id, genome, world);
-            Legs legs = new Legs(id, world.getEmptyPosition(), genome);
+            Legs legs = new Legs(id, world.getRandomPosition(), genome);
             Locomotion locomotion = new StraightWalkWithRandomTurn(id, legs, genome);
             Mood startingMood = new Existing(vision, genome, locomotion);
 

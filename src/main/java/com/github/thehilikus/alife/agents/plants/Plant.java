@@ -31,7 +31,7 @@ public class Plant implements Agent.Eatable {
 
             final double maxSizeProportionToWorld = 0.09;
             int maxSize = (int) (Math.min(world.getWidth(), world.getHeight()) * maxSizeProportionToWorld);
-            Agent.Living newAgent = new Plant(id, world.getEmptyPosition(), startingMood, maxSize);
+            Agent.Living newAgent = new Plant(id, world.getRandomPosition(), startingMood, maxSize);
             LOG.info("Created {}", newAgent);
             world.addAgent(newAgent);
         }

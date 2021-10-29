@@ -9,9 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.Positive;
+import java.awt.*;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.function.Predicate;
 
 /**
@@ -45,15 +45,8 @@ public class SurroundingsVision implements Vision {
     @Override
     public SortedSet<ScanResult> scan(Predicate<Agent> test) {
         LOG.debug("Scanning around agent {} with distance = {}", agentId, distance);
-        SortedSet<ScanResult> result = new TreeSet<>();
-        for (int y = distance * -1; y <= distance; y++) {
-            for (int x = distance * -1; x <= distance; x++) {
-                Agent foundAgent = world.getAgentRelativeTo(agentId, x, y);
-                if (test.test(foundAgent)) {
-                    result.add(new ScanResult(x, y, foundAgent));
-                }
-            }
-        }
+        Shape viewingArea = new Rectangle(-distance / 2, -distance / 2, distance, distance);
+        SortedSet<ScanResult> result = world.getAgentsInAreaRelativeTo(agentId, viewingArea, test);
 
         LOG.trace("Found {} agents", result.size());
         return result;

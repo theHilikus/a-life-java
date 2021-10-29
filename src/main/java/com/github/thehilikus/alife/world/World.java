@@ -1,10 +1,11 @@
 package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
+import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.agents.views.AgentsView;
 import com.github.thehilikus.alife.api.Agent;
-import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.api.Position;
+import com.github.thehilikus.alife.api.ScanResult;
 import com.github.thehilikus.alife.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,16 +13,21 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The environment where the agents live
  */
 public class World {
     private static final Logger LOG = LoggerFactory.getLogger(World.class.getSimpleName());
-    private final Agent[][] grid;
-    private final Map<Integer, Agent.Living> agents = new ConcurrentHashMap<>();
+    private final Collection<Agent.Living> livingAgents = new CopyOnWriteArrayList<>();
+    private final Collection<Agent> edges = new ArrayList<>();
     private final Map<Integer, Agent.Living> cemetery = new HashMap<>();
+    private final int width;
+    private final int height;
     private int hour;
     private TickListener tickListener;
 
@@ -32,7 +38,8 @@ public class World {
 
     private World(int width, int height) {
         LOG.info("Creating world of {}x{}", width, height);
-        grid = new Agent[height + 2][width + 2];
+        this.width = width + 2;
+        this.height = height + 2;
         createEdge();
         hour = 0;
     }
@@ -41,36 +48,36 @@ public class World {
         int x = 0;
         while (x < getWidth()) {
             Position.Immutable position = new Position(x, 0).toImmutable();
-            grid[position.getY()][position.getX()] = new Edge(position);
+            edges.add(new Edge(position));
 
             position = new Position(x, getHeight() - 1).toImmutable();
-            grid[position.getY()][position.getX()] = new Edge(position);
+            edges.add(new Edge(position));
             x++;
         }
 
         int y = 0;
         while (y < getHeight()) {
             Position.Immutable position = new Position(0, y).toImmutable();
-            grid[position.getY()][position.getX()] = new Edge(position);
+            edges.add(new Edge(position));
 
             position = new Position(getWidth() - 1, y).toImmutable();
-            grid[position.getY()][position.getX()] = new Edge(position);
+            edges.add(new Edge(position));
             y++;
         }
     }
 
     public int getWidth() {
-        return grid[0].length;
+        return width;
     }
 
     public int getHeight() {
-        return grid.length;
+        return height;
     }
 
     public boolean tick() {
         LOG.info("Starting hour {}", ++hour);
         Collection<Agent.Living> toRemove = new HashSet<>();
-        agents.values().forEach(agent -> {
+        livingAgents.forEach(agent -> {
             VitalSign causeOfDeath;
             if (agent instanceof Agent.Movable) {
                 causeOfDeath = tickMovableAgent((Agent.Movable) agent);
@@ -88,20 +95,14 @@ public class World {
             tickListener.ticked();
         }
 
-        return agents.values().stream().anyMatch(agent -> agent instanceof Agent.Movable);
+        return livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
     }
 
     private VitalSign tickMovableAgent(Agent.Movable agent) {
         Position.Immutable originalPosition = agent.getPosition();
-        grid[originalPosition.getY()][originalPosition.getX()] = null;
         VitalSign causeOfDeath = agent.tick();
         if (causeOfDeath == null) {
             Position.Immutable newPosition = agent.getPosition();
-            Agent collidedAgent = grid[newPosition.getY()][newPosition.getX()];
-            if (collidedAgent != null) {
-                newPosition = resolveCollision(agent, originalPosition, collidedAgent);
-            }
-            grid[newPosition.getY()][newPosition.getX()] = agent;
             if (!originalPosition.equals(newPosition)) {
                 LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
             }
@@ -110,71 +111,26 @@ public class World {
         return causeOfDeath;
     }
 
-    private Position.Immutable resolveCollision(Agent.Living colliderAgent, Position.Immutable originalPosition, Agent collidedAgent) {
-        Position newPosition = new Position(originalPosition.getX(), originalPosition.getY());
-        Orientation newOrientation = originalPosition.directionTo(colliderAgent.getPosition()).opposite();
-        while (isPositionOccupied(newPosition.getX(), newPosition.getY())) {
-            newPosition.move(newOrientation, 1);
-            if (grid[newPosition.getY()][newPosition.getX()] instanceof Edge) {
-                LOG.debug("Hit the edge when resolving collision");
-                newOrientation = newOrientation.turn(Orientation.WEST);
-            }
-        }
-        colliderAgent.changePosition(newPosition, newOrientation);
-        LOG.trace("Adjusting collision at {} between new {} and original {}", newPosition, colliderAgent.getId(), collidedAgent.getId());
-
-        return newPosition.toImmutable();
-    }
-
     public void addAgent(Agent.Living agent) {
-        Position.Immutable position = agent.getPosition();
-        if (isPositionOccupied(position.getX(), position.getY())) {
-            Position closebyPosition = new Position(position.getX(), position.getY());
-            closebyPosition.move(Orientation.WEST, 1);
-            resolveCollision(agent, closebyPosition.toImmutable(), grid[position.getY()][position.getX()]);
-        }
         LOG.info("Adding {} to world", agent);
-        grid[position.getY()][position.getX()] = agent;
-        agents.put(agent.getId(), agent);
+        livingAgents.add(agent);
     }
 
     private void removeAgent(Agent.Living agent) {
-        Position.Immutable position = agent.getPosition();
         LOG.info("Removing {} from world", agent);
-        grid[position.getY()][position.getX()] = null;
-        agents.remove(agent.getId());
+        livingAgents.remove(agent);
         cemetery.put(agent.getId(), agent);
     }
 
-    public Position getEmptyPosition() {
-        int x;
-        int y;
-        do {
-            x = RandomProvider.nextInt(1, getWidth() - 1);
-            y = RandomProvider.nextInt(1, getHeight() - 1);
-        } while (isPositionOccupied(x, y));
-
+    public Position getRandomPosition() {
+        int x = RandomProvider.nextInt(1, getWidth() - 1);
+        int y = RandomProvider.nextInt(1, getHeight() - 1);
         return new Position(x, y);
-    }
-
-    private boolean isPositionOccupied(int x, int y) {
-        return grid[y][x] != null;
-    }
-
-    public Agent getAgentRelativeTo(int id, int xDelta, int yDelta) {
-        Position.Immutable center = agents.get(id).getPosition();
-        int x = center.getX() + xDelta;
-        int y = center.getY() + yDelta;
-        if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
-            return null;
-        }
-
-        return grid[y][x];
     }
 
     public Map<String, Object> getAgentDetails(int agentId) {
         Map<String, Object> result;
-        Agent agent = agents.get(agentId);
+        Agent agent = livingAgents.stream().filter(agent2 -> agent2.getId() == agentId).findFirst().orElse(null);
         if (agent == null) {
             agent = cemetery.get(agentId);
             if (agent == null) {
@@ -194,6 +150,26 @@ public class World {
         tickListener = listener;
     }
 
+    public SortedSet<ScanResult> getAgentsInAreaRelativeTo(int agentId, Shape viewingArea, Predicate<Agent> test) {
+        Agent centerAgent = livingAgents.stream().filter(agent -> agent.getId() == agentId).findFirst().orElseThrow();
+        int centerAgentX = centerAgent.getPosition().getX();
+        int centerAgentY = centerAgent.getPosition().getY();
+        Set<Agent> agentsFound = Stream.concat(livingAgents.stream(), edges.stream())
+                .filter(test) //test the requirements passed by the agent
+                .filter(agent -> viewingArea.contains(agent.getPosition().getX() - centerAgentX, agent.getPosition().getY() - centerAgentY))
+                .filter(agent -> agent.getId() != agentId) //to avoid itself
+                .collect(Collectors.toSet());
+
+        SortedSet<ScanResult> result = new TreeSet<>();
+        for (Agent found : agentsFound) {
+            int xDelta = found.getPosition().getX() - centerAgent.getPosition().getX();
+            int yDelta = found.getPosition().getY() - centerAgent.getPosition().getY();
+            result.add(new ScanResult(xDelta, yDelta, found));
+        }
+
+        return result;
+    }
+
     public class ConsoleView {
 
         private final Agent.View agentsView = new AgentsView();
@@ -209,6 +185,10 @@ public class World {
 
             String formatCode = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.NONE, Ansi.BColor.NONE);
             String emptySpace = Ansi.formatMessage("  ", formatCode);
+            Agent[][] grid = new Agent[getHeight()][getWidth()];
+            livingAgents.forEach(agent -> grid[agent.getPosition().getY()][agent.getPosition().getX()] = agent);
+            edges.forEach(agent -> grid[agent.getPosition().getY()][agent.getPosition().getX()] = agent);
+
             for (int y = 0; y < getHeight(); y++) {
                 for (int x = 0; x < getWidth(); x++) {
                     Agent agent = grid[y][x];
@@ -252,13 +232,20 @@ public class World {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             agentsShapes.clear();
-            for (int y = 1; y < World.this.getHeight() - 1; y++) { //don't draw edges
-                for (int x = 1; x < World.this.getWidth() - 1; x++) {
-                    Agent agent = grid[y][x];
-                    if (agent != null) {
-                        Shape agentShape = agentsView.drawIn2DGraphics(g2d, agent, agent.getId() == agentSelectedId);
-                        agentsShapes.put(agentShape, agent);
-                    }
+
+            paintAgents(g2d, true);
+            paintAgents(g2d, false);
+        }
+
+        private void paintAgents(Graphics2D g2d, boolean plantsOnly) {
+            for (Agent agent : livingAgents) {
+                if (plantsOnly && agent instanceof Plant) {
+                    Shape agentShape = agentsView.drawIn2DGraphics(g2d, agent, agent.getId() == agentSelectedId);
+                    agentsShapes.put(agentShape, agent);
+                }
+                if (!plantsOnly && !(agent instanceof Plant)) {
+                    Shape agentShape = agentsView.drawIn2DGraphics(g2d, agent, agent.getId() == agentSelectedId);
+                    agentsShapes.put(agentShape, agent);
                 }
             }
         }
