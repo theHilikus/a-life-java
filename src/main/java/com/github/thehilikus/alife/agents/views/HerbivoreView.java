@@ -67,6 +67,10 @@ public class HerbivoreView implements Agent.View {
 
         if (selected) {
             drawVision(g2d, details, agent.getPosition());
+            Position.Immutable targetPosition = (Position.Immutable) details.get(Mood.PARAMETER_PREFIX + "targetPosition");
+            if (targetPosition != null) {
+                drawPathToTarget(g2d, (Position.Immutable) details.get("position"), targetPosition);
+            }
         }
 
         Color agentColor = computeAgentColor(details);
@@ -95,6 +99,11 @@ public class HerbivoreView implements Agent.View {
 
         g2d.setColor(Color.BLUE);
         g2d.draw(vision);
+    }
+
+    private void drawPathToTarget(Graphics2D g2d, Position.Immutable position, Position.Immutable targetPosition) {
+        g2d.setColor(graphicalMoodColours.get("Hunting"));
+        g2d.drawLine(position.getX(), position.getY(), targetPosition.getX(), targetPosition.getY());
     }
 
     @SuppressWarnings("MagicNumber")

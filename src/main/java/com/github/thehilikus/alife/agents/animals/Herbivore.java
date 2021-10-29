@@ -91,7 +91,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("id", id);
         result.put("type", getClass().getSimpleName());
-        result.put("position", locomotion.getPosition().getX() + ", " + locomotion.getPosition().getY());
+        result.put("position", locomotion.getPosition());
         result.put(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
 
         result.putAll(vitals.getParameters());
