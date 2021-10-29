@@ -73,4 +73,11 @@ public class MainToolbar extends JToolBar {
     public void setInitialValue() {
         speedSelector.setValue(INITIAL_REFRESH_DELAY);
     }
+
+    public void end() {
+        startAndPauseButton.setText("Start");
+        startAndPauseButton.setEnabled(false);
+        stepButton.setEnabled(false);
+        speedSelector.setEnabled(false);
+    }
 }

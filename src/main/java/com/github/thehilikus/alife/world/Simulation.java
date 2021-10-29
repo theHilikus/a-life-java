@@ -118,7 +118,7 @@ public class Simulation {
 
         World.GraphicalView worldView = world.new GraphicalView();
         SimulationGraphicalView simulationView = new SimulationGraphicalView(worldView);
-        SimulationGraphicalController graphicalController = new SimulationGraphicalController(worldView, simulationView.getInfoPanel(), control);
+        SimulationGraphicalController graphicalController = new SimulationGraphicalController(worldView, simulationView.getInfoPanel(), simulationView.getToolbar(), control);
         simulationView.addActionListener(graphicalController);
         worldView.addMouseListener(graphicalController);
         world.setTickListener(graphicalController);
@@ -227,7 +227,7 @@ public class Simulation {
             Runnable tick = () -> {
                 boolean alive = world.tick();
                 if (!alive) {
-                    executor.shutdown();
+                    pause();
                 }
             };
             scheduledFuture = executor.scheduleAtFixedRate(tick, 0, refreshDelay, TimeUnit.MILLISECONDS);

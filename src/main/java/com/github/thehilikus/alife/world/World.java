@@ -29,7 +29,7 @@ public class World {
     private final int width;
     private final int height;
     private int hour;
-    private TickListener tickListener;
+    private WorldListener worldListener;
 
 
     static World createWorld(CliOptions options) {
@@ -91,11 +91,17 @@ public class World {
         });
         toRemove.forEach(this::removeAgent);
         LOG.info("Ending hour {}\n", hour);
-        if (tickListener != null) {
-            tickListener.ticked();
+        if (worldListener != null) {
+            worldListener.ticked();
         }
 
-        return livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
+        boolean result = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
+        if (!result) {
+            if (worldListener != null) {
+                worldListener.ended();
+            }
+        }
+        return result;
     }
 
     private VitalSign tickMovableAgent(Agent.Movable agent) {
@@ -146,8 +152,8 @@ public class World {
         return hour;
     }
 
-    public void setTickListener(TickListener listener) {
-        tickListener = listener;
+    public void setTickListener(WorldListener listener) {
+        worldListener = listener;
     }
 
     public SortedSet<ScanResult> getAgentsInAreaRelativeTo(int agentId, Shape viewingArea, Predicate<Agent> test) {
@@ -273,7 +279,8 @@ public class World {
         }
     }
 
-    public interface TickListener {
+    public interface WorldListener {
         void ticked();
+        void ended();
     }
 }

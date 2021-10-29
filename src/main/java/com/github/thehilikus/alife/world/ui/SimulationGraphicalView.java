@@ -46,4 +46,8 @@ public class SimulationGraphicalView extends JFrame {
     public InfoPanel getInfoPanel() {
         return infoPanel;
     }
+
+    public MainToolbar getToolbar() {
+        return toolbar;
+    }
 }

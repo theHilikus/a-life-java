@@ -17,17 +17,20 @@ import java.awt.event.MouseListener;
 /**
  * Receives events from the simulation
  */
-public class SimulationGraphicalController implements MouseListener, World.TickListener, ActionListener, ChangeListener {
+public class SimulationGraphicalController implements MouseListener, World.WorldListener, ActionListener, ChangeListener {
     private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class);
     private final World.GraphicalView worldView;
     private final InfoPanel infoPanel;
+    private final MainToolbar toolbar;
     private final Simulation.Control control;
     private Agent selectedAgent;
 
-    public SimulationGraphicalController(World.GraphicalView worldView, InfoPanel infoPanel, Simulation.Control control) {
+    public SimulationGraphicalController(World.GraphicalView worldView, InfoPanel infoPanel, MainToolbar toolbar, Simulation.Control control) {
         this.worldView = worldView;
         this.infoPanel = infoPanel;
+        this.toolbar = toolbar;
         this.control = control;
+
     }
 
     @Override
@@ -73,6 +76,11 @@ public class SimulationGraphicalController implements MouseListener, World.TickL
         } catch (Exception exc) {
             LOG.error("Error refreshing the view", exc);
         }
+    }
+
+    @Override
+    public void ended() {
+        toolbar.end();
     }
 
     @Override
