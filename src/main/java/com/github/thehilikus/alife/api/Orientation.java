@@ -23,7 +23,7 @@ public enum Orientation {
     public Orientation turn(Orientation direction) {
         int delta = direction == WEST ? 1 : -1;
 
-        return Orientation.fromInt((index + delta) % Orientation.values().length);
+        return Orientation.fromInt(Math.floorMod(index + delta, Orientation.values().length));
     }
 
     public Orientation opposite() {
