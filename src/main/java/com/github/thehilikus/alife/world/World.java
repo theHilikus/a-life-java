@@ -247,10 +247,9 @@ public class World {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
 
-            agentsShapes.clear();
-
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             if (currentFrame == totalFrames) {
+                agentsShapes.clear();
                 paintAgentsKeyframes(g2d, true); //paint plants first for proper z-ordering
                 paintAgentsKeyframes(g2d, false);
                 if (animationClock != null) {
