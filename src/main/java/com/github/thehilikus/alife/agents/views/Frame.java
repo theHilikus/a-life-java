@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.lang.Math.PI;
+
 /**
  * An animation frame
  */
@@ -89,7 +91,28 @@ public class Frame {
     }
 
     private double interpolateAngle(double startAngle, double endAngle, double percentToKeyFrame) {
-        return startAngle; //TODO: complete
+        double result;
+        if (endAngle > startAngle) {
+            //turned clockwise. see if anti clock is shorter
+            if (endAngle - startAngle > PI) {
+                //anti is shorter
+                result = (double) interpolateNumber(startAngle + 2 * PI, endAngle, percentToKeyFrame);
+            } else {
+                // clockwise is shorter
+                result = (double) interpolateNumber(startAngle, endAngle, percentToKeyFrame);
+            }
+        } else { //endAngle < startAngle
+            //turned anticlock or wrapped around
+            if (startAngle - endAngle >= PI) {
+                //clock is shorter
+                result = (double) interpolateNumber(startAngle, endAngle + 2 * PI, percentToKeyFrame);
+            } else {
+                result = (double) interpolateNumber(startAngle, endAngle, percentToKeyFrame);
+            }
+
+        }
+
+        return result % (2 * PI);
     }
 
     private Color interpolateColor(Color startColor, Color endColor, double percentToKeyFrame) {
