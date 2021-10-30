@@ -290,7 +290,7 @@ public class World {
             Agent result = null;
             double shortestDistance = Double.MAX_VALUE;
             for (Map.Entry<Shape, Agent> agentShape : agentsShapes.entrySet()) {
-                if (agentShape.getKey().contains(point)) {
+                if (agentShape.getKey().getBounds2D().contains(point)) {
                     Position.Immutable agentPosition = agentShape.getValue().getPosition();
                     double distanceToAgent = point.distanceSq(agentPosition.getX(), agentPosition.getY());
                     if (distanceToAgent < shortestDistance) {
