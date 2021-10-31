@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Semaphore;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -94,17 +95,19 @@ public class World {
         });
         toRemove.forEach(this::removeAgent);
         LOG.info("Ending hour {}\n", hour);
+
+        boolean shouldContinue = true;
         if (worldListener != null) {
-            worldListener.ticked(hour);
+            shouldContinue = worldListener.ticked(hour);
         }
 
-        boolean result = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
-        if (!result) {
+        boolean movableAgentsAlive = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
+        if (!movableAgentsAlive) {
             if (worldListener != null) {
                 worldListener.ended();
             }
         }
-        return result;
+        return movableAgentsAlive && shouldContinue;
     }
 
     private VitalSign tickMovableAgent(Agent.Movable agent) {
@@ -220,10 +223,11 @@ public class World {
 
         private final Map<Shape, Agent> agentsShapes = new HashMap<>();
         private int agentSelectedId = -1;
-        private Timer animationClock;
+        private final Timer animationClock = new Timer(1000 / FRAME_RATE, this);
         private int currentFrame = 0;
         private int totalFrames;
         private int refreshDelay;
+        private final Semaphore semaphore = new Semaphore(0);
 
         public GraphicalView() {
             final int edgePadding = 20;
@@ -232,17 +236,21 @@ public class World {
             setBackground(Color.WHITE);
         }
 
-        public void refresh(int hour) {
+        public void refresh(int hour) throws InterruptedException {
+            if (SwingUtilities.isEventDispatchThread()) {
+                throw new IllegalStateException("Don't refresh from the EDT");
+            }
             if (currentFrame != totalFrames) {
                 LOG.warn("Dropped {} frames", totalFrames - currentFrame);
             }
             currentFrame = 0;
             totalFrames = (int) ((double) refreshDelay / 1000 * FRAME_RATE);
-            if (animationClock == null) {
-                animationClock = new Timer(1000 / FRAME_RATE, this);
+            if (!animationClock.isRunning()) {
                 LOG.trace("Starting animation clock for hour = {}", hour);
                 animationClock.start();
             }
+            semaphore.drainPermits();
+            semaphore.acquire();
         }
 
         @Override
@@ -256,14 +264,23 @@ public class World {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             if (currentFrame == totalFrames) {
                 LOG.trace("Painting keyframe = {}", currentFrame);
+                detectIfSimulationNotMoving();
                 agentsShapes.clear();
                 paintAgentsKeyframes(g2d, true); //paint plants first for proper z-ordering
                 paintAgentsKeyframes(g2d, false);
+                semaphore.release();
             } else {
                 LOG.trace("Painting tween frame = {}", currentFrame);
                 currentFrame++;
                 paintAgentsTweenFrames(g2d, true, (double) currentFrame / totalFrames);
                 paintAgentsTweenFrames(g2d, false, (double) currentFrame / totalFrames);
+            }
+        }
+
+        private void detectIfSimulationNotMoving() {
+            if (semaphore.availablePermits() > 5) {
+                LOG.info("Simulation has not progressed in a while. Stopping animation clock");
+                animationClock.stop();
             }
         }
 
@@ -322,14 +339,10 @@ public class World {
         public void setRefreshDelay(int refreshDelay) {
             this.refreshDelay = refreshDelay;
         }
-
-        public void end() {
-            animationClock.stop();
-        }
     }
 
     public interface WorldListener {
-        void ticked(int hour);
+        boolean ticked(int hour);
 
         void ended();
     }

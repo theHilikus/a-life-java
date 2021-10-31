@@ -215,7 +215,7 @@ public class Simulation {
 
         private final World world;
         private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        private ScheduledFuture<?> scheduledFuture;
+        private Future<?> future;
         private int refreshDelay;
 
         public Control(World world) {
@@ -225,18 +225,19 @@ public class Simulation {
         public void start() {
             LOG.info("Starting continuous simulation with refresh delay = {}", refreshDelay);
             Runnable tick = () -> {
-                boolean alive = world.tick();
-                if (!alive) {
-                    pause();
+                boolean alive = true;
+                while (alive) {
+                    alive = world.tick();
                 }
+                pause();
             };
-            scheduledFuture = executor.scheduleAtFixedRate(tick, 0, refreshDelay, TimeUnit.MILLISECONDS);
+            future = executor.submit(tick);
         }
 
         public void pause() {
             LOG.info("Pausing simulation");
-            scheduledFuture.cancel(true);
-            scheduledFuture = null;
+            future.cancel(true);
+            future = null;
         }
 
         public void reset() {
@@ -247,13 +248,13 @@ public class Simulation {
             throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
         }
 
-        public boolean tick() {
+        public void tick() {
             LOG.info("Advancing a single tick");
-            return world.tick();
+            executor.execute(world::tick);
         }
 
         public boolean isRunning() {
-            return scheduledFuture != null;
+            return future != null;
         }
 
         public void setRefreshDelay(int refreshDelay) {

@@ -69,20 +69,26 @@ public class SimulationGraphicalController implements MouseListener, World.World
     }
 
     @Override
-    public void ticked(int hour) {
+    public boolean ticked(int hour) {
+        boolean result = true;
         try {
             LOG.trace("World ticked after hour = {}", hour);
-            worldView.refresh(hour);
+            try {
+                worldView.refresh(hour);
+            } catch (InterruptedException exc) {
+                result = false;
+            }
             refreshSelectedAgentDetails();
         } catch (Exception exc) {
             LOG.error("Error refreshing the view", exc);
         }
+
+        return result;
     }
 
     @Override
     public void ended() {
         toolbar.end();
-        worldView.end();
     }
 
     @Override
@@ -99,7 +105,6 @@ public class SimulationGraphicalController implements MouseListener, World.World
                 break;
             case "pause":
                 control.pause();
-                worldView.end();
                 break;
         }
     }
