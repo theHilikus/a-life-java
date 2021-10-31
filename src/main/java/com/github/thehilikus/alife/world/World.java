@@ -95,7 +95,7 @@ public class World {
         toRemove.forEach(this::removeAgent);
         LOG.info("Ending hour {}\n", hour);
         if (worldListener != null) {
-            worldListener.ticked();
+            worldListener.ticked(hour);
         }
 
         boolean result = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
@@ -215,7 +215,7 @@ public class World {
 
     public class GraphicalView extends JPanel implements ActionListener {
 
-        private static final int FRAME_RATE = 30;
+        private static final int FRAME_RATE = 30; //FPS
         private final Agent.View agentsView = new AgentsView();
 
         private final Map<Shape, Agent> agentsShapes = new HashMap<>();
@@ -232,11 +232,17 @@ public class World {
             setBackground(Color.WHITE);
         }
 
-        public void refresh() {
-            totalFrames = (int) ((double) refreshDelay / 1000 * FRAME_RATE);
+        public void refresh(int hour) {
+            if (currentFrame != totalFrames) {
+                LOG.warn("Dropped {} frames", totalFrames - currentFrame);
+            }
             currentFrame = 0;
-            animationClock = new Timer(1000 / totalFrames, this);
-            animationClock.start();
+            totalFrames = (int) ((double) refreshDelay / 1000 * FRAME_RATE);
+            if (animationClock == null) {
+                animationClock = new Timer(1000 / FRAME_RATE, this);
+                LOG.trace("Starting animation clock for hour = {}", hour);
+                animationClock.start();
+            }
         }
 
         @Override
@@ -249,13 +255,12 @@ public class World {
 
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             if (currentFrame == totalFrames) {
+                LOG.trace("Painting keyframe = {}", currentFrame);
                 agentsShapes.clear();
                 paintAgentsKeyframes(g2d, true); //paint plants first for proper z-ordering
                 paintAgentsKeyframes(g2d, false);
-                if (animationClock != null) {
-                    animationClock.stop();
-                }
             } else {
+                LOG.trace("Painting tween frame = {}", currentFrame);
                 currentFrame++;
                 paintAgentsTweenFrames(g2d, true, (double) currentFrame / totalFrames);
                 paintAgentsTweenFrames(g2d, false, (double) currentFrame / totalFrames);
@@ -310,16 +315,21 @@ public class World {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            LOG.trace("Animation clock ticked");
             repaint();
         }
 
         public void setRefreshDelay(int refreshDelay) {
             this.refreshDelay = refreshDelay;
         }
+
+        public void end() {
+            animationClock.stop();
+        }
     }
 
     public interface WorldListener {
-        void ticked();
+        void ticked(int hour);
 
         void ended();
     }

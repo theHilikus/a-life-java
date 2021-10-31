@@ -18,7 +18,7 @@ import java.awt.event.MouseListener;
  * Receives events from the simulation
  */
 public class SimulationGraphicalController implements MouseListener, World.WorldListener, ActionListener, ChangeListener {
-    private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class.getSimpleName());
     private final World.GraphicalView worldView;
     private final InfoPanel infoPanel;
     private final MainToolbar toolbar;
@@ -69,9 +69,10 @@ public class SimulationGraphicalController implements MouseListener, World.World
     }
 
     @Override
-    public void ticked() {
+    public void ticked(int hour) {
         try {
-            worldView.refresh();
+            LOG.trace("World ticked after hour = {}", hour);
+            worldView.refresh(hour);
             refreshSelectedAgentDetails();
         } catch (Exception exc) {
             LOG.error("Error refreshing the view", exc);
@@ -81,6 +82,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
     @Override
     public void ended() {
         toolbar.end();
+        worldView.end();
     }
 
     @Override
@@ -97,6 +99,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
                 break;
             case "pause":
                 control.pause();
+                worldView.end();
                 break;
         }
     }
