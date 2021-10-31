@@ -110,8 +110,12 @@ public class HerbivoreView implements Agent.View {
         newKeyframe.addPropertyToInterpolate("position", agent.getDetails().get("position"));
         newKeyframe.addPropertyToInterpolate("orientation", ((Orientation)agent.getDetails().get(Locomotion.PARAMETER_PREFIX + "orientation")).toRadians());
         Color newAgentColor = computeAgentColor(agent.getDetails());
-        newKeyframe.addPropertyToInterpolate("color", newAgentColor);
+        newKeyframe.addPropertyToInterpolate("color", newAgentColor); //TODO: check color interpolation
 
+        if (previousKeyframe == null) {
+            //new agent in the world. just take its new keyframe as previous keyframe
+            previousKeyframe = newKeyframe;
+        }
         Frame tweenFrame = previousKeyframe.interpolate(newKeyframe, percentToKeyFrame);
 
         Color agentColor = previousKeyframe.getInterpolatedProperty("color");
