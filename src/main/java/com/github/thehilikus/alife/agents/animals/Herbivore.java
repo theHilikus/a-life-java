@@ -148,9 +148,4 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     public Position.Immutable getPosition() {
         return locomotion.getPosition();
     }
-
-    @Override
-    public void changePosition(Position newPosition, Orientation direction) {
-        locomotion.setPosition(newPosition, direction);
-    }
 }

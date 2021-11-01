@@ -35,8 +35,6 @@ public interface Agent {
          * @return null if the agent is alive at the end of the turn or the vital sign that caused the death
          */
         VitalSign tick();
-
-        void changePosition(Position newPosition, Orientation direction);
     }
 
     interface Eatable extends Living {

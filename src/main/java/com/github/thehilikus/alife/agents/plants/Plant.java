@@ -61,12 +61,6 @@ public class Plant implements Agent.Eatable {
 
         return energyTracker.isAlive() ? null : energyTracker;
     }
-
-    @Override
-    public void changePosition(Position newPosition, Orientation direction) {
-        position = newPosition;
-    }
-
     @Override
     public int getId() {
         return id;

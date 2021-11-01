@@ -57,12 +57,6 @@ public class StraightWalkWithRandomTurn implements Locomotion {
         return walker.getPosition();
     }
 
-    @Override
-    public void setPosition(Position newPosition, Orientation newDirection) {
-        walker.setPosition(newPosition);
-        orientation = newDirection;
-    }
-
     private void turn() {
         Orientation direction = Orientation.WEST;
         LOG.info("Turning {}", direction);

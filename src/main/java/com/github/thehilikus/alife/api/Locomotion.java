@@ -28,6 +28,4 @@ public interface Locomotion extends Component {
 
     @NotNull
     Position.Immutable getPosition();
-
-    void setPosition(Position newPosition, Orientation direction);
 }
