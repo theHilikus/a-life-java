@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.agents.animals;
 
 import com.github.thehilikus.alife.agents.animals.moods.Existing;
-import com.github.thehilikus.alife.agents.animals.motions.Legs;
 import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
 import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
 import com.github.thehilikus.alife.agents.controllers.*;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * A living agent that eats {@link com.github.thehilikus.alife.agents.plants.Plant}
@@ -38,8 +38,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
             int id = IdsProvider.getNextId();
             Genome genome = new HerbivoreGenome();
             Vision vision = new SurroundingsVision(id, genome, world);
-            Legs legs = new Legs(id, world.getRandomPosition(), genome);
-            Locomotion locomotion = new StraightWalkWithRandomTurn(id, legs, genome);
+            Locomotion locomotion = new StraightWalkWithRandomTurn(id, world.getRandomPosition(), genome);
             Mood startingMood = new Existing(vision, genome, locomotion);
 
             HungerTracker hungerTracker = new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
@@ -47,7 +46,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
             AgeTracker ageTracker = new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
             ReproductionTracker reproductionTracker = new ReproductionTracker();
             SizeTracker sizeTracker = new SizeTracker(genome.getGene("maxSize"));
-            MoodController moodController = new HerbivoreMoodController(vision, legs, locomotion, genome, hungerTracker, energyTracker, ageTracker, reproductionTracker, sizeTracker, world);
+            MoodController moodController = new HerbivoreMoodController(vision, locomotion, genome, hungerTracker, energyTracker, ageTracker, reproductionTracker, sizeTracker, world);
             VitalsController vitals = new VitalsController(id, moodController, hungerTracker, energyTracker, ageTracker, reproductionTracker, sizeTracker);
 
             Living newAgent = new Herbivore(id, vision, locomotion, startingMood, genome, vitals);
@@ -92,7 +91,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("id", id);
         result.put("type", getClass().getSimpleName());
-        result.put("position", locomotion.getPosition());
+        result.put("position", getPosition());
         result.put(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
 
         result.putAll(vitals.getParameters());
@@ -108,7 +107,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     public String toString() {
         return "Herbivore{" +
                 "id=" + id +
-                ", position=" + locomotion.getPosition() +
+                ", position=" + getPosition() +
                 ", mood=" + mood +
                 '}';
     }
@@ -122,10 +121,8 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     public Evolvable reproduce(int fatherId, World world, Genome offspringGenome) {
         int id = IdsProvider.getNextId();
         Vision vision = new SurroundingsVision(id, offspringGenome, world);
-        Position offspringPosition = new Position(locomotion.getPosition().getX(), locomotion.getPosition().getY());
-        Legs offspringLegs = new Legs(id, offspringPosition, offspringGenome);
-        Locomotion offspringLocomotion = new StraightWalkWithRandomTurn(id, offspringLegs, offspringGenome);
-        offspringLocomotion.move(1, 1);
+        Position offspringPosition = new Position(getPosition().getX(), getPosition().getY());
+        Locomotion offspringLocomotion = new StraightWalkWithRandomTurn(id, offspringPosition, offspringGenome);
         Mood offspringStartingMood = new Existing(vision, offspringGenome, offspringLocomotion);
 
         HungerTracker offspringHungerTracker = new HungerTracker(offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
@@ -133,7 +130,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         AgeTracker offspringAgeTracker = new AgeTracker(offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
         ReproductionTracker offspringReproductionTracker = new ReproductionTracker();
         SizeTracker offspringSizeTracker = new SizeTracker(offspringGenome.getGene("maxSize"));
-        MoodController offspringMoodController = new HerbivoreMoodController(vision, offspringLegs, offspringLocomotion, offspringGenome, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, offspringSizeTracker, world);
+        MoodController offspringMoodController = new HerbivoreMoodController(vision, offspringLocomotion, offspringGenome, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, offspringSizeTracker, world);
         VitalsController offspringVitals = new VitalsController(id, offspringMoodController, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, offspringSizeTracker);
 
         Evolvable result = new Herbivore(id, vision, offspringLocomotion, offspringStartingMood, offspringGenome, offspringVitals);

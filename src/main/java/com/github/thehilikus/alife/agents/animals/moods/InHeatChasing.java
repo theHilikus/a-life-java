@@ -1,11 +1,7 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
-import com.github.thehilikus.alife.agents.animals.motions.Legs;
 import com.github.thehilikus.alife.agents.genetics.Genome;
-import com.github.thehilikus.alife.api.Agent;
-import com.github.thehilikus.alife.api.Mood;
-import com.github.thehilikus.alife.api.MoodController;
-import com.github.thehilikus.alife.api.Vision;
+import com.github.thehilikus.alife.api.*;
 
 /**
  * When an agent has found a potential mate
@@ -15,8 +11,8 @@ public class InHeatChasing extends Hunting {
     private final MoodController moodController;
     private final Agent.Evolvable mate;
 
-    public InHeatChasing(MoodController moodController, Vision vision, Legs legs, Genome genome, Agent.Evolvable mate) {
-        super(moodController, vision, legs, genome, mate);
+    public InHeatChasing(MoodController moodController, Vision vision, Locomotion locomotion, Genome genome, Agent.Evolvable mate) {
+        super(moodController, vision, locomotion, genome, mate);
         this.moodController = moodController;
         this.mate = mate;
     }

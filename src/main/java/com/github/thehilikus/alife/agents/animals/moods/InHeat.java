@@ -16,11 +16,13 @@ public class InHeat implements Mood {
     private final Existing existing;
     private final MoodController moodController;
     private final Vision vision;
+    private final Locomotion locomotion;
 
     public InHeat(MoodController moodController, Vision vision, Genome genome, Locomotion locomotion) {
         this.existing = new Existing(vision, genome, locomotion);
         this.moodController = moodController;
         this.vision = vision;
+        this.locomotion = locomotion;
     }
 
     @Override
@@ -28,6 +30,7 @@ public class InHeat implements Mood {
         SortedSet<ScanResult> potentialMates = vision.scan(Herbivore.class::isInstance);
         if (!potentialMates.isEmpty()) {
             Agent closestMate = potentialMates.first().getAgent();
+            locomotion.faceTowards(closestMate.getPosition());
             return moodController.startFollowing((Agent.Evolvable) closestMate);
         } else {
             existing.tick();

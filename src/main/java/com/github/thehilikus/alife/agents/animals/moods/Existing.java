@@ -2,10 +2,7 @@ package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.genetics.Genome;
-import com.github.thehilikus.alife.api.Locomotion;
-import com.github.thehilikus.alife.api.Mood;
-import com.github.thehilikus.alife.api.ScanResult;
-import com.github.thehilikus.alife.api.Vision;
+import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.Edge;
 
 import java.util.Map;
@@ -31,13 +28,7 @@ public class Existing implements Mood {
     @Override
     public Mood tick() {
         SortedSet<ScanResult> foundAgents = vision.scan(Edge.class::isInstance);
-        if (!foundAgents.isEmpty()) {
-            ScanResult closestEdgeScan = foundAgents.first();
-            int maxMovement = Math.max(Math.abs(closestEdgeScan.getXDistance()) - 1, Math.abs(closestEdgeScan.getYDistance()) - 1);
-            lastMovement = locomotion.move(speedFactor, maxMovement);
-        } else {
-            lastMovement = locomotion.move(speedFactor);
-        }
+        lastMovement = locomotion.move(speedFactor, foundAgents);
 
         return this;
     }

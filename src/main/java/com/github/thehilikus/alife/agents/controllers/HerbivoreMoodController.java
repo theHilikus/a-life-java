@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.agents.controllers;
 
 import com.github.thehilikus.alife.agents.animals.moods.*;
-import com.github.thehilikus.alife.agents.animals.motions.Legs;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.World;
@@ -12,7 +11,6 @@ import com.github.thehilikus.alife.world.World;
 public class HerbivoreMoodController implements MoodController {
     private static final int POST_REPRODUCTION_WAIT = 10;
     private final Vision vision;
-    private final Legs legs;
     private final Locomotion locomotion;
     private final Genome genome;
     private final HungerTracker hungerTracker;
@@ -22,9 +20,8 @@ public class HerbivoreMoodController implements MoodController {
     private final SizeTracker sizeTracker;
     private final World world;
 
-    public HerbivoreMoodController(Vision vision, Legs legs, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker, SizeTracker sizeTracker, World world) {
+    public HerbivoreMoodController(Vision vision, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker, SizeTracker sizeTracker, World world) {
         this.vision = vision;
-        this.legs = legs;
         this.locomotion = locomotion;
         this.genome = genome;
         this.hungerTracker = hungerTracker;
@@ -37,7 +34,7 @@ public class HerbivoreMoodController implements MoodController {
 
     @Override
     public Mood startHunting(Agent.Eatable target) {
-        return new Hunting(this, vision, legs, genome, target);
+        return new Hunting(this, vision, locomotion, genome, target);
     }
 
     @Override
@@ -67,7 +64,7 @@ public class HerbivoreMoodController implements MoodController {
 
     @Override
     public Mood startFollowing(Agent.Evolvable mate) {
-        return new InHeatChasing(this, vision, legs, genome, mate);
+        return new InHeatChasing(this, vision, locomotion, genome, mate);
     }
 
     @Override

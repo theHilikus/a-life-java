@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
-import com.github.thehilikus.alife.agents.animals.motions.Legs;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
@@ -19,15 +18,15 @@ public class Hunting implements Mood {
     private static final Logger LOG = LoggerFactory.getLogger(Hunting.class);
     private final MoodController moodController;
     private final Vision vision;
-    private final Legs legs;
+    private final Locomotion locomotion;
     private final double speedFactor;
     private final Agent target;
     private int lastMovement;
 
-    public Hunting(MoodController moodController, Vision vision, Legs legs, Genome genome, Agent target) {
+    public Hunting(MoodController moodController, Vision vision, Locomotion locomotion, Genome genome, Agent target) {
         this.moodController = moodController;
         this.vision = vision;
-        this.legs = legs;
+        this.locomotion = locomotion;
         this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor");
         this.target = target;
     }
@@ -54,12 +53,11 @@ public class Hunting implements Mood {
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.target.getId()).findFirst();
         if (targetOptional.isPresent()) {
             ScanResult targetScan = targetOptional.get();
-            Orientation targetDirection = legs.getPosition().directionTo(targetScan.getAgent().getPosition());
-            int maxMovement = Math.max(Math.abs(targetScan.getXDistance()) - 1, Math.abs(targetScan.getYDistance()) - 1);
-            if (maxMovement == 0) {
+            int maxMovement = locomotion.moveTowardsTarget(speedFactor, targetScan.getAgent().getPosition());
+            if (locomotion.getPosition().isNextTo(targetScan.getAgent().getPosition())) {
                 return reachedTarget();
             } else {
-                lastMovement = legs.move(speedFactor, targetDirection, maxMovement);
+                lastMovement = maxMovement;
             }
         } else {
             LOG.info("Target {} is gone :(", target.getId());
@@ -75,7 +73,7 @@ public class Hunting implements Mood {
 
     @Override
     public int getEnergyDelta() {
-        return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * legs.getEnergyExpenditureFactor());
+        return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
     }
 
     @Override
