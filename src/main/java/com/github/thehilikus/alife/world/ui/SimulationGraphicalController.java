@@ -87,7 +87,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
     }
 
     @Override
-    public void ended() {
+    public void ended(int hour) {
         toolbar.end();
     }
 
@@ -98,7 +98,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
                 control.reset();
                 break;
             case "step":
-                control.tick();
+                control.step();
                 break;
             case "start":
                 control.start();
@@ -113,7 +113,6 @@ public class SimulationGraphicalController implements MouseListener, World.World
     public void stateChanged(ChangeEvent e) {
         JSlider slider = (JSlider) e.getSource();
         if (!slider.getValueIsAdjusting()) {
-            control.setRefreshDelay(slider.getValue());
             worldView.setRefreshDelay(slider.getValue());
         }
     }

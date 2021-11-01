@@ -16,8 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -104,7 +103,7 @@ public class World {
         boolean movableAgentsAlive = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
         if (!movableAgentsAlive) {
             if (worldListener != null) {
-                worldListener.ended();
+                worldListener.ended(hour);
             }
         }
         return movableAgentsAlive && shouldContinue;
@@ -140,7 +139,7 @@ public class World {
         return new Position(x, y);
     }
 
-    public Map<String, Object> getAgentDetails(int agentId) {
+    private Map<String, Object> getAgentDetails(int agentId) {
         Map<String, Object> result;
         Agent agent = livingAgents.stream().filter(agent2 -> agent2.getId() == agentId).findFirst().orElse(null);
         if (agent == null) {
@@ -158,7 +157,7 @@ public class World {
         return hour;
     }
 
-    public void setTickListener(WorldListener listener) {
+    public void setWorldListener(WorldListener listener) {
         worldListener = listener;
     }
 
@@ -184,9 +183,21 @@ public class World {
 
     public class ConsoleView {
 
+        private final Semaphore semaphore = new Semaphore(0);
         private final Agent.View agentsView = new AgentsView();
+        private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-        public void draw() {
+        public void runAutomatic(int refreshDelay) {
+            executor.scheduleAtFixedRate(semaphore::release, 0, refreshDelay, TimeUnit.MILLISECONDS);
+        }
+
+        public void refresh() throws InterruptedException {
+            refreshNonBlocking();
+            semaphore.drainPermits();
+            semaphore.acquire();
+        }
+
+        public void refreshNonBlocking() {
             String textualRepresentation = getWorldRepresentation();
             System.out.println(textualRepresentation);
         }
@@ -213,6 +224,18 @@ public class World {
                 stringBuilder.append(System.lineSeparator());
             }
             return stringBuilder.toString();
+        }
+
+        public void printAgentDetails(int agentId) {
+            Map<String, Object> agentDetails = getAgentDetails(agentId);
+            if (!agentDetails.isEmpty()) {
+                StringBuilder detailsBuffer = new StringBuilder();
+                detailsBuffer.append("##### Details of agent ").append(agentId).append(" #####").append(System.lineSeparator());
+                agentDetails.forEach((key, value) -> detailsBuffer.append(key).append(": ").append(value).append(System.lineSeparator()));
+                System.out.println(detailsBuffer);
+            } else {
+                System.out.println("No agent found with id " + agentId);
+            }
         }
     }
 
@@ -344,6 +367,6 @@ public class World {
     public interface WorldListener {
         boolean ticked(int hour);
 
-        void ended();
+        void ended(int hour);
     }
 }
