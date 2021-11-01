@@ -114,6 +114,7 @@ public class HerbivoreView implements Agent.View {
 
         if (previousKeyframe == null) {
             //new agent in the world. just take its new keyframe as previous keyframe
+            newKeyframe.addFixedProperty("size", agent.getDetails().get("size"));
             previousKeyframe = newKeyframe;
         }
         Frame tweenFrame = previousKeyframe.interpolate(newKeyframe, percentToKeyFrame);
