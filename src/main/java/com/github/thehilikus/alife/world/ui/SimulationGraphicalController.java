@@ -45,7 +45,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
 
     private void refreshSelectedAgentDetails() {
         if (selectedAgent != null) {
-            infoPanel.showAgentDetails(selectedAgent.getDetails());
+            SwingUtilities.invokeLater(() -> infoPanel.showAgentDetails(selectedAgent.getDetails()));
         }
     }
 
