@@ -19,6 +19,9 @@ public class AgentDetailsPanel extends PropertySheetPanel {
     }
 
     public void updateDetails(Map<String, Object> agentDetails) {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            throw new IllegalStateException("Don't draw outside the EDT");
+        }
         PropertySheetTableModel tableModel = new PropertySheetTableModel();
 
         for (Map.Entry<String, Object> detailsEntry : agentDetails.entrySet()) {

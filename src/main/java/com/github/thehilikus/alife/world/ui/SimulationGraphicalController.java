@@ -18,7 +18,7 @@ import java.awt.event.MouseListener;
  * Receives events from the simulation
  */
 public class SimulationGraphicalController implements MouseListener, World.WorldListener, ActionListener, ChangeListener {
-    private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class.getSimpleName());
     private final World.GraphicalView worldView;
     private final InfoPanel infoPanel;
     private final MainToolbar toolbar;
@@ -45,7 +45,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
 
     private void refreshSelectedAgentDetails() {
         if (selectedAgent != null) {
-            infoPanel.showAgentDetails(selectedAgent.getDetails());
+            SwingUtilities.invokeLater(() -> infoPanel.showAgentDetails(selectedAgent.getDetails()));
         }
     }
 
@@ -69,17 +69,25 @@ public class SimulationGraphicalController implements MouseListener, World.World
     }
 
     @Override
-    public void ticked() {
+    public boolean ticked(int hour) {
+        boolean result = true;
         try {
-            worldView.refresh();
+            LOG.trace("World ticked after hour = {}", hour);
+            try {
+                worldView.refresh(hour);
+            } catch (InterruptedException exc) {
+                result = false;
+            }
             refreshSelectedAgentDetails();
         } catch (Exception exc) {
             LOG.error("Error refreshing the view", exc);
         }
+
+        return result;
     }
 
     @Override
-    public void ended() {
+    public void ended(int hour) {
         toolbar.end();
     }
 
@@ -90,7 +98,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
                 control.reset();
                 break;
             case "step":
-                control.tick();
+                control.step();
                 break;
             case "start":
                 control.start();
@@ -105,7 +113,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
     public void stateChanged(ChangeEvent e) {
         JSlider slider = (JSlider) e.getSource();
         if (!slider.getValueIsAdjusting()) {
-            control.setRefreshDelay(slider.getValue());
+            worldView.setRefreshDelay(slider.getValue());
         }
     }
 }

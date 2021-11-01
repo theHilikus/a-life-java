@@ -11,9 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -91,17 +94,19 @@ public class World {
         });
         toRemove.forEach(this::removeAgent);
         LOG.info("Ending hour {}\n", hour);
+
+        boolean shouldContinue = true;
         if (worldListener != null) {
-            worldListener.ticked();
+            shouldContinue = worldListener.ticked(hour);
         }
 
-        boolean result = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
-        if (!result) {
+        boolean movableAgentsAlive = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
+        if (!movableAgentsAlive) {
             if (worldListener != null) {
-                worldListener.ended();
+                worldListener.ended(hour);
             }
         }
-        return result;
+        return movableAgentsAlive && shouldContinue;
     }
 
     private VitalSign tickMovableAgent(Agent.Movable agent) {
@@ -134,7 +139,7 @@ public class World {
         return new Position(x, y);
     }
 
-    public Map<String, Object> getAgentDetails(int agentId) {
+    private Map<String, Object> getAgentDetails(int agentId) {
         Map<String, Object> result;
         Agent agent = livingAgents.stream().filter(agent2 -> agent2.getId() == agentId).findFirst().orElse(null);
         if (agent == null) {
@@ -152,7 +157,7 @@ public class World {
         return hour;
     }
 
-    public void setTickListener(WorldListener listener) {
+    public void setWorldListener(WorldListener listener) {
         worldListener = listener;
     }
 
@@ -178,9 +183,21 @@ public class World {
 
     public class ConsoleView {
 
+        private final Semaphore semaphore = new Semaphore(0);
         private final Agent.View agentsView = new AgentsView();
+        private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-        public void draw() {
+        public void runAutomatic(int refreshDelay) {
+            executor.scheduleAtFixedRate(semaphore::release, 0, refreshDelay, TimeUnit.MILLISECONDS);
+        }
+
+        public void refresh() throws InterruptedException {
+            refreshNonBlocking();
+            semaphore.drainPermits();
+            semaphore.acquire();
+        }
+
+        public void refreshNonBlocking() {
             String textualRepresentation = getWorldRepresentation();
             System.out.println(textualRepresentation);
         }
@@ -208,14 +225,32 @@ public class World {
             }
             return stringBuilder.toString();
         }
+
+        public void printAgentDetails(int agentId) {
+            Map<String, Object> agentDetails = getAgentDetails(agentId);
+            if (!agentDetails.isEmpty()) {
+                StringBuilder detailsBuffer = new StringBuilder();
+                detailsBuffer.append("##### Details of agent ").append(agentId).append(" #####").append(System.lineSeparator());
+                agentDetails.forEach((key, value) -> detailsBuffer.append(key).append(": ").append(value).append(System.lineSeparator()));
+                System.out.println(detailsBuffer);
+            } else {
+                System.out.println("No agent found with id " + agentId);
+            }
+        }
     }
 
-    public class GraphicalView extends JPanel {
+    public class GraphicalView extends JPanel implements ActionListener {
 
+        private static final int FRAME_RATE = 30; //FPS
         private final Agent.View agentsView = new AgentsView();
 
         private final Map<Shape, Agent> agentsShapes = new HashMap<>();
         private int agentSelectedId = -1;
+        private final Timer animationClock = new Timer(1000 / FRAME_RATE, this);
+        private int currentFrame = 0;
+        private int totalFrames;
+        private int refreshDelay;
+        private final Semaphore semaphore = new Semaphore(0);
 
         public GraphicalView() {
             final int edgePadding = 20;
@@ -224,8 +259,21 @@ public class World {
             setBackground(Color.WHITE);
         }
 
-        public void refresh() {
-            repaint();
+        public void refresh(int hour) throws InterruptedException {
+            if (SwingUtilities.isEventDispatchThread()) {
+                throw new IllegalStateException("Don't refresh from the EDT");
+            }
+            if (currentFrame != totalFrames) {
+                LOG.warn("Dropped {} frames", totalFrames - currentFrame);
+            }
+            currentFrame = 0;
+            totalFrames = (int) ((double) refreshDelay / 1000 * FRAME_RATE);
+            if (!animationClock.isRunning()) {
+                LOG.trace("Starting animation clock for hour = {}", hour);
+                animationClock.start();
+            }
+            semaphore.drainPermits();
+            semaphore.acquire();
         }
 
         @Override
@@ -235,23 +283,50 @@ public class World {
             }
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
+
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            agentsShapes.clear();
-
-            paintAgents(g2d, true);
-            paintAgents(g2d, false);
+            if (currentFrame == totalFrames) {
+                LOG.trace("Painting keyframe = {}", currentFrame);
+                detectIfSimulationNotMoving();
+                agentsShapes.clear();
+                paintAgentsKeyframes(g2d, true); //paint plants first for proper z-ordering
+                paintAgentsKeyframes(g2d, false);
+                semaphore.release();
+            } else {
+                LOG.trace("Painting tween frame = {}", currentFrame);
+                currentFrame++;
+                paintAgentsTweenFrames(g2d, true, (double) currentFrame / totalFrames);
+                paintAgentsTweenFrames(g2d, false, (double) currentFrame / totalFrames);
+            }
         }
 
-        private void paintAgents(Graphics2D g2d, boolean plantsOnly) {
+        private void detectIfSimulationNotMoving() {
+            if (semaphore.availablePermits() > 5) {
+                LOG.info("Simulation has not progressed in a while. Stopping animation clock");
+                animationClock.stop();
+            }
+        }
+
+        private void paintAgentsKeyframes(Graphics2D g2d, boolean plantsOnly) {
             for (Agent agent : livingAgents) {
                 if (plantsOnly && agent instanceof Plant) {
-                    Shape agentShape = agentsView.drawIn2DGraphics(g2d, agent, agent.getId() == agentSelectedId);
+                    Shape agentShape = agentsView.drawKeyframe(g2d, agent, agent.getId() == agentSelectedId);
                     agentsShapes.put(agentShape, agent);
                 }
                 if (!plantsOnly && !(agent instanceof Plant)) {
-                    Shape agentShape = agentsView.drawIn2DGraphics(g2d, agent, agent.getId() == agentSelectedId);
+                    Shape agentShape = agentsView.drawKeyframe(g2d, agent, agent.getId() == agentSelectedId);
                     agentsShapes.put(agentShape, agent);
+                }
+            }
+        }
+
+        private void paintAgentsTweenFrames(Graphics2D g2d, boolean plantsOnly, double percentToKeyFrame) {
+            for (Agent agent : livingAgents) {
+                if (plantsOnly && agent instanceof Plant) {
+                    agentsView.drawTweenFrame(g2d, agent, percentToKeyFrame);
+                }
+                if (!plantsOnly && !(agent instanceof Plant)) {
+                    agentsView.drawTweenFrame(g2d, agent, percentToKeyFrame);
                 }
             }
         }
@@ -260,7 +335,7 @@ public class World {
             Agent result = null;
             double shortestDistance = Double.MAX_VALUE;
             for (Map.Entry<Shape, Agent> agentShape : agentsShapes.entrySet()) {
-                if (agentShape.getKey().contains(point)) {
+                if (agentShape.getKey().getBounds2D().contains(point)) {
                     Position.Immutable agentPosition = agentShape.getValue().getPosition();
                     double distanceToAgent = point.distanceSq(agentPosition.getX(), agentPosition.getY());
                     if (distanceToAgent < shortestDistance) {
@@ -275,12 +350,23 @@ public class World {
 
         public void setSelectedAgent(int selectedId) {
             agentSelectedId = selectedId;
-            refresh();
+            repaint();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            LOG.trace("Animation clock ticked");
+            repaint();
+        }
+
+        public void setRefreshDelay(int refreshDelay) {
+            this.refreshDelay = refreshDelay;
         }
     }
 
     public interface WorldListener {
-        void ticked();
-        void ended();
+        boolean ticked(int hour);
+
+        void ended(int hour);
     }
 }
