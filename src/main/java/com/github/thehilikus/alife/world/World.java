@@ -78,35 +78,40 @@ public class World {
     }
 
     public boolean tick() {
-        LOG.info("Starting hour {}", ++hour);
-        Collection<Agent.Living> toRemove = new HashSet<>();
-        livingAgents.forEach(agent -> {
-            VitalSign causeOfDeath;
-            if (agent instanceof Agent.Movable) {
-                causeOfDeath = tickMovableAgent((Agent.Movable) agent);
-            } else {
-                causeOfDeath = agent.tick();
-            }
-            if (causeOfDeath != null) {
-                LOG.debug("{} died. Cause of death={}", agent, causeOfDeath);
-                toRemove.add(agent);
-            }
-        });
-        toRemove.forEach(this::removeAgent);
-        LOG.info("Ending hour {}\n", hour);
+        try {
+            LOG.info("Starting hour {}", ++hour);
+            Collection<Agent.Living> toRemove = new HashSet<>();
+            livingAgents.forEach(agent -> {
+                VitalSign causeOfDeath;
+                if (agent instanceof Agent.Movable) {
+                    causeOfDeath = tickMovableAgent((Agent.Movable) agent);
+                } else {
+                    causeOfDeath = agent.tick();
+                }
+                if (causeOfDeath != null) {
+                    LOG.debug("{} died. Cause of death={}", agent, causeOfDeath);
+                    toRemove.add(agent);
+                }
+            });
+            toRemove.forEach(this::removeAgent);
+            LOG.info("Ending hour {}\n", hour);
 
-        boolean shouldContinue = true;
-        if (worldListener != null) {
-            shouldContinue = worldListener.ticked(hour);
-        }
-
-        boolean movableAgentsAlive = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
-        if (!movableAgentsAlive) {
+            boolean shouldContinue = true;
             if (worldListener != null) {
-                worldListener.ended(hour);
+                shouldContinue = worldListener.ticked(hour);
             }
+
+            boolean movableAgentsAlive = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
+            if (!movableAgentsAlive) {
+                if (worldListener != null) {
+                    worldListener.ended(hour);
+                }
+            }
+            return movableAgentsAlive && shouldContinue;
+        } catch (Exception exc) {
+            LOG.error("Error simulating the World", exc);
+            return false;
         }
-        return movableAgentsAlive && shouldContinue;
     }
 
     private VitalSign tickMovableAgent(Agent.Movable agent) {
