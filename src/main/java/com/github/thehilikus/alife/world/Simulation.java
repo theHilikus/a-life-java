@@ -139,7 +139,7 @@ public class Simulation {
         private static final Logger LOG = LoggerFactory.getLogger(Control.class);
 
         private final World world;
-        private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "simulation"));
         private Future<?> future;
 
         public Control(World world) {
