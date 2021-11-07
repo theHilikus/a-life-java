@@ -10,35 +10,32 @@ import javax.validation.constraints.PositiveOrZero;
 public class ScanResult implements Comparable<ScanResult> {
     @PositiveOrZero
     @NegativeOrZero
-    private final int xDistance;
+    private final int distanceSquared;
 
     @PositiveOrZero
     @NegativeOrZero
-    private final int yDistance;
+    private final int direction;
 
     @NotNull
     private final Agent agent;
 
-    public ScanResult(int xDistance, int yDistance, Agent agent) {
-        this.xDistance = xDistance;
-        this.yDistance = yDistance;
+    public ScanResult(int distanceSquared, int direction, Agent agent) {
+        this.distanceSquared = distanceSquared;
+        this.direction = direction;
         this.agent = agent;
     }
 
     @Override
     public int compareTo(ScanResult other) {
-        int distanceSquared = (int) (Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
-        int otherDistanceSquared = (int) (Math.pow(other.xDistance, 2) + Math.pow(other.yDistance, 2));
-
-        return distanceSquared - otherDistanceSquared;
+        return distanceSquared - other.distanceSquared;
     }
 
-    public int getXDistance() {
-        return xDistance;
+    public int getDistanceSquared() {
+        return distanceSquared;
     }
 
-    public int getYDistance() {
-        return yDistance;
+    public int getRelativeDirection() {
+        return direction;
     }
 
     public Agent getAgent() {

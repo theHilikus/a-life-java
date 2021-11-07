@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeSet;
 
 /**
  * A living agent that eats {@link com.github.thehilikus.alife.agents.plants.Plant}
@@ -144,5 +143,10 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     @Override
     public Position.Immutable getPosition() {
         return locomotion.getPosition();
+    }
+
+    @Override
+    public int getOrientation() {
+        return locomotion.getOrientation();
     }
 }

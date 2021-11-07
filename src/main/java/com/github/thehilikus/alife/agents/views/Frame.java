@@ -1,13 +1,12 @@
 package com.github.thehilikus.alife.agents.views;
 
+import com.github.thehilikus.alife.api.Orientation;
 import com.github.thehilikus.alife.api.Position;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import static java.lang.Math.PI;
 
 /**
  * An animation frame
@@ -45,8 +44,8 @@ public class Frame {
         for (Map.Entry<String, Object> property : propertiesToInterpolate.entrySet()) {
             String propertyKey = property.getKey();
             if (propertyKey.equals("orientation")) {
-                double startAngle = (double) property.getValue();
-                double endAngle = endFrame.getInterpolatedProperty(propertyKey);
+                int startAngle = (int) property.getValue();
+                int endAngle = endFrame.getInterpolatedProperty(propertyKey);
                 result.addPropertyToInterpolate(propertyKey, interpolateAngle(startAngle, endAngle, percentToKeyFrame));
             } else if (property.getValue() instanceof Number) {
                 Number startNumber = (Number) property.getValue();
@@ -90,29 +89,29 @@ public class Frame {
         return new Position(interX, interY).toImmutable();
     }
 
-    private double interpolateAngle(double startAngle, double endAngle, double percentToKeyFrame) {
-        double result;
+    private int interpolateAngle(int startAngle, int endAngle, double percentToKeyFrame) {
+        int result;
         if (endAngle > startAngle) {
             //turned clockwise. see if anti clock is shorter
-            if (endAngle - startAngle > PI) {
+            if (endAngle - startAngle > Orientation.HALF_TURN) {
                 //anti is shorter
-                result = (double) interpolateNumber(startAngle + 2 * PI, endAngle, percentToKeyFrame);
+                result = (int) interpolateNumber(startAngle + Orientation.FULL_TURN, endAngle, percentToKeyFrame);
             } else {
                 // clockwise is shorter
-                result = (double) interpolateNumber(startAngle, endAngle, percentToKeyFrame);
+                result = (int) interpolateNumber(startAngle, endAngle, percentToKeyFrame);
             }
         } else { //endAngle < startAngle
             //turned anticlock or wrapped around
-            if (startAngle - endAngle >= PI) {
+            if (startAngle - endAngle > Orientation.HALF_TURN) {
                 //clock is shorter
-                result = (double) interpolateNumber(startAngle, endAngle + 2 * PI, percentToKeyFrame);
+                result = (int) interpolateNumber(startAngle, endAngle + Orientation.FULL_TURN, percentToKeyFrame);
             } else {
-                result = (double) interpolateNumber(startAngle, endAngle, percentToKeyFrame);
+                result = (int) interpolateNumber(startAngle, endAngle, percentToKeyFrame);
             }
 
         }
 
-        return result % (2 * PI);
+        return result % (Orientation.FULL_TURN);
     }
 
     private Color interpolateColor(Color startColor, Color endColor, double percentToKeyFrame) {

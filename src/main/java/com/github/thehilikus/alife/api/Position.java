@@ -16,20 +16,11 @@ public class Position {
         this.y = y;
     }
 
-    public void move(Orientation direction, int speed) {
-        switch (direction) {
-            case NORTH:
-                y -= speed;
-                break;
-            case WEST:
-                x -= speed;
-                break;
-            case SOUTH:
-                y += speed;
-                break;
-            case EAST:
-                x += speed;
-        }
+    public void move(int direction, int speed) {
+        int speedX = (int) Math.round(Math.cos(Math.toRadians(direction)) * speed);
+        int speedY = (int) Math.round(Math.sin(Math.toRadians(direction)) * speed);
+        x += speedX;
+        y += speedY;
     }
 
     public int getX() {
@@ -38,34 +29,6 @@ public class Position {
 
     public int getY() {
         return y;
-    }
-
-    /**
-     * Finds the farthest direction to the destination
-     *
-     * @param destination the position to get to
-     */
-    public Orientation directionTo(Position.Immutable destination) {
-        int deltaX = destination.x - this.x;
-        int deltaY = destination.y - this.y;
-        Orientation result;
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            //move in X
-            if (deltaX < 0) {
-                result = Orientation.WEST;
-            } else {
-                result = Orientation.EAST;
-            }
-        } else {
-            //move in Y
-            if (deltaY < 0) {
-                result = Orientation.NORTH;
-            } else {
-                result = Orientation.SOUTH;
-            }
-        }
-
-        return result;
     }
 
     @Override

@@ -3,10 +3,7 @@ package com.github.thehilikus.alife.world;
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.agents.views.AgentsView;
-import com.github.thehilikus.alife.api.Agent;
-import com.github.thehilikus.alife.api.Position;
-import com.github.thehilikus.alife.api.ScanResult;
-import com.github.thehilikus.alife.api.VitalSign;
+import com.github.thehilikus.alife.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,7 +177,13 @@ public class World {
         for (Agent found : agentsFound) {
             int xDelta = found.getPosition().getX() - centerAgent.getPosition().getX();
             int yDelta = found.getPosition().getY() - centerAgent.getPosition().getY();
-            result.add(new ScanResult(xDelta, yDelta, found));
+            double agentAngleInRadians = Math.atan2(yDelta, xDelta);
+            int direction = (int) Math.round(Math.toDegrees(agentAngleInRadians) - centerAgent.getOrientation());
+            if (Math.abs(direction) > Orientation.HALF_TURN) {
+                //represent it in the other direction to make it smaller
+                direction = (direction - Orientation.FULL_TURN) % Orientation.FULL_TURN;
+            }
+            result.add(new ScanResult(xDelta * xDelta + yDelta * yDelta, direction, found));
         }
 
         return result;

@@ -24,7 +24,7 @@ public class StraightWalkWithRandomTurn extends Legs {
     @Override
     public int move(double speedFactor, SortedSet<ScanResult> scanResults) {
         if (shouldTurn()) {
-            turn(Orientation.WEST);
+            turn(Orientation.LEFT_TURN);
         } else {
             super.move(speedFactor, scanResults);
         }

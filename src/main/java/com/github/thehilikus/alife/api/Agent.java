@@ -20,6 +20,10 @@ public interface Agent {
 
     Position.Immutable getPosition();
 
+    default int getOrientation() {
+        return 0;
+    }
+
     /**
      * Min size for any agent
      */

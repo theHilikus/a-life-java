@@ -28,12 +28,13 @@ public interface Locomotion extends Component {
     /**
      * Move the agent towards a specific distination
      *
-     * @param speedFactor the proportion of the max velocity to use as speed
-     * @param target      the final location to reach
+     * @param speedFactor     the proportion of the max velocity to use as speed
+     * @param targetDistance  the target distance relative to its own
+     * @param targetDirection the target direction relative to its own
      * @return the distance travelled
      */
     @PositiveOrZero
-    int moveTowardsTarget(double speedFactor, Position.Immutable target);
+    int moveTowardsTarget(double speedFactor, int targetDistance, int targetDirection);
 
     @DecimalMin("-1.0")
     @DecimalMax("0.0")
@@ -42,5 +43,7 @@ public interface Locomotion extends Component {
     @NotNull
     Position.Immutable getPosition();
 
-    void faceTowards(Position.Immutable position);
+    int getOrientation();
+
+    void turn(int degrees);
 }
