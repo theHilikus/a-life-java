@@ -105,7 +105,7 @@ public class World {
                 }
             }
             return movableAgentsAlive && shouldContinue;
-        } catch (Exception exc) {
+        } catch (Exception | AssertionError exc) {
             LOG.error("Error simulating the World", exc);
             return false;
         }
@@ -119,6 +119,10 @@ public class World {
             if (!originalPosition.equals(newPosition)) {
                 LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
             }
+            assert newPosition.getX() > 0
+                    && newPosition.getY() > 0
+                    && newPosition.getX() <= width - 2
+                    && newPosition.getY() <= height - 2 : "Agent " + agent.getId() + " moved out of the world: " + newPosition;
         }
 
         return causeOfDeath;
@@ -183,6 +187,7 @@ public class World {
                 //represent it in the other direction to make it smaller
                 direction = (direction - Orientation.FULL_TURN) % Orientation.FULL_TURN;
             }
+            assert Math.abs(direction) <= Orientation.HALF_TURN : "Relative angle must be > -180 and < 180 but was " + direction;
             result.add(new ScanResult(xDelta * xDelta + yDelta * yDelta, direction, found));
         }
 

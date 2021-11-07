@@ -126,7 +126,7 @@ public class Legs implements Locomotion {
         int movement = 0;
         if (distance > 1) { //since otherwise we are already next to the target
             if (Math.abs(orientationOffset) < MOVE_AND_ROTATE_MAX) {
-                orientation += orientationOffset;
+                orientation = Math.floorMod(orientation + orientationOffset, Orientation.FULL_TURN);
                 movement = moveForwards(speedFactor, distance - 1);
             } else {
                 //only rotate
