@@ -26,7 +26,7 @@ public interface Locomotion extends Component {
     int move(double speedFactor, SortedSet<ScanResult> scanResults);
 
     /**
-     * Move the agent towards a specific distination
+     * Move the agent towards a specific destination
      *
      * @param speedFactor     the proportion of the max velocity to use as speed
      * @param targetDistance  the target distance relative to its own

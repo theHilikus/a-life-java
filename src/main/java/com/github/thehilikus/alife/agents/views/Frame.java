@@ -27,6 +27,7 @@ public class Frame {
         propertiesToInterpolate.put(name, value);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getInterpolatedProperty(String name) {
         return (T) propertiesToInterpolate.get(name);
     }
@@ -35,6 +36,7 @@ public class Frame {
         fixedProperties.put(name, value);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getFixedProperty(String name) {
         return (T) fixedProperties.get(name);
     }

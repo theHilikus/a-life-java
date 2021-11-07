@@ -3,7 +3,7 @@ package com.github.thehilikus.alife.api;
 import javax.validation.constraints.PositiveOrZero;
 
 /**
- * An mutable object to keep track of a position in the world
+ * A mutable object to keep track of a position in the world
  */
 public class Position {
     @PositiveOrZero
