@@ -15,7 +15,7 @@ import java.util.*;
  * Motion that always moves forward until reaching the edge of the world
  */
 public class Legs implements Locomotion {
-    private static final Logger LOG = LoggerFactory.getLogger(Legs.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Legs.class.getSimpleName());
     private static final int MOVE_AND_ROTATE_MAX = 45;
     private final int agentId;
 

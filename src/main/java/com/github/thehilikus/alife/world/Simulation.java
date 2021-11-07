@@ -136,7 +136,7 @@ public class Simulation {
     }
 
     public static class Control {
-        private static final Logger LOG = LoggerFactory.getLogger(Control.class);
+        private static final Logger LOG = LoggerFactory.getLogger(Control.class.getSimpleName());
 
         private final World world;
         private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "simulation"));
