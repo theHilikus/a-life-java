@@ -31,7 +31,7 @@ public class StraightWalkWithRandomTurn extends Legs {
             turn(Orientation.LEFT_TURN);
             LOG.info("Turned from {}° to {}°", originalOrientation, getOrientation());
         } else {
-            super.move(speedFactor, scanResults);
+            return super.move(speedFactor, scanResults);
         }
         return 0;
     }
