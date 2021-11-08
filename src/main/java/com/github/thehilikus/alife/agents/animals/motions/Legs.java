@@ -27,7 +27,7 @@ public class Legs implements Locomotion {
     @DecimalMax("0.0")
     private final double energyExpenditureFactor;
 
-    public Legs(int agentId, Position position, Genome genome) {
+    protected Legs(int agentId, Position position, Genome genome) {
         this(agentId, position, RandomProvider.nextInt(Locomotion.FULL_TURN), genome);
     }
 
@@ -112,9 +112,9 @@ public class Legs implements Locomotion {
             }
         } else if (edgeY > position.getY() && edgeX != 0) {
             //bottom wall
-            if (positiveOrientation < 90) {
+            if (positiveOrientation < HALF_TURN / 2) {
                 turn(Locomotion.LEFT_TURN);
-            } else if (positiveOrientation > 90) {
+            } else if (positiveOrientation > HALF_TURN / 2) {
                 turn(Locomotion.RIGHT_TURN);
             } else {
                 turn(Locomotion.HALF_TURN);

@@ -50,7 +50,7 @@ public class Position {
         private final int x;
         private final int y;
 
-        public Immutable(Position mutable) {
+        private Immutable(Position mutable) {
             this.x = mutable.x;
             this.y = mutable.y;
         }

@@ -14,6 +14,9 @@ import java.util.SortedSet;
  * When looking for food but it has not been found
  */
 public class Scouting implements Mood {
+    /**
+     * The priority of the mood from 1-100
+     */
     public static final int PRIORITY = 80;
     private final Vision vision;
     private final Locomotion locomotion;

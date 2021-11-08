@@ -215,7 +215,7 @@ public class World {
             System.out.println(textualRepresentation);
         }
 
-        public String getWorldRepresentation() {
+        private String getWorldRepresentation() {
             StringBuilder stringBuilder = new StringBuilder(getWidth() * getHeight() * 2);
             stringBuilder.append("World view on hour ").append(hour).append(System.lineSeparator());
 

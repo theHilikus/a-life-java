@@ -17,7 +17,7 @@ public interface Vision extends Component {
      * Searches for agents around itself
      *
      * @param test A test condition to declare what the vision can detect
-     * @return a sorted list with the most interesting agent first in the set. The concept of "most interesting" is implementation-dependent
+     * @return A sorted list with the most interesting agent first in the set. The concept of "most interesting" is implementation-dependent
      */
     @NotNull
     SortedSet<ScanResult> scan(Predicate<Agent> test);
