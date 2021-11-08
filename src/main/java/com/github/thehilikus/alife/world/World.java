@@ -182,10 +182,10 @@ public class World {
             int xDelta = found.getPosition().getX() - centerAgent.getPosition().getX();
             int yDelta = found.getPosition().getY() - centerAgent.getPosition().getY();
             double agentAngleInRadians = Math.atan2(yDelta, xDelta);
-            int direction = (int) Math.round(Math.toDegrees(agentAngleInRadians) - centerAgent.getOrientation());
-            if (Math.abs(direction) > Orientation.HALF_TURN) {
-                //represent it in the other direction to make it smaller
-                direction = (direction - Orientation.FULL_TURN) % Orientation.FULL_TURN;
+            int direction = (int) Math.round(Math.toDegrees(agentAngleInRadians) - centerAgent.getOrientation()) % Orientation.FULL_TURN;
+            if (direction < -Orientation.HALF_TURN) {
+                //represent it in the other direction to make it smaller than 180
+                direction = (direction + Orientation.FULL_TURN) % Orientation.FULL_TURN;
             }
             assert Math.abs(direction) <= Orientation.HALF_TURN : "Relative angle must be > -180 and < 180 but was " + direction;
             result.add(new ScanResult(xDelta * xDelta + yDelta * yDelta, direction, found));

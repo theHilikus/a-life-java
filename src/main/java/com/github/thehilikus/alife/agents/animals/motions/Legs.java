@@ -49,12 +49,30 @@ public class Legs implements Locomotion {
             result = moveTowardsTarget(speedFactor, distanceToEdge, scanResult.getRelativeDirection());
             if (result == distanceToEdge - 1) {
                 //agent hit the edge, turn
+                LOG.debug("Bouncing off edge");
                 turnAfterEdgeCollision(scanResult.getAgent());
             }
         } else {
             result = moveForwards(speedFactor, Integer.MAX_VALUE);
         }
 
+        return result;
+    }
+
+    private Optional<ScanResult> findEdgeInCurrentOrientation(Iterable<ScanResult> scanResults) {
+        ScanResult smallestDirection = new ScanResult(1000, Orientation.FULL_TURN, null);
+        for (ScanResult scanResult : scanResults) {
+            if (scanResult.getAgent() instanceof Edge) {
+                if (Math.abs(scanResult.getRelativeDirection()) < Math.abs(smallestDirection.getRelativeDirection())) {
+                    smallestDirection = scanResult;
+                }
+            }
+        }
+
+        Optional<ScanResult> result = Optional.empty();
+        if (Math.abs(smallestDirection.getRelativeDirection()) < Orientation.HALF_TURN / 4) {
+            result = Optional.of(smallestDirection);
+        }
         return result;
     }
 
@@ -107,17 +125,6 @@ public class Legs implements Locomotion {
         }
     }
 
-    private Optional<ScanResult> findEdgeInCurrentOrientation(Iterable<ScanResult> scanResults) {
-        for (ScanResult scanResult : scanResults) {
-            if (scanResult.getAgent() instanceof Edge) {
-                if (scanResult.getRelativeDirection() == 0) {
-                    return Optional.of(scanResult);
-                }
-            }
-        }
-        return Optional.empty();
-    }
-
     @Override
     public int moveTowardsTarget(double speedFactor, int distance, int orientationOffset) {
         if (Math.abs(orientationOffset) > Orientation.HALF_TURN) {
@@ -131,7 +138,7 @@ public class Legs implements Locomotion {
             } else {
                 //only rotate
                 LOG.debug("Only adjusting angle to target by {}", orientationOffset);
-                orientation += orientationOffset;
+                orientation = Math.floorMod(orientation + orientationOffset, Orientation.FULL_TURN);
             }
         }
         return movement;
@@ -182,6 +189,6 @@ public class Legs implements Locomotion {
 
     @Override
     public void turn(int degrees) {
-        orientation = (orientation + degrees) % Orientation.FULL_TURN;
+        orientation = Math.floorMod(orientation + degrees, Orientation.FULL_TURN);
     }
 }
