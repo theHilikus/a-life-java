@@ -63,17 +63,38 @@ public class Legs implements Locomotion {
         ScanResult smallestDirection = new ScanResult(1000, Locomotion.FULL_TURN, null);
         for (ScanResult scanResult : scanResults) {
             if (scanResult.getAgent() instanceof Edge) {
-                if (Math.abs(scanResult.getRelativeDirection()) < Math.abs(smallestDirection.getRelativeDirection())) {
+                int positiveRelativeDirection = Math.abs(scanResult.getRelativeDirection());
+                int positiveSmallestFound = Math.abs(smallestDirection.getRelativeDirection());
+                if (positiveRelativeDirection < positiveSmallestFound && isFacing(scanResult.getAgent())) {
                     smallestDirection = scanResult;
                 }
             }
         }
 
         Optional<ScanResult> result = Optional.empty();
-        if (Math.abs(smallestDirection.getRelativeDirection()) < Locomotion.HALF_TURN / 4) {
+        if (smallestDirection.getAgent() != null) { //if we found at least one
             result = Optional.of(smallestDirection);
         }
         return result;
+    }
+
+    private boolean isFacing(Agent edge) {
+        boolean facingWest = orientation > 90 && orientation < 270;
+        boolean facingNorth = orientation > Locomotion.HALF_TURN;
+        boolean facingEast = orientation > 270 || orientation < 90;
+        boolean facingSouth = orientation < Locomotion.HALF_TURN;
+
+        int deltaX = edge.getPosition().getX() - position.getX();
+        int deltaY = edge.getPosition().getY() - position.getY();
+
+        return deltaX < 0 && deltaY < 0 && facingWest && facingNorth
+                || deltaX < 0 && deltaY > 0 && facingWest && facingSouth
+                || deltaX > 0 && deltaY < 0 && facingEast && facingNorth
+                || deltaX > 0 && deltaY > 0 && facingEast && facingSouth
+                || deltaX < 0 && deltaY == 0 && facingWest
+                || deltaX > 0 && deltaY == 0 && facingEast
+                || deltaX == 0 && deltaY < 0 && facingNorth
+                || deltaX == 0 && deltaY > 0 && facingSouth;
     }
 
     private void turnAfterEdgeCollision(Agent edge) {
