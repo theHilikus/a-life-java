@@ -1,6 +1,6 @@
 package com.github.thehilikus.alife.agents.views;
 
-import com.github.thehilikus.alife.api.Orientation;
+import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Position;
 
 import java.awt.*;
@@ -95,25 +95,25 @@ public class Frame {
         int result;
         if (endAngle > startAngle) {
             //turned clockwise. see if anti clock is shorter
-            if (endAngle - startAngle > Orientation.HALF_TURN) {
+            if (endAngle - startAngle > Locomotion.HALF_TURN) {
                 //anti is shorter
-                result = (int) interpolateNumber(startAngle + Orientation.FULL_TURN, endAngle, percentToKeyFrame);
+                result = (int) interpolateNumber(startAngle + Locomotion.FULL_TURN, endAngle, percentToKeyFrame);
             } else {
                 // clockwise is shorter
                 result = (int) interpolateNumber(startAngle, endAngle, percentToKeyFrame);
             }
         } else { //endAngle < startAngle
             //turned anticlock or wrapped around
-            if (startAngle - endAngle > Orientation.HALF_TURN) {
+            if (startAngle - endAngle > Locomotion.HALF_TURN) {
                 //clock is shorter
-                result = (int) interpolateNumber(startAngle, endAngle + Orientation.FULL_TURN, percentToKeyFrame);
+                result = (int) interpolateNumber(startAngle, endAngle + Locomotion.FULL_TURN, percentToKeyFrame);
             } else {
                 result = (int) interpolateNumber(startAngle, endAngle, percentToKeyFrame);
             }
 
         }
 
-        return result % (Orientation.FULL_TURN);
+        return result % (Locomotion.FULL_TURN);
     }
 
     private Color interpolateColor(Color startColor, Color endColor, double percentToKeyFrame) {

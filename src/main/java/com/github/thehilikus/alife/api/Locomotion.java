@@ -14,6 +14,22 @@ public interface Locomotion extends Component {
      * The prefix for motion parameters
      */
     String PARAMETER_PREFIX = "motion.";
+    /**
+     * A complete rotation
+     */
+    int FULL_TURN = 360;
+    /**
+     * Half a rotation
+     */
+    int HALF_TURN = 180;
+    /**
+     * A 90-degree turn to the right
+     */
+    int RIGHT_TURN = 90;
+    /**
+     * A 90-degree turn to the left
+     */
+    int LEFT_TURN = -RIGHT_TURN;
 
     /**
      * Move the agent without a specific purpose

@@ -1,6 +1,6 @@
 package com.github.thehilikus.alife.agents.views;
 
-import com.github.thehilikus.alife.api.Orientation;
+import com.github.thehilikus.alife.api.OrientationHelper;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -21,74 +21,74 @@ public class FrameTest {
 
     @Test
     void testAngleInterpolationFromNorth() {
-        testingUnit.addPropertyToInterpolate(ORIENTATION, Orientation.NORTH.toDegrees());
+        testingUnit.addPropertyToInterpolate(ORIENTATION, OrientationHelper.NORTH);
         Frame endFrame = new Frame();
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.EAST.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.EAST);
         Frame interpolated = testingUnit.interpolate(endFrame, MID_POINT);
         assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), 315);
 
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.SOUTH.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.SOUTH);
         interpolated = testingUnit.interpolate(endFrame, MID_POINT);
-        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(Orientation.NORTH, Orientation.SOUTH));
+        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.NORTH, OrientationHelper.SOUTH));
 
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.WEST.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.WEST);
         interpolated = testingUnit.interpolate(endFrame, MID_POINT);
-        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(Orientation.NORTH, Orientation.WEST));
+        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.NORTH, OrientationHelper.WEST));
     }
 
     @Test
     void testAngleInterpolationFromEast() {
-        testingUnit.addPropertyToInterpolate(ORIENTATION, Orientation.EAST.toDegrees());
+        testingUnit.addPropertyToInterpolate(ORIENTATION, OrientationHelper.EAST);
         Frame endFrame = new Frame();
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.SOUTH.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.SOUTH);
         Frame interpolated = testingUnit.interpolate(endFrame, MID_POINT);
-        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(Orientation.EAST, Orientation.SOUTH));
+        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.EAST, OrientationHelper.SOUTH));
 
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.WEST.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.WEST);
         interpolated = testingUnit.interpolate(endFrame, MID_POINT);
-        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(Orientation.EAST, Orientation.WEST));
+        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.EAST, OrientationHelper.WEST));
 
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.NORTH.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.NORTH);
         interpolated = testingUnit.interpolate(endFrame, MID_POINT);
         assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), 315);
     }
 
     @Test
     void testAngleInterpolationFromSouth() {
-        testingUnit.addPropertyToInterpolate(ORIENTATION, Orientation.SOUTH.toDegrees());
+        testingUnit.addPropertyToInterpolate(ORIENTATION, OrientationHelper.SOUTH);
         Frame endFrame = new Frame();
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.WEST.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.WEST);
         Frame interpolated = testingUnit.interpolate(endFrame, MID_POINT);
-        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(Orientation.SOUTH, Orientation.WEST));
+        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.SOUTH, OrientationHelper.WEST));
 
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.NORTH.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.NORTH);
         interpolated = testingUnit.interpolate(endFrame, MID_POINT);
-        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(Orientation.SOUTH, Orientation.NORTH));
+        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.SOUTH, OrientationHelper.NORTH));
 
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.EAST.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.EAST);
         interpolated = testingUnit.interpolate(endFrame, MID_POINT);
-        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(Orientation.SOUTH, Orientation.EAST));
+        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.SOUTH, OrientationHelper.EAST));
     }
 
     @Test
     void testAngleInterpolationFromWest() {
-        testingUnit.addPropertyToInterpolate(ORIENTATION, Orientation.WEST.toDegrees());
+        testingUnit.addPropertyToInterpolate(ORIENTATION, OrientationHelper.WEST);
         Frame endFrame = new Frame();
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.NORTH.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.NORTH);
         Frame interpolated = testingUnit.interpolate(endFrame, MID_POINT);
-        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(Orientation.WEST, Orientation.NORTH));
+        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.WEST, OrientationHelper.NORTH));
 
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.EAST.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.EAST);
         interpolated = testingUnit.interpolate(endFrame, MID_POINT);
-        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(Orientation.WEST, Orientation.EAST));
+        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.WEST, OrientationHelper.EAST));
 
 
-        endFrame.addPropertyToInterpolate(ORIENTATION, Orientation.SOUTH.toDegrees());
+        endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.SOUTH);
         interpolated = testingUnit.interpolate(endFrame, MID_POINT);
-        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(Orientation.WEST, Orientation.SOUTH));
+        assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.WEST, OrientationHelper.SOUTH));
     }
 
-    private int midAngle(Orientation first, Orientation second) {
-        return (first.toDegrees() + second.toDegrees()) / 2;
+    private int midAngle(int first, int second) {
+        return (first + second) / 2;
     }
 }

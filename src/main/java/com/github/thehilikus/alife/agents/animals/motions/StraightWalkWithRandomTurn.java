@@ -28,7 +28,7 @@ public class StraightWalkWithRandomTurn extends Legs {
     public int move(double speedFactor, SortedSet<ScanResult> scanResults) {
         if (shouldTurn()) {
             int originalOrientation = getOrientation();
-            turn(Orientation.LEFT_TURN);
+            turn(Locomotion.LEFT_TURN);
             LOG.info("Turned from {}° to {}°", originalOrientation, getOrientation());
         } else {
             return super.move(speedFactor, scanResults);

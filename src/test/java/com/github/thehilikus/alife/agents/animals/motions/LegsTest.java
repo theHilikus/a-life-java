@@ -2,10 +2,7 @@ package com.github.thehilikus.alife.agents.animals.motions;
 
 import com.github.thehilikus.alife.agents.genetics.DummyGenome;
 import com.github.thehilikus.alife.agents.genetics.Genome;
-import com.github.thehilikus.alife.api.Locomotion;
-import com.github.thehilikus.alife.api.Orientation;
-import com.github.thehilikus.alife.api.Position;
-import com.github.thehilikus.alife.api.ScanResult;
+import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.Edge;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -21,7 +18,7 @@ public class LegsTest {
 
     private static final double SPEED_FACTOR = 0.5;
     private static final int TOP_SPEED = 20;
-    private static final int ORIENTATION = Orientation.SOUTH.toDegrees();
+    private static final int ORIENTATION = OrientationHelper.SOUTH;
     private static final int ORIGINAL_COORD = 10;
     private Legs testingUnit;
 
@@ -70,7 +67,7 @@ public class LegsTest {
 
         int distance = testingUnit.move(SPEED_FACTOR, scanResults);
         assertEquals(distance, edgeY - ORIGINAL_COORD - 1);
-        assertEquals(testingUnit.getOrientation(), Orientation.NORTH.toDegrees());
+        assertEquals(testingUnit.getOrientation(), OrientationHelper.NORTH);
         Position.Immutable expectedPosition = new Position(ORIGINAL_COORD, edgeY - 1).toImmutable();
         assertEquals(testingUnit.getPosition(), expectedPosition);
     }

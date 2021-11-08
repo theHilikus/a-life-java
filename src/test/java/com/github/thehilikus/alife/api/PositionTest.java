@@ -21,35 +21,35 @@ public class PositionTest {
 
     @Test
     void testMoveNorth() {
-        testingUnit.move(Orientation.NORTH.toDegrees(), SPEED);
+        testingUnit.move(OrientationHelper.NORTH, SPEED);
         assertEquals(X, testingUnit.getX());
         assertEquals(Y - SPEED, testingUnit.getY());
     }
 
     @Test
     void testMoveEast() {
-        testingUnit.move(Orientation.EAST.toDegrees(), SPEED);
+        testingUnit.move(OrientationHelper.EAST, SPEED);
         assertEquals(X + SPEED, testingUnit.getX());
         assertEquals(Y, testingUnit.getY());
     }
 
     @Test
     void testMoveSouth() {
-        testingUnit.move(Orientation.SOUTH.toDegrees(), SPEED);
+        testingUnit.move(OrientationHelper.SOUTH, SPEED);
         assertEquals(X, testingUnit.getX());
         assertEquals(Y + SPEED, testingUnit.getY());
     }
 
     @Test
     void testMoveWest() {
-        testingUnit.move(Orientation.WEST.toDegrees(), SPEED);
+        testingUnit.move(OrientationHelper.WEST, SPEED);
         assertEquals(X - SPEED, testingUnit.getX());
         assertEquals(Y, testingUnit.getY());
     }
 
     @Test
     void testMoveSouthWest() {
-        int southEast = (Orientation.SOUTH.toDegrees() + Orientation.WEST.toDegrees()) / 2;
+        int southEast = (OrientationHelper.SOUTH + OrientationHelper.WEST) / 2;
         testingUnit.move(southEast, SPEED);
         int delta = 7; // sin(southEast) * SPEED
         assertEquals(X - delta, testingUnit.getX());
