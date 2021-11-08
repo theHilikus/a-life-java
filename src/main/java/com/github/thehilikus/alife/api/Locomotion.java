@@ -14,6 +14,22 @@ public interface Locomotion extends Component {
      * The prefix for motion parameters
      */
     String PARAMETER_PREFIX = "motion.";
+    /**
+     * A complete rotation
+     */
+    int FULL_TURN = 360;
+    /**
+     * Half a rotation
+     */
+    int HALF_TURN = 180;
+    /**
+     * A 90-degree turn to the right
+     */
+    int RIGHT_TURN = 90;
+    /**
+     * A 90-degree turn to the left
+     */
+    int LEFT_TURN = -RIGHT_TURN;
 
     /**
      * Move the agent without a specific purpose
@@ -26,14 +42,15 @@ public interface Locomotion extends Component {
     int move(double speedFactor, SortedSet<ScanResult> scanResults);
 
     /**
-     * Move the agent towards a specific distination
+     * Move the agent towards a specific destination
      *
-     * @param speedFactor the proportion of the max velocity to use as speed
-     * @param target      the final location to reach
+     * @param speedFactor     the proportion of the max velocity to use as speed
+     * @param targetDistance  the target distance relative to its own
+     * @param targetDirection the target direction relative to its own
      * @return the distance travelled
      */
     @PositiveOrZero
-    int moveTowardsTarget(double speedFactor, Position.Immutable target);
+    int moveTowardsTarget(double speedFactor, int targetDistance, int targetDirection);
 
     @DecimalMin("-1.0")
     @DecimalMax("0.0")
@@ -42,5 +59,7 @@ public interface Locomotion extends Component {
     @NotNull
     Position.Immutable getPosition();
 
-    void faceTowards(Position.Immutable position);
+    int getOrientation();
+
+    void turn(int degrees);
 }

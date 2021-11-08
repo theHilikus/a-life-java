@@ -3,6 +3,8 @@ package com.github.thehilikus.alife.agents.animals.motions;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.RandomProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.DecimalMax;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.SortedSet;
  * Motion that moves always in the direction being faced and random turns
  */
 public class StraightWalkWithRandomTurn extends Legs {
+    private static final Logger LOG = LoggerFactory.getLogger(StraightWalkWithRandomTurn.class.getSimpleName());
     @DecimalMax("1.0")
     private final double turningProbability;
 
@@ -24,9 +27,11 @@ public class StraightWalkWithRandomTurn extends Legs {
     @Override
     public int move(double speedFactor, SortedSet<ScanResult> scanResults) {
         if (shouldTurn()) {
-            turn(Orientation.WEST);
+            int originalOrientation = getOrientation();
+            turn(Locomotion.LEFT_TURN);
+            LOG.info("Turned from {}° to {}°", originalOrientation, getOrientation());
         } else {
-            super.move(speedFactor, scanResults);
+            return super.move(speedFactor, scanResults);
         }
         return 0;
     }

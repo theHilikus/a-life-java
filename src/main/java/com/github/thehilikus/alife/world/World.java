@@ -3,10 +3,7 @@ package com.github.thehilikus.alife.world;
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.agents.views.AgentsView;
-import com.github.thehilikus.alife.api.Agent;
-import com.github.thehilikus.alife.api.Position;
-import com.github.thehilikus.alife.api.ScanResult;
-import com.github.thehilikus.alife.api.VitalSign;
+import com.github.thehilikus.alife.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +105,7 @@ public class World {
                 }
             }
             return movableAgentsAlive && shouldContinue;
-        } catch (Exception exc) {
+        } catch (Exception | AssertionError exc) {
             LOG.error("Error simulating the World", exc);
             return false;
         }
@@ -122,6 +119,10 @@ public class World {
             if (!originalPosition.equals(newPosition)) {
                 LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
             }
+            assert newPosition.getX() > 0
+                    && newPosition.getY() > 0
+                    && newPosition.getX() <= width - 2
+                    && newPosition.getY() <= height - 2 : "Agent " + agent.getId() + " moved out of the world: " + newPosition;
         }
 
         return causeOfDeath;
@@ -180,7 +181,14 @@ public class World {
         for (Agent found : agentsFound) {
             int xDelta = found.getPosition().getX() - centerAgent.getPosition().getX();
             int yDelta = found.getPosition().getY() - centerAgent.getPosition().getY();
-            result.add(new ScanResult(xDelta, yDelta, found));
+            double agentAngleInRadians = Math.atan2(yDelta, xDelta);
+            int direction = (int) Math.round(Math.toDegrees(agentAngleInRadians) - centerAgent.getOrientation()) % Locomotion.FULL_TURN;
+            if (direction < -Locomotion.HALF_TURN) {
+                //represent it in the other direction to make it smaller than 180
+                direction = (direction + Locomotion.FULL_TURN) % Locomotion.FULL_TURN;
+            }
+            assert Math.abs(direction) <= Locomotion.HALF_TURN : "Relative angle must be > -180 and < 180 but was " + direction;
+            result.add(new ScanResult(xDelta * xDelta + yDelta * yDelta, direction, found));
         }
 
         return result;
@@ -207,7 +215,7 @@ public class World {
             System.out.println(textualRepresentation);
         }
 
-        public String getWorldRepresentation() {
+        private String getWorldRepresentation() {
             StringBuilder stringBuilder = new StringBuilder(getWidth() * getHeight() * 2);
             stringBuilder.append("World view on hour ").append(hour).append(System.lineSeparator());
 

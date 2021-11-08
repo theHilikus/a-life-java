@@ -80,7 +80,7 @@ public class HerbivoreView implements Agent.View {
         Frame keyframe = new Frame();
         keyframe.addFixedProperty("size", details.get("size"));
         keyframe.addPropertyToInterpolate("position", details.get("position"));
-        keyframe.addPropertyToInterpolate("orientation", ((Orientation)details.get(Locomotion.PARAMETER_PREFIX + "orientation")).toRadians());
+        keyframe.addPropertyToInterpolate("orientation", details.get(Locomotion.PARAMETER_PREFIX + "orientation"));
         Color agentColor = computeAgentColor(details);
         g2d.setColor(agentColor);
         keyframe.addPropertyToInterpolate("color", agentColor);
@@ -108,7 +108,7 @@ public class HerbivoreView implements Agent.View {
         Frame previousKeyframe = lastKeyframes.get(agent);
         Frame newKeyframe = new Frame();
         newKeyframe.addPropertyToInterpolate("position", agent.getDetails().get("position"));
-        newKeyframe.addPropertyToInterpolate("orientation", ((Orientation)agent.getDetails().get(Locomotion.PARAMETER_PREFIX + "orientation")).toRadians());
+        newKeyframe.addPropertyToInterpolate("orientation", agent.getDetails().get(Locomotion.PARAMETER_PREFIX + "orientation"));
         Color newAgentColor = computeAgentColor(agent.getDetails());
         newKeyframe.addPropertyToInterpolate("color", newAgentColor); //TODO: check color interpolation
 
@@ -154,9 +154,9 @@ public class HerbivoreView implements Agent.View {
         int size = frame.getFixedProperty("size");
 
         Path2D triangle = new Path2D.Double();
-        triangle.moveTo(-size / 2.0, size / 2.4);
-        triangle.lineTo(size / 2.0, size / 2.4);
-        triangle.lineTo(0, size / -1.2);
+        triangle.moveTo(size / -2.4, -size / 2.0);
+        triangle.lineTo(size / -2.4, size / 2.0);
+        triangle.lineTo(size / 1.2, 0 );
         triangle.closePath();
 
         AffineTransform transform = new AffineTransform();
@@ -164,8 +164,9 @@ public class HerbivoreView implements Agent.View {
         Position.Immutable position = frame.getInterpolatedProperty("position");
         transform.translate(position.getX(), position.getY());
 
-        double orientation = frame.getInterpolatedProperty("orientation");
-        transform.rotate(orientation);
+        int orientation = frame.getInterpolatedProperty("orientation");
+        double orientationInRadians = Math.toRadians(orientation);
+        transform.rotate(orientationInRadians);
 
         triangle.transform(transform);
 

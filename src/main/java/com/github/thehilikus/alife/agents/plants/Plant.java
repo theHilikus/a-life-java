@@ -19,7 +19,7 @@ import java.util.Map;
 public class Plant implements Agent.Eatable {
     private static final Logger LOG = LoggerFactory.getLogger(Plant.class.getSimpleName());
     private final int id;
-    private Position position;
+    private final Position position;
     private final int size;
     private Mood mood;
     private final EnergyTracker energyTracker;

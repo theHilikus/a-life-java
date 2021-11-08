@@ -44,7 +44,7 @@ public class Mating implements Mood {
         SortedSet<ScanResult> mateScans = vision.scan(agent -> agent == mate);
         if (!mateScans.isEmpty()) {
             ScanResult mateScan = mateScans.first();
-            if (Math.abs(mateScan.getXDistance()) <= 1 && Math.abs(mateScan.getYDistance()) <= 1) {
+            if (mateScan.getDistanceSquared() < 4) {
                 LOG.debug("Mating with {}: {}/{}", mate, timeWithMate, matingDuration);
                 if (timeWithMate >= matingDuration) {
                     LOG.info("Giving birth");

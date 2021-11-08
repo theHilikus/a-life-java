@@ -14,6 +14,9 @@ import java.util.SortedSet;
  * When looking for food but it has not been found
  */
 public class Scouting implements Mood {
+    /**
+     * The priority of the mood from 1-100
+     */
     public static final int PRIORITY = 80;
     private final Vision vision;
     private final Locomotion locomotion;
@@ -34,10 +37,11 @@ public class Scouting implements Mood {
         //scout the area
         SortedSet<ScanResult> foundAgents = vision.scan(agent -> agent instanceof Plant || agent instanceof Edge);
         if (!foundAgents.isEmpty()) {
-            Optional<Plant> plantOptional = foundAgents.stream().map(ScanResult::getAgent).filter(Plant.class::isInstance).map(Plant.class::cast).findFirst();
-            if (plantOptional.isPresent()) {
-                locomotion.faceTowards(plantOptional.get().getPosition());
-                return moodController.startHunting(plantOptional.get());
+            Optional<ScanResult> plantScanOptional = foundAgents.stream().filter(scan -> scan.getAgent() instanceof Plant).findFirst();
+            if (plantScanOptional.isPresent()) {
+                ScanResult plantScan = plantScanOptional.get();
+                locomotion.turn(plantScan.getRelativeDirection());
+                return moodController.startHunting((Agent.Eatable) plantScan.getAgent());
             } else {
                 //only found edges
                 lastMovement = locomotion.move(speedFactor, foundAgents);
