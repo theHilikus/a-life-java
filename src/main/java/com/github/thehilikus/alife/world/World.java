@@ -277,7 +277,11 @@ public class World {
                 throw new IllegalStateException("Don't refresh from the EDT");
             }
             if (currentFrame != totalFrames) {
-                LOG.warn("Dropped {} frames", totalFrames - currentFrame);
+                if (totalFrames - currentFrame > 0) {
+                    LOG.warn("Dropped {} frames", totalFrames - currentFrame);
+                } else {
+                    LOG.warn("Missed {} frames", currentFrame - totalFrames - 1);
+                }
             }
             currentFrame = 0;
             totalFrames = (int) ((double) refreshDelay / 1000 * FRAME_RATE);
@@ -298,7 +302,7 @@ public class World {
             Graphics2D g2d = (Graphics2D) g;
 
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            if (currentFrame == totalFrames) {
+            if (currentFrame >= totalFrames) {
                 LOG.trace("Painting keyframe = {}", currentFrame);
                 detectIfSimulationNotMoving();
                 agentsShapes.clear();
@@ -307,10 +311,10 @@ public class World {
                 semaphore.release();
             } else {
                 LOG.trace("Painting tween frame = {}", currentFrame);
-                currentFrame++;
                 paintAgentsTweenFrames(g2d, true, (double) currentFrame / totalFrames);
                 paintAgentsTweenFrames(g2d, false, (double) currentFrame / totalFrames);
             }
+            currentFrame++;
         }
 
         private void detectIfSimulationNotMoving() {
