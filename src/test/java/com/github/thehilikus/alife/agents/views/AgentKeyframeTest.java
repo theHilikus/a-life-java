@@ -1,30 +1,31 @@
 package com.github.thehilikus.alife.agents.views;
 
 import com.github.thehilikus.alife.api.OrientationHelper;
+import com.github.thehilikus.alife.world.ui.AgentKeyframe;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
 
 /**
- * Tests for {@link Frame}
+ * Tests for {@link AgentKeyframe}
  */
-public class FrameTest {
+public class AgentKeyframeTest {
     private static final String ORIENTATION = "orientation";
     private static final double MID_POINT = 0.5;
-    private Frame testingUnit;
+    private AgentKeyframe testingUnit;
 
     @BeforeMethod
     public void setup() {
-        testingUnit = new Frame();
+        testingUnit = new AgentKeyframe();
     }
 
     @Test
     void testAngleInterpolationFromNorth() {
         testingUnit.addPropertyToInterpolate(ORIENTATION, OrientationHelper.NORTH);
-        Frame endFrame = new Frame();
+        AgentKeyframe endFrame = new AgentKeyframe();
         endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.EAST);
-        Frame interpolated = testingUnit.interpolate(endFrame, MID_POINT);
+        AgentKeyframe interpolated = testingUnit.interpolate(endFrame, MID_POINT);
         assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), 315);
 
         endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.SOUTH);
@@ -39,9 +40,9 @@ public class FrameTest {
     @Test
     void testAngleInterpolationFromEast() {
         testingUnit.addPropertyToInterpolate(ORIENTATION, OrientationHelper.EAST);
-        Frame endFrame = new Frame();
+        AgentKeyframe endFrame = new AgentKeyframe();
         endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.SOUTH);
-        Frame interpolated = testingUnit.interpolate(endFrame, MID_POINT);
+        AgentKeyframe interpolated = testingUnit.interpolate(endFrame, MID_POINT);
         assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.EAST, OrientationHelper.SOUTH));
 
         endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.WEST);
@@ -56,9 +57,9 @@ public class FrameTest {
     @Test
     void testAngleInterpolationFromSouth() {
         testingUnit.addPropertyToInterpolate(ORIENTATION, OrientationHelper.SOUTH);
-        Frame endFrame = new Frame();
+        AgentKeyframe endFrame = new AgentKeyframe();
         endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.WEST);
-        Frame interpolated = testingUnit.interpolate(endFrame, MID_POINT);
+        AgentKeyframe interpolated = testingUnit.interpolate(endFrame, MID_POINT);
         assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.SOUTH, OrientationHelper.WEST));
 
         endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.NORTH);
@@ -73,9 +74,9 @@ public class FrameTest {
     @Test
     void testAngleInterpolationFromWest() {
         testingUnit.addPropertyToInterpolate(ORIENTATION, OrientationHelper.WEST);
-        Frame endFrame = new Frame();
+        AgentKeyframe endFrame = new AgentKeyframe();
         endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.NORTH);
-        Frame interpolated = testingUnit.interpolate(endFrame, MID_POINT);
+        AgentKeyframe interpolated = testingUnit.interpolate(endFrame, MID_POINT);
         assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(OrientationHelper.WEST, OrientationHelper.NORTH));
 
         endFrame.addPropertyToInterpolate(ORIENTATION, OrientationHelper.EAST);

@@ -6,6 +6,7 @@ import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.Position;
 import com.github.thehilikus.alife.api.VitalSign;
+import com.github.thehilikus.alife.world.ui.AgentKeyframe;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -31,7 +32,7 @@ public class PlantView implements Agent.View {
             "Growing", Color.GREEN
     );
 
-    private final Map<Agent, Frame> lastKeyframes = new HashMap<>();
+    private final Map<Agent, AgentKeyframe> lastKeyframes = new HashMap<>();
 
     @Override
     public void drawInConsole(StringBuilder builder, Agent agent) {
@@ -57,7 +58,7 @@ public class PlantView implements Agent.View {
     public Shape drawKeyframe(Graphics2D g2d, Agent plant, boolean selected) {
         Map<String, Object> details = plant.getDetails();
 
-        Frame keyframe = new Frame();
+        AgentKeyframe keyframe = new AgentKeyframe();
         keyframe.addFixedProperty("size", details.get("size"));
         keyframe.addPropertyToInterpolate("energy", details.get(VitalSign.PARAMETER_PREFIX + "energy"));
         keyframe.addFixedProperty("position", plant.getPosition());
@@ -79,7 +80,7 @@ public class PlantView implements Agent.View {
         return agentShape;
     }
 
-    private Shape createPlantShape(Frame frame) {
+    private Shape createPlantShape(AgentKeyframe frame) {
         int agentSize = frame.getFixedProperty("size");
 
         double vitality = ((Integer) frame.getInterpolatedProperty("energy")).doubleValue() / EnergyTracker.MAX_ENERGY;
@@ -93,14 +94,14 @@ public class PlantView implements Agent.View {
 
     @Override
     public void drawTweenFrame(Graphics2D g2d, Agent agent, double percentToKeyFrame) {
-        Frame previousKeyframe = lastKeyframes.get(agent);
-        Frame newKeyframe = new Frame();
+        AgentKeyframe previousKeyframe = lastKeyframes.get(agent);
+        AgentKeyframe newKeyframe = new AgentKeyframe();
         newKeyframe.addPropertyToInterpolate("energy", agent.getDetails().get(VitalSign.PARAMETER_PREFIX + "energy"));
         String moodName = agent.getDetails().get(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);
         newKeyframe.addPropertyToInterpolate("color", moodColor);
 
-        Frame tweenFrame = previousKeyframe.interpolate(newKeyframe, percentToKeyFrame);
+        AgentKeyframe tweenFrame = previousKeyframe.interpolate(newKeyframe, percentToKeyFrame);
 
         Shape agentShape = createPlantShape(tweenFrame);
         Color agentColor = tweenFrame.getInterpolatedProperty("color");

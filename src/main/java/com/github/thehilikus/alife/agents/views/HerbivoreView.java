@@ -4,6 +4,7 @@ import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.controllers.HungerTracker;
 import com.github.thehilikus.alife.api.*;
+import com.github.thehilikus.alife.world.ui.AgentKeyframe;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -43,7 +44,7 @@ public class HerbivoreView implements Agent.View {
             "Sleeping", Color.ORANGE
     );
 
-    private final Map<Agent, Frame> lastKeyframes = new HashMap<>();
+    private final Map<Agent, AgentKeyframe> lastKeyframes = new HashMap<>();
 
     @Override
     public void drawInConsole(StringBuilder builder, Agent agent) {
@@ -77,7 +78,7 @@ public class HerbivoreView implements Agent.View {
             }
         }
 
-        Frame keyframe = new Frame();
+        AgentKeyframe keyframe = new AgentKeyframe();
         keyframe.addFixedProperty("size", details.get("size"));
         keyframe.addPropertyToInterpolate("position", details.get("position"));
         keyframe.addPropertyToInterpolate("orientation", details.get(Locomotion.PARAMETER_PREFIX + "orientation"));
@@ -105,8 +106,8 @@ public class HerbivoreView implements Agent.View {
 
     @Override
     public void drawTweenFrame(Graphics2D g2d, Agent agent, double percentToKeyFrame) {
-        Frame previousKeyframe = lastKeyframes.get(agent);
-        Frame newKeyframe = new Frame();
+        AgentKeyframe previousKeyframe = lastKeyframes.get(agent);
+        AgentKeyframe newKeyframe = new AgentKeyframe();
         newKeyframe.addPropertyToInterpolate("position", agent.getDetails().get("position"));
         newKeyframe.addPropertyToInterpolate("orientation", agent.getDetails().get(Locomotion.PARAMETER_PREFIX + "orientation"));
         Color newAgentColor = computeAgentColor(agent.getDetails());
@@ -117,7 +118,7 @@ public class HerbivoreView implements Agent.View {
             newKeyframe.addFixedProperty("size", agent.getDetails().get("size"));
             previousKeyframe = newKeyframe;
         }
-        Frame tweenFrame = previousKeyframe.interpolate(newKeyframe, percentToKeyFrame);
+        AgentKeyframe tweenFrame = previousKeyframe.interpolate(newKeyframe, percentToKeyFrame);
 
         Color agentColor = previousKeyframe.getInterpolatedProperty("color");
         g2d.setColor(agentColor);
@@ -150,7 +151,7 @@ public class HerbivoreView implements Agent.View {
     }
 
     @SuppressWarnings("MagicNumber")
-    private Shape createHerbivoreShape(Frame frame) {
+    private Shape createHerbivoreShape(AgentKeyframe frame) {
         int size = frame.getFixedProperty("size");
 
         Path2D triangle = new Path2D.Double();

@@ -30,7 +30,6 @@ public class SimulationGraphicalController implements MouseListener, World.World
         this.infoPanel = infoPanel;
         this.toolbar = toolbar;
         this.control = control;
-
     }
 
     @Override

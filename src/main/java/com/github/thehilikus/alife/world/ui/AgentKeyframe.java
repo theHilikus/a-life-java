@@ -1,4 +1,4 @@
-package com.github.thehilikus.alife.agents.views;
+package com.github.thehilikus.alife.world.ui;
 
 import com.github.thehilikus.alife.api.Locomotion;
 import com.github.thehilikus.alife.api.Position;
@@ -9,17 +9,17 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * An animation frame
+ * An animation frame of a single agent
  */
-public class Frame {
+public class AgentKeyframe {
     private final Map<String, Object> propertiesToInterpolate = new HashMap<>();
     private final Map<String, Object> fixedProperties;
 
-    public Frame() {
+    public AgentKeyframe() {
         this(new HashMap<>());
     }
 
-    private Frame(Map<String, Object> fixedProperties) {
+    private AgentKeyframe(Map<String, Object> fixedProperties) {
         this.fixedProperties = fixedProperties;
     }
 
@@ -41,8 +41,8 @@ public class Frame {
         return (T) fixedProperties.get(name);
     }
 
-    public Frame interpolate(Frame endFrame, double percentToKeyFrame) {
-        Frame result = new Frame(fixedProperties);
+    public AgentKeyframe interpolate(AgentKeyframe endFrame, double percentToKeyFrame) {
+        AgentKeyframe result = new AgentKeyframe(fixedProperties);
         for (Map.Entry<String, Object> property : propertiesToInterpolate.entrySet()) {
             String propertyKey = property.getKey();
             if (propertyKey.equals("orientation")) {
