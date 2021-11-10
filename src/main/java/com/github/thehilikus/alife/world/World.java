@@ -91,7 +91,6 @@ public class World {
                 }
             });
             toRemove.forEach(this::removeAgent);
-            LOG.info("Ending hour {}\n", hour);
 
             boolean shouldContinue = true;
             if (worldListener != null) {
@@ -104,6 +103,7 @@ public class World {
                     worldListener.ended(hour);
                 }
             }
+            LOG.info("Ending hour {}. Will continue? {}\n", hour, movableAgentsAlive && shouldContinue);
             return movableAgentsAlive && shouldContinue;
         } catch (Exception | AssertionError exc) {
             LOG.error("Error simulating the World", exc);
@@ -272,7 +272,7 @@ public class World {
             setBackground(Color.WHITE);
         }
 
-        public void refresh(int hour) throws InterruptedException {
+        public void refresh() throws InterruptedException {
             if (SwingUtilities.isEventDispatchThread()) {
                 throw new IllegalStateException("Don't refresh from the EDT");
             }

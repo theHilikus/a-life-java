@@ -73,7 +73,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
         try {
             LOG.trace("World ticked after hour = {}", hour);
             try {
-                worldView.refresh(hour);
+                worldView.refresh();
             } catch (InterruptedException exc) {
                 result = false;
             }
