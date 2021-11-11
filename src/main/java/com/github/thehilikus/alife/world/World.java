@@ -1,9 +1,10 @@
 package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.agents.views.AgentsView;
 import com.github.thehilikus.alife.api.*;
+import com.github.thehilikus.alife.world.ui.AgentKeyframe;
+import com.github.thehilikus.alife.world.ui.Keyframe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -257,40 +258,36 @@ public class World {
         private static final int FRAME_RATE = 30; //FPS
         private final Agent.View agentsView = new AgentsView();
 
-        private final Map<Shape, Agent> agentsShapes = new HashMap<>();
+        private final Map<Shape, Position.Immutable> agentsShapes = new HashMap<>();
         private int agentSelectedId = -1;
         private final Timer animationClock = new Timer(1000 / FRAME_RATE, this);
         private int currentFrame = 0;
         private int totalFrames;
         private int refreshDelay;
-        private final Semaphore semaphore = new Semaphore(0);
+        private final BlockingQueue<Keyframe> frameBuffer = new ArrayBlockingQueue<>(5);
+        private Keyframe lastKeyframe;
+        private Keyframe nextKeyframe;
+        private boolean singleStep;
 
         public GraphicalView() {
             final int edgePadding = 20;
             setPreferredSize(new Dimension(World.this.getWidth() + edgePadding, World.this.getHeight() + edgePadding));
             setBorder(BorderFactory.createLineBorder(Color.BLACK));
             setBackground(Color.WHITE);
+            animationClock.setActionCommand("animation-timer");
         }
 
         public void refresh() throws InterruptedException {
             if (SwingUtilities.isEventDispatchThread()) {
                 throw new IllegalStateException("Don't refresh from the EDT");
             }
-            if (currentFrame != totalFrames) {
-                if (totalFrames - currentFrame > 0) {
-                    LOG.warn("Dropped {} frames", totalFrames - currentFrame);
-                } else {
-                    LOG.warn("Missed {} frames", currentFrame - totalFrames - 1);
-                }
+
+            Keyframe newFrame = new Keyframe(hour);
+            for (Agent agent : livingAgents) {
+                newFrame.addAgentFrame(agentsView.createAgentFrame(agent));
             }
-            currentFrame = 0;
-            totalFrames = (int) ((double) refreshDelay / 1000 * FRAME_RATE);
-            if (!animationClock.isRunning()) {
-                LOG.trace("Starting animation clock for hour = {}", hour);
-                animationClock.start();
-            }
-            semaphore.drainPermits();
-            semaphore.acquire();
+            LOG.debug("Frame buffer size = {}/{}. Adding keyframe for hour {}. ", frameBuffer.size(), frameBuffer.size() + frameBuffer.remainingCapacity(), hour);
+            frameBuffer.put(newFrame);
         }
 
         @Override
@@ -299,70 +296,86 @@ public class World {
                 throw new IllegalStateException("Don't draw outside the EDT");
             }
             super.paintComponent(g);
-            Graphics2D g2d = (Graphics2D) g;
 
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            if (currentFrame >= totalFrames) {
-                LOG.trace("Painting keyframe = {}", currentFrame);
-                detectIfSimulationNotMoving();
-                agentsShapes.clear();
-                paintAgentsKeyframes(g2d, true); //paint plants first for proper z-ordering
-                paintAgentsKeyframes(g2d, false);
-                semaphore.release();
+            Keyframe workingFrame;
+            if (animationClock.isRunning() && currentFrame == 1 || lastKeyframe == null) {
+                workingFrame = frameBuffer.poll();
             } else {
-                LOG.trace("Painting tween frame = {}", currentFrame);
-                paintAgentsTweenFrames(g2d, true, (double) currentFrame / totalFrames);
-                paintAgentsTweenFrames(g2d, false, (double) currentFrame / totalFrames);
+                workingFrame = lastKeyframe;
+            }
+            if (workingFrame != null) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                if (currentFrame == totalFrames || totalFrames == 0) {
+                    if (nextKeyframe == null) {
+                        //for simulation initialization only
+                        nextKeyframe = workingFrame;
+                    }
+                    LOG.trace("Painting keyframe for hour = {}", nextKeyframe.getWorldAge());
+                    paintAgentsKeyframes(g2d, nextKeyframe);
+                    lastKeyframe = nextKeyframe;
+                    currentFrame = 0;
+                    if (animationClock.isRunning() && singleStep) {
+                        animationClock.stop();
+                        singleStep = false;
+                    }
+                } else {
+                    if (currentFrame == 1) {
+                        nextKeyframe = workingFrame;
+                    }
+                    LOG.trace("Painting tween frame # {} between hour {} and {}", currentFrame, lastKeyframe.getWorldAge(), nextKeyframe.getWorldAge());
+                    paintAgentsTweenFrames(g2d, lastKeyframe, nextKeyframe, (double) currentFrame / totalFrames);
+                }
+            } else {
+                LOG.warn("No frames available");
+                detectIfSimulationNotMoving();
             }
             currentFrame++;
         }
 
+        private void paintAgentsKeyframes(Graphics2D g2d, Iterable<AgentKeyframe> newKeyframe) {
+            for (AgentKeyframe agentFrame : newKeyframe) {
+                Shape agentShape = agentsView.drawKeyframe(g2d, agentFrame, agentFrame.getAgentId() == agentSelectedId);
+                agentsShapes.put(agentShape, agentFrame.getFixedProperty("position"));
+            }
+        }
+
+        private void paintAgentsTweenFrames(Graphics2D g2d, Keyframe lastKeyframe, Iterable<AgentKeyframe> newKeyframe, double percentageToKeyframe) {
+            for (AgentKeyframe agentNewFrame : newKeyframe) {
+                AgentKeyframe agentLastFrame = lastKeyframe.getAgentKeyframe(agentNewFrame.getAgentId());
+//                if (previousKeyframe == null) {
+                //new agent in the world. just take its new keyframe as previous keyframe
+//                    previousKeyframe = newKeyframe;
+//                }
+                agentsView.drawTweenFrame(g2d, agentLastFrame, agentNewFrame, percentageToKeyframe);
+            }
+        }
+
         private void detectIfSimulationNotMoving() {
-            if (semaphore.availablePermits() > 5) {
+            if (currentFrame >= totalFrames + 5) {
                 LOG.info("Simulation has not progressed in a while. Stopping animation clock");
                 animationClock.stop();
             }
         }
 
-        private void paintAgentsKeyframes(Graphics2D g2d, boolean plantsOnly) {
-            for (Agent agent : livingAgents) {
-                if (plantsOnly && agent instanceof Plant) {
-                    Shape agentShape = agentsView.drawKeyframe(g2d, agent, agent.getId() == agentSelectedId);
-                    agentsShapes.put(agentShape, agent);
-                }
-                if (!plantsOnly && !(agent instanceof Plant)) {
-                    Shape agentShape = agentsView.drawKeyframe(g2d, agent, agent.getId() == agentSelectedId);
-                    agentsShapes.put(agentShape, agent);
-                }
-            }
-        }
-
-        private void paintAgentsTweenFrames(Graphics2D g2d, boolean plantsOnly, double percentToKeyFrame) {
-            for (Agent agent : livingAgents) {
-                if (plantsOnly && agent instanceof Plant) {
-                    agentsView.drawTweenFrame(g2d, agent, percentToKeyFrame);
-                }
-                if (!plantsOnly && !(agent instanceof Plant)) {
-                    agentsView.drawTweenFrame(g2d, agent, percentToKeyFrame);
-                }
-            }
-        }
 
         public Agent getAgentInCoordinates(Point point) {
-            Agent result = null;
-            double shortestDistance = Double.MAX_VALUE;
-            for (Map.Entry<Shape, Agent> agentShape : agentsShapes.entrySet()) {
-                if (agentShape.getKey().getBounds2D().contains(point)) {
-                    Position.Immutable agentPosition = agentShape.getValue().getPosition();
-                    double distanceToAgent = point.distanceSq(agentPosition.getX(), agentPosition.getY());
-                    if (distanceToAgent < shortestDistance) {
-                        shortestDistance = distanceToAgent;
-                        result = agentShape.getValue();
-                    }
-                }
-            }
-
-            return result;
+            throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
+//            Agent result = null;
+//            double shortestDistance = Double.MAX_VALUE;
+//            for (Map.Entry<Shape, Position.Immutable> agentShape : agentsShapes.entrySet()) {
+//                if (agentShape.getKey().getBounds2D().contains(point)) {
+//                    Position.Immutable agentPosition = agentShape.getValue();
+//                    double distanceToAgent = point.distanceSq(agentPosition.getX(), agentPosition.getY());
+//                    if (distanceToAgent < shortestDistance) {
+//                        shortestDistance = distanceToAgent;
+//                        result = agentShape.getValue();
+//                    }
+//                }
+//            }
+//
+//            return result;
         }
 
         public void setSelectedAgent(int selectedId) {
@@ -372,8 +385,24 @@ public class World {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            LOG.trace("Animation clock ticked");
-            repaint();
+            switch (e.getActionCommand().toLowerCase()) {
+                case "reset":
+                    break;
+                case "step":
+                    singleStep = true;
+                case "start":
+                    totalFrames = (int) ((double) refreshDelay / 1000 * FRAME_RATE);
+                    LOG.trace("Starting animation clock");
+                    animationClock.start();
+                    break;
+                case "pause":
+                    animationClock.stop();
+                    break;
+                case "animation-timer":
+                    LOG.trace("Animation clock ticked");
+                    repaint();
+                    break;
+            }
         }
 
         public void setRefreshDelay(int refreshDelay) {

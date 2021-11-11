@@ -104,6 +104,7 @@ public class Simulation {
 
         if (options.isGraphical()) {
             initGui();
+            control.start();
         } else {
             initConsole();
         }
@@ -125,6 +126,11 @@ public class Simulation {
         simulationView.addActionListener(graphicalController);
         worldView.addMouseListener(graphicalController);
         world.setWorldListener(graphicalController);
+        try {
+            worldView.refresh();
+        } catch (InterruptedException e) {
+            throw new AssertionError("Should never happen since there are no interrupts at this stage");
+        }
     }
 
     private void start() {

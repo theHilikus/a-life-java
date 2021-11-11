@@ -22,14 +22,13 @@ public class SimulationGraphicalController implements MouseListener, World.World
     private final World.GraphicalView worldView;
     private final InfoPanel infoPanel;
     private final MainToolbar toolbar;
-    private final Simulation.Control control;
     private Agent selectedAgent;
+
 
     public SimulationGraphicalController(World.GraphicalView worldView, InfoPanel infoPanel, MainToolbar toolbar, Simulation.Control control) {
         this.worldView = worldView;
         this.infoPanel = infoPanel;
         this.toolbar = toolbar;
-        this.control = control;
     }
 
     @Override
@@ -92,20 +91,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch (e.getActionCommand().toLowerCase()) {
-            case "reset":
-                control.reset();
-                break;
-            case "step":
-                control.step();
-                break;
-            case "start":
-                control.start();
-                break;
-            case "pause":
-                control.pause();
-                break;
-        }
+        worldView.actionPerformed(e);
     }
 
     @Override

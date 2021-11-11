@@ -11,15 +11,19 @@ import java.util.Objects;
 /**
  * An animation frame of a single agent
  */
-public class AgentKeyframe {
+public class AgentKeyframe implements Comparable<AgentKeyframe> {
     private final Map<String, Object> propertiesToInterpolate = new HashMap<>();
     private final Map<String, Object> fixedProperties;
+    private final int agentId;
+    private final int zOrder;
 
-    public AgentKeyframe() {
-        this(new HashMap<>());
+    public AgentKeyframe(int agentId, int zOrder) {
+        this(agentId, zOrder, new HashMap<>());
     }
 
-    private AgentKeyframe(Map<String, Object> fixedProperties) {
+    private AgentKeyframe(int agentId, int zOrder, Map<String, Object> fixedProperties) {
+        this.agentId = agentId;
+        this.zOrder = zOrder;
         this.fixedProperties = fixedProperties;
     }
 
@@ -42,7 +46,7 @@ public class AgentKeyframe {
     }
 
     public AgentKeyframe interpolate(AgentKeyframe endFrame, double percentToKeyFrame) {
-        AgentKeyframe result = new AgentKeyframe(fixedProperties);
+        AgentKeyframe result = new AgentKeyframe(zOrder, agentId, fixedProperties);
         for (Map.Entry<String, Object> property : propertiesToInterpolate.entrySet()) {
             String propertyKey = property.getKey();
             if (propertyKey.equals("orientation")) {
@@ -126,5 +130,18 @@ public class AgentKeyframe {
         int alpha = (int) interpolateNumber(startColor.getAlpha(), endColor.getAlpha(), percentToKeyFrame);
 
         return new Color(red, green, blue, alpha);
+    }
+
+    @Override
+    public int compareTo(AgentKeyframe o) {
+        int zOrderDiff = zOrder - o.zOrder;
+        if (zOrderDiff == 0) {
+            return o.agentId - agentId;
+        }
+        return zOrderDiff;
+    }
+
+    public int getAgentId() {
+        return agentId;
     }
 }

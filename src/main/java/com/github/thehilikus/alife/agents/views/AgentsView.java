@@ -4,6 +4,7 @@ import com.github.thehilikus.alife.agents.animals.Herbivore;
 import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.world.Edge;
+import com.github.thehilikus.alife.world.ui.AgentKeyframe;
 
 import java.awt.*;
 import java.util.Map;
@@ -27,12 +28,12 @@ public class AgentsView implements Agent.View {
     }
 
     @Override
-    public Shape drawKeyframe(Graphics2D g2d, Agent agent, boolean selected) {
+    public Shape drawKeyframe(Graphics2D g2d, AgentKeyframe newKeyframe, boolean selected) {
         Stroke originalStroke = g2d.getStroke();
 
-        Agent.View view = agentsViews.get(agent.getClass());
-        Objects.requireNonNull(view, "No view found that can draw " + agent);
-        Shape result = view.drawKeyframe(g2d, agent, selected);
+        Agent.View view = agentsViews.get(newKeyframe.getFixedProperty("agentType"));
+        Objects.requireNonNull(view, "No view found that can draw " + newKeyframe);
+        Shape result = view.drawKeyframe(g2d, newKeyframe, selected);
 
         g2d.setStroke(originalStroke);
 
@@ -40,13 +41,21 @@ public class AgentsView implements Agent.View {
     }
 
     @Override
-    public void drawTweenFrame(Graphics2D g2d, Agent agent, double percentToKeyFrame) {
+    public void drawTweenFrame(Graphics2D g2d, AgentKeyframe lastKeyframe, AgentKeyframe newKeyframe, double percentToKeyframe) {
         Stroke originalStroke = g2d.getStroke();
 
-        Agent.View view = agentsViews.get(agent.getClass());
-        Objects.requireNonNull(view, "No view found that can draw " + agent);
-        view.drawTweenFrame(g2d, agent, percentToKeyFrame);
+        Agent.View view = agentsViews.get(newKeyframe.getFixedProperty("agentType"));
+        Objects.requireNonNull(view, "No view found that can draw " + newKeyframe);
+        view.drawTweenFrame(g2d, lastKeyframe, newKeyframe, percentToKeyframe);
 
         g2d.setStroke(originalStroke);
+    }
+
+    @Override
+    public AgentKeyframe createAgentFrame(Agent agent) {
+        Agent.View view = agentsViews.get(agent.getClass());
+        Objects.requireNonNull(view, "No view found that can draw " + agent);
+
+        return view.createAgentFrame(agent);
     }
 }

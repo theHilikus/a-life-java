@@ -10,7 +10,6 @@ import com.github.thehilikus.alife.world.ui.AgentKeyframe;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -19,6 +18,7 @@ import java.util.Objects;
  */
 public class PlantView implements Agent.View {
 
+    private static final int Z_ORDER = 5;
     private final Map<String, Ansi.FColor> consoleMoodColours = Map.of(
             "BeingEaten", Ansi.FColor.YELLOW,
             "Growing", Ansi.FColor.BLACK
@@ -31,8 +31,6 @@ public class PlantView implements Agent.View {
             "BeingEaten", Color.YELLOW,
             "Growing", Color.GREEN
     );
-
-    private final Map<Agent, AgentKeyframe> lastKeyframes = new HashMap<>();
 
     @Override
     public void drawInConsole(StringBuilder builder, Agent agent) {
@@ -55,27 +53,30 @@ public class PlantView implements Agent.View {
     }
 
     @Override
-    public Shape drawKeyframe(Graphics2D g2d, Agent plant, boolean selected) {
-        Map<String, Object> details = plant.getDetails();
-
-        AgentKeyframe keyframe = new AgentKeyframe();
-        keyframe.addFixedProperty("size", details.get("size"));
-        keyframe.addPropertyToInterpolate("energy", details.get(VitalSign.PARAMETER_PREFIX + "energy"));
-        keyframe.addFixedProperty("position", plant.getPosition());
-
-        Shape agentShape = createPlantShape(keyframe);
-
+    public AgentKeyframe createAgentFrame(Agent agent) {
+        Map<String, Object> details = agent.getDetails();
+        AgentKeyframe result = new AgentKeyframe(agent.getId(), Z_ORDER);
+        result.addFixedProperty("agentType", agent.getClass());
+        result.addFixedProperty("size", details.get("size"));
+        result.addPropertyToInterpolate("energy", details.get(VitalSign.PARAMETER_PREFIX + "energy"));
+        result.addFixedProperty("position", agent.getPosition());
         String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);
         Objects.requireNonNull(moodColor, "Mood color was empty for " + moodName);
-        keyframe.addPropertyToInterpolate("color", moodColor);
+        result.addPropertyToInterpolate("color", moodColor);
 
+        return result;
+    }
+
+    @Override
+    public Shape drawKeyframe(Graphics2D g2d, AgentKeyframe newKeyframe, boolean selected) {
+        Shape agentShape = createPlantShape(newKeyframe);
+
+        Color moodColor = newKeyframe.getInterpolatedProperty("color");
         g2d.setColor(moodColor);
         g2d.fill(agentShape);
         g2d.setColor(Color.BLACK);
         g2d.draw(agentShape);
-
-        lastKeyframes.put(plant, keyframe);
 
         return agentShape;
     }
@@ -93,15 +94,8 @@ public class PlantView implements Agent.View {
     }
 
     @Override
-    public void drawTweenFrame(Graphics2D g2d, Agent agent, double percentToKeyFrame) {
-        AgentKeyframe previousKeyframe = lastKeyframes.get(agent);
-        AgentKeyframe newKeyframe = new AgentKeyframe();
-        newKeyframe.addPropertyToInterpolate("energy", agent.getDetails().get(VitalSign.PARAMETER_PREFIX + "energy"));
-        String moodName = agent.getDetails().get(Mood.PARAMETER_PREFIX + "current").toString();
-        Color moodColor = graphicalMoodColours.get(moodName);
-        newKeyframe.addPropertyToInterpolate("color", moodColor);
-
-        AgentKeyframe tweenFrame = previousKeyframe.interpolate(newKeyframe, percentToKeyFrame);
+    public void drawTweenFrame(Graphics2D g2d, AgentKeyframe lastKeyframe, AgentKeyframe newKeyframe, double percentToKeyframe) {
+        AgentKeyframe tweenFrame = lastKeyframe.interpolate(newKeyframe, percentToKeyframe);
 
         Shape agentShape = createPlantShape(tweenFrame);
         Color agentColor = tweenFrame.getInterpolatedProperty("color");
