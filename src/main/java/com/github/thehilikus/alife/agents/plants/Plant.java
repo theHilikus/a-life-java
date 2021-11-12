@@ -72,7 +72,7 @@ public class Plant implements Agent.Eatable {
         result.put("id", id);
         result.put("type", getClass().getSimpleName());
         result.put("size", size);
-        result.put("position", position);
+        result.put("position", position.toImmutable());
         result.put(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
 
         result.putAll(mood.getParameters());

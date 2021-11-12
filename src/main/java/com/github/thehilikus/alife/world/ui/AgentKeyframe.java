@@ -13,17 +13,23 @@ import java.util.Objects;
  */
 public class AgentKeyframe implements Comparable<AgentKeyframe> {
     private final Map<String, Object> propertiesToInterpolate = new HashMap<>();
+    private final Map<String, Object> agentDetails;
     private final Map<String, Object> fixedProperties;
     private final int agentId;
     private final int zOrder;
 
     public AgentKeyframe(int agentId, int zOrder) {
-        this(agentId, zOrder, new HashMap<>());
+        this(agentId, zOrder, new HashMap<>(), new HashMap<>());
     }
 
-    private AgentKeyframe(int agentId, int zOrder, Map<String, Object> fixedProperties) {
+    public AgentKeyframe(int agentId, int zOrder, Map<String, Object> agentDetails) {
+        this(agentId, zOrder, agentDetails, new HashMap<>());
+    }
+
+    private AgentKeyframe(int agentId, int zOrder, Map<String, Object> agentDetails, Map<String, Object> fixedProperties) {
         this.agentId = agentId;
         this.zOrder = zOrder;
+        this.agentDetails = agentDetails;
         this.fixedProperties = fixedProperties;
     }
 
@@ -45,8 +51,12 @@ public class AgentKeyframe implements Comparable<AgentKeyframe> {
         return (T) fixedProperties.get(name);
     }
 
+    public Map<String, Object> getAgentDetails() {
+        return agentDetails;
+    }
+
     public AgentKeyframe interpolate(AgentKeyframe endFrame, double percentToKeyFrame) {
-        AgentKeyframe result = new AgentKeyframe(zOrder, agentId, fixedProperties);
+        AgentKeyframe result = new AgentKeyframe(zOrder, agentId, agentDetails, fixedProperties);
         for (Map.Entry<String, Object> property : propertiesToInterpolate.entrySet()) {
             String propertyKey = property.getKey();
             if (propertyKey.equals("orientation")) {

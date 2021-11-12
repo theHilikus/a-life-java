@@ -66,9 +66,8 @@ public class HerbivoreView implements Agent.View {
     @Override
     public AgentKeyframe createAgentFrame(Agent agent) {
         Map<String, Object> details = agent.getDetails();
-        AgentKeyframe result = new AgentKeyframe(agent.getId(), Z_ORDER);
+        AgentKeyframe result = new AgentKeyframe(agent.getId(), Z_ORDER, details);
         result.addFixedProperty("agentType", agent.getClass());
-        result.addFixedProperty("size", details.get("size"));
         result.addPropertyToInterpolate("position", details.get("position"));
         result.addPropertyToInterpolate("orientation", details.get(Locomotion.PARAMETER_PREFIX + "orientation"));
         Color agentColor = computeAgentColor(details);
@@ -88,9 +87,9 @@ public class HerbivoreView implements Agent.View {
 
         Position.Immutable position = newKeyframe.getInterpolatedProperty("position");
         if (selected) {
-            int distance = newKeyframe.getFixedProperty(Vision.PARAMETER_PREFIX + "distance");
+            int distance = (int) newKeyframe.getAgentDetails().get(Vision.PARAMETER_PREFIX + "distance");
             drawVision(g2d, distance, position);
-            Position.Immutable targetPosition = newKeyframe.getFixedProperty(Mood.PARAMETER_PREFIX + "targetPosition");
+            Position.Immutable targetPosition = (Position.Immutable) newKeyframe.getAgentDetails().get(Mood.PARAMETER_PREFIX + "targetPosition");
             if (targetPosition != null) {
                 drawPathToTarget(g2d, position, targetPosition);
             }
@@ -147,7 +146,7 @@ public class HerbivoreView implements Agent.View {
 
     @SuppressWarnings("MagicNumber")
     private Shape createHerbivoreShape(AgentKeyframe frame) {
-        int size = frame.getFixedProperty("size");
+        int size = (int) frame.getAgentDetails().get("size");
 
         Path2D triangle = new Path2D.Double();
         triangle.moveTo(size / -2.4, -size / 2.0);

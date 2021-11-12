@@ -33,18 +33,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        selectedAgent = worldView.getAgentInCoordinates(e.getPoint());
-        if (selectedAgent != null) {
-            LOG.debug("Displaying details of agent {}", selectedAgent);
-            refreshSelectedAgentDetails();
-            worldView.setSelectedAgent(selectedAgent.getId());
-        }
-    }
-
-    private void refreshSelectedAgentDetails() {
-        if (selectedAgent != null) {
-            SwingUtilities.invokeLater(() -> infoPanel.showAgentDetails(selectedAgent.getDetails()));
-        }
+        worldView.selectAgentIn(e.getPoint());
     }
 
     @Override
@@ -76,7 +65,6 @@ public class SimulationGraphicalController implements MouseListener, World.World
             } catch (InterruptedException exc) {
                 result = false;
             }
-            refreshSelectedAgentDetails();
         } catch (Exception exc) {
             LOG.error("Error refreshing the view", exc);
         }

@@ -55,11 +55,9 @@ public class PlantView implements Agent.View {
     @Override
     public AgentKeyframe createAgentFrame(Agent agent) {
         Map<String, Object> details = agent.getDetails();
-        AgentKeyframe result = new AgentKeyframe(agent.getId(), Z_ORDER);
+        AgentKeyframe result = new AgentKeyframe(agent.getId(), Z_ORDER, details);
         result.addFixedProperty("agentType", agent.getClass());
-        result.addFixedProperty("size", details.get("size"));
         result.addPropertyToInterpolate("energy", details.get(VitalSign.PARAMETER_PREFIX + "energy"));
-        result.addFixedProperty("position", agent.getPosition());
         String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);
         Objects.requireNonNull(moodColor, "Mood color was empty for " + moodName);
@@ -82,14 +80,14 @@ public class PlantView implements Agent.View {
     }
 
     private Shape createPlantShape(AgentKeyframe frame) {
-        int agentSize = frame.getFixedProperty("size");
+        int agentSize = (int) frame.getAgentDetails().get("size");
 
         double vitality = ((Integer) frame.getInterpolatedProperty("energy")).doubleValue() / EnergyTracker.MAX_ENERGY;
         //noinspection MagicNumber
         double radius = agentSize / 2.0 * vitality;
 
-        int x = ((Position.Immutable) frame.getFixedProperty("position")).getX();
-        int y = ((Position.Immutable) frame.getFixedProperty("position")).getY();
+        int x = ((Position.Immutable) frame.getAgentDetails().get("position")).getX();
+        int y = ((Position.Immutable) frame.getAgentDetails().get("position")).getY();
         return new Ellipse2D.Double(x - radius, y - radius, radius * 2, radius * 2);
     }
 
@@ -104,5 +102,4 @@ public class PlantView implements Agent.View {
         g2d.setColor(Color.BLACK);
         g2d.draw(agentShape);
     }
-
 }
