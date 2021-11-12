@@ -9,7 +9,6 @@ import com.github.thehilikus.alife.world.ui.AgentKeyframe;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -43,8 +42,7 @@ public class HerbivoreView implements Agent.View {
             "Scouting", Color.CYAN,
             "Sleeping", Color.ORANGE
     );
-
-    private final Map<Agent, AgentKeyframe> lastKeyframes = new HashMap<>();
+    private static final int Z_ORDER = 10;
 
     @Override
     public void drawInConsole(StringBuilder builder, Agent agent) {
@@ -66,77 +64,70 @@ public class HerbivoreView implements Agent.View {
     }
 
     @Override
-    public Shape drawKeyframe(Graphics2D g2d, Agent agent, boolean selected) {
+    public AgentKeyframe createAgentFrame(Agent agent) {
         Map<String, Object> details = agent.getDetails();
+        AgentKeyframe result = new AgentKeyframe(agent.getId(), Z_ORDER, details);
+        result.addPropertyToInterpolate("position", details.get("position"));
+        result.addPropertyToInterpolate("orientation", details.get(Locomotion.PARAMETER_PREFIX + "orientation"));
+        Color agentColor = computeAgentColor(details);
+        result.addPropertyToInterpolate("color", agentColor);
 
-        Position.Immutable position = (Position.Immutable) details.get("position");
+        return result;
+    }
+
+    @Override
+    public Shape drawKeyframe(Graphics2D g2d, AgentKeyframe newKeyframe, boolean selected) {
+
+        Position.Immutable position = newKeyframe.getInterpolatedProperty("position");
         if (selected) {
-            drawVision(g2d, details, agent.getPosition());
-            Position.Immutable targetPosition = (Position.Immutable) details.get(Mood.PARAMETER_PREFIX + "targetPosition");
+            int distance = newKeyframe.getAgentDetail(Vision.PARAMETER_PREFIX + "distance");
+            drawVision(g2d, distance, position);
+            Position.Immutable targetPosition = newKeyframe.getAgentDetail(Mood.PARAMETER_PREFIX + "targetPosition");
             if (targetPosition != null) {
                 drawPathToTarget(g2d, position, targetPosition);
             }
         }
 
-        AgentKeyframe keyframe = new AgentKeyframe();
-        keyframe.addFixedProperty("size", details.get("size"));
-        keyframe.addPropertyToInterpolate("position", details.get("position"));
-        keyframe.addPropertyToInterpolate("orientation", details.get(Locomotion.PARAMETER_PREFIX + "orientation"));
-        Color agentColor = computeAgentColor(details);
+        Color agentColor = newKeyframe.getInterpolatedProperty("color");
         g2d.setColor(agentColor);
-        keyframe.addPropertyToInterpolate("color", agentColor);
 
-        if ((int) details.get(VitalSign.PARAMETER_PREFIX + "age") >= (int) details.get(Agent.Evolvable.PARAMETER_PREFIX + "teenAge")) {
-            Stroke stroke = new BasicStroke(2);
-            g2d.setStroke(stroke);
-            keyframe.addFixedProperty("stroke", stroke);
+        Stroke stroke = new BasicStroke();
+        if ((int) newKeyframe.getAgentDetail(VitalSign.PARAMETER_PREFIX + "age") >= (int) newKeyframe.getAgentDetail(Agent.Evolvable.PARAMETER_PREFIX + "teenAge")) {
+            stroke = new BasicStroke(2);
         }
+        g2d.setStroke(stroke);
 
-        Shape agentShape = createHerbivoreShape(keyframe);
+        Shape agentShape = createHerbivoreShape(newKeyframe);
         g2d.fill(agentShape);
 
-        Color borderColor = computeBorderColor(details);
+        Color borderColor = computeBorderColor(newKeyframe.getAgentDetails());
         g2d.setColor(borderColor);
-        keyframe.addFixedProperty("borderColor", borderColor);
         g2d.draw(agentShape);
 
-        lastKeyframes.put(agent, keyframe);
         return agentShape;
     }
 
     @Override
-    public void drawTweenFrame(Graphics2D g2d, Agent agent, double percentToKeyFrame) {
-        AgentKeyframe previousKeyframe = lastKeyframes.get(agent);
-        AgentKeyframe newKeyframe = new AgentKeyframe();
-        newKeyframe.addPropertyToInterpolate("position", agent.getDetails().get("position"));
-        newKeyframe.addPropertyToInterpolate("orientation", agent.getDetails().get(Locomotion.PARAMETER_PREFIX + "orientation"));
-        Color newAgentColor = computeAgentColor(agent.getDetails());
-        newKeyframe.addPropertyToInterpolate("color", newAgentColor); //TODO: check color interpolation
+    public void drawTweenFrame(Graphics2D g2d, AgentKeyframe lastKeyframe, AgentKeyframe newKeyframe, double percentToKeyframe) {
+        AgentKeyframe tweenFrame = lastKeyframe.interpolate(newKeyframe, percentToKeyframe);
 
-        if (previousKeyframe == null) {
-            //new agent in the world. just take its new keyframe as previous keyframe
-            newKeyframe.addFixedProperty("size", agent.getDetails().get("size"));
-            previousKeyframe = newKeyframe;
-        }
-        AgentKeyframe tweenFrame = previousKeyframe.interpolate(newKeyframe, percentToKeyFrame);
-
-        Color agentColor = previousKeyframe.getInterpolatedProperty("color");
+        Color agentColor = tweenFrame.getInterpolatedProperty("color");
         g2d.setColor(agentColor);
-        Stroke stroke = previousKeyframe.getFixedProperty("stroke");
-        if (stroke != null) {
-            g2d.setStroke(stroke);
+        Stroke stroke = new BasicStroke();
+        if ((int) lastKeyframe.getAgentDetail(VitalSign.PARAMETER_PREFIX + "age") >= (int) lastKeyframe.getAgentDetail(Agent.Evolvable.PARAMETER_PREFIX + "teenAge")) {
+            stroke = new BasicStroke(2);
         }
+        g2d.setStroke(stroke);
         Shape agentShape = createHerbivoreShape(tweenFrame);
         g2d.fill(agentShape);
 
-        Color borderColor = previousKeyframe.getFixedProperty("borderColor");
+        Color borderColor = computeBorderColor(lastKeyframe.getAgentDetails());
         g2d.setColor(borderColor);
 
         g2d.draw(agentShape);
     }
 
-    private void drawVision(Graphics2D g2d, Map<String, Object> details, Position.Immutable position) {
-        int distance = (int) details.get(Vision.PARAMETER_PREFIX + "distance");
+    private void drawVision(Graphics2D g2d, int distance, Position.Immutable position) {
         int x = position.getX() - distance / 2;
         int y = position.getY() - distance / 2;
         Shape vision = new Rectangle(x, y, distance, distance);
@@ -152,7 +143,7 @@ public class HerbivoreView implements Agent.View {
 
     @SuppressWarnings("MagicNumber")
     private Shape createHerbivoreShape(AgentKeyframe frame) {
-        int size = frame.getFixedProperty("size");
+        int size = frame.getAgentDetail("size");
 
         Path2D triangle = new Path2D.Double();
         triangle.moveTo(size / -2.4, -size / 2.0);

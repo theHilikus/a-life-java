@@ -2,6 +2,7 @@ package com.github.thehilikus.alife.agents.views;
 
 import com.diogonunes.jcdp.color.api.Ansi;
 import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.world.ui.AgentKeyframe;
 
 import java.awt.*;
 
@@ -16,12 +17,17 @@ public class EdgeView implements Agent.View {
     }
 
     @Override
-    public Shape drawKeyframe(Graphics2D g2d, Agent agent, boolean selected) {
+    public AgentKeyframe createAgentFrame(Agent agent) {
         throw new UnsupportedOperationException("Edge is not drawn in graphical view");
     }
 
     @Override
-    public void drawTweenFrame(Graphics2D g2d, Agent agent, double percentToKeyFrame) {
+    public Shape drawKeyframe(Graphics2D g2d, AgentKeyframe newKeyframe, boolean selected) {
+        throw new UnsupportedOperationException("Edge is not drawn in graphical view");
+    }
+
+    @Override
+    public void drawTweenFrame(Graphics2D g2d, AgentKeyframe lastKeyframe, AgentKeyframe newKeyframe, double percentToKeyframe) {
         throw new UnsupportedOperationException("Edge is not drawn in graphical view");
     }
 }

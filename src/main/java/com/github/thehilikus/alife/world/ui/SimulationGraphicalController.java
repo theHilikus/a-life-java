@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.world.ui;
 
-import com.github.thehilikus.alife.api.Agent;
-import com.github.thehilikus.alife.world.Simulation;
+import com.github.thehilikus.alife.world.Animation;
 import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,32 +19,18 @@ import java.awt.event.MouseListener;
 public class SimulationGraphicalController implements MouseListener, World.WorldListener, ActionListener, ChangeListener {
     private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class.getSimpleName());
     private final World.GraphicalView worldView;
-    private final InfoPanel infoPanel;
+    private final Animation animation;
     private final MainToolbar toolbar;
-    private final Simulation.Control control;
-    private Agent selectedAgent;
 
-    public SimulationGraphicalController(World.GraphicalView worldView, InfoPanel infoPanel, MainToolbar toolbar, Simulation.Control control) {
+    public SimulationGraphicalController(World.GraphicalView worldView, Animation animation, MainToolbar toolbar) {
         this.worldView = worldView;
-        this.infoPanel = infoPanel;
+        this.animation = animation;
         this.toolbar = toolbar;
-        this.control = control;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        selectedAgent = worldView.getAgentInCoordinates(e.getPoint());
-        if (selectedAgent != null) {
-            LOG.debug("Displaying details of agent {}", selectedAgent);
-            refreshSelectedAgentDetails();
-            worldView.setSelectedAgent(selectedAgent.getId());
-        }
-    }
-
-    private void refreshSelectedAgentDetails() {
-        if (selectedAgent != null) {
-            SwingUtilities.invokeLater(() -> infoPanel.showAgentDetails(selectedAgent.getDetails()));
-        }
+        worldView.selectAgentIn(e.getPoint());
     }
 
     @Override
@@ -73,11 +58,10 @@ public class SimulationGraphicalController implements MouseListener, World.World
         try {
             LOG.trace("World ticked after hour = {}", hour);
             try {
-                worldView.refresh();
+                worldView.createNextKeyframe();
             } catch (InterruptedException exc) {
                 result = false;
             }
-            refreshSelectedAgentDetails();
         } catch (Exception exc) {
             LOG.error("Error refreshing the view", exc);
         }
@@ -92,27 +76,15 @@ public class SimulationGraphicalController implements MouseListener, World.World
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch (e.getActionCommand().toLowerCase()) {
-            case "reset":
-                control.reset();
-                break;
-            case "step":
-                control.step();
-                break;
-            case "start":
-                control.start();
-                break;
-            case "pause":
-                control.pause();
-                break;
-        }
+        animation.actionPerformed(e);
+        worldView.actionPerformed(e);
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
         JSlider slider = (JSlider) e.getSource();
         if (!slider.getValueIsAdjusting()) {
-            worldView.setRefreshDelay(slider.getValue());
+            animation.setRefreshDelay(slider.getValue());
         }
     }
 }

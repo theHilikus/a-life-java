@@ -7,6 +7,7 @@ import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.spi.AppenderAttachable;
 import com.github.thehilikus.alife.agents.animals.Herbivore;
 import com.github.thehilikus.alife.agents.plants.Plant;
+import com.github.thehilikus.alife.world.ui.InfoPanel;
 import com.github.thehilikus.alife.world.ui.SimulationConsoleController;
 import com.github.thehilikus.alife.world.ui.SimulationGraphicalController;
 import com.github.thehilikus.alife.world.ui.SimulationGraphicalView;
@@ -104,6 +105,7 @@ public class Simulation {
 
         if (options.isGraphical()) {
             initGui();
+            control.start();
         } else {
             initConsole();
         }
@@ -119,12 +121,20 @@ public class Simulation {
     private void initGui() {
         LOG.info("Initializing GUI");
 
-        World.GraphicalView worldView = world.new GraphicalView();
-        simulationView = new SimulationGraphicalView(worldView);
-        SimulationGraphicalController graphicalController = new SimulationGraphicalController(worldView, simulationView.getInfoPanel(), simulationView.getToolbar(), control);
+        InfoPanel infoPanel = new InfoPanel();
+        Animation animation = new Animation();
+        World.GraphicalView worldView = world.new GraphicalView(infoPanel, animation);
+        simulationView = new SimulationGraphicalView(worldView, infoPanel);
+        SimulationGraphicalController graphicalController = new SimulationGraphicalController(worldView, animation, simulationView.getToolbar());
         simulationView.addActionListener(graphicalController);
         worldView.addMouseListener(graphicalController);
+        animation.addActionListener(graphicalController);
         world.setWorldListener(graphicalController);
+        try {
+            worldView.createNextKeyframe();
+        } catch (InterruptedException e) {
+            throw new AssertionError("Should never happen since there are no interrupts at this stage");
+        }
     }
 
     private void start() {

@@ -11,15 +11,25 @@ import java.util.Objects;
 /**
  * An animation frame of a single agent
  */
-public class AgentKeyframe {
+public class AgentKeyframe implements Comparable<AgentKeyframe> {
     private final Map<String, Object> propertiesToInterpolate = new HashMap<>();
+    private final Map<String, Object> agentDetails;
     private final Map<String, Object> fixedProperties;
+    private final int agentId;
+    private final int zOrder;
 
-    public AgentKeyframe() {
-        this(new HashMap<>());
+    public AgentKeyframe(int agentId, int zOrder) {
+        this(agentId, zOrder, new HashMap<>(), new HashMap<>());
     }
 
-    private AgentKeyframe(Map<String, Object> fixedProperties) {
+    public AgentKeyframe(int agentId, int zOrder, Map<String, Object> agentDetails) {
+        this(agentId, zOrder, agentDetails, new HashMap<>());
+    }
+
+    private AgentKeyframe(int agentId, int zOrder, Map<String, Object> agentDetails, Map<String, Object> fixedProperties) {
+        this.agentId = agentId;
+        this.zOrder = zOrder;
+        this.agentDetails = agentDetails;
         this.fixedProperties = fixedProperties;
     }
 
@@ -32,17 +42,16 @@ public class AgentKeyframe {
         return (T) propertiesToInterpolate.get(name);
     }
 
-    public void addFixedProperty(String name, Object value) {
-        fixedProperties.put(name, value);
+    public <T> T getAgentDetail(String name) {
+        return (T) agentDetails.get(name);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getFixedProperty(String name) {
-        return (T) fixedProperties.get(name);
+    public Map<String, Object> getAgentDetails() {
+        return agentDetails;
     }
 
     public AgentKeyframe interpolate(AgentKeyframe endFrame, double percentToKeyFrame) {
-        AgentKeyframe result = new AgentKeyframe(fixedProperties);
+        AgentKeyframe result = new AgentKeyframe(zOrder, agentId, agentDetails, fixedProperties);
         for (Map.Entry<String, Object> property : propertiesToInterpolate.entrySet()) {
             String propertyKey = property.getKey();
             if (propertyKey.equals("orientation")) {
@@ -126,5 +135,18 @@ public class AgentKeyframe {
         int alpha = (int) interpolateNumber(startColor.getAlpha(), endColor.getAlpha(), percentToKeyFrame);
 
         return new Color(red, green, blue, alpha);
+    }
+
+    @Override
+    public int compareTo(AgentKeyframe o) {
+        int zOrderDiff = zOrder - o.zOrder;
+        if (zOrderDiff == 0) {
+            return o.agentId - agentId;
+        }
+        return zOrderDiff;
+    }
+
+    public int getAgentId() {
+        return agentId;
     }
 }

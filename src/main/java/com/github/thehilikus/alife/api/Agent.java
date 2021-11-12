@@ -2,6 +2,7 @@ package com.github.thehilikus.alife.api;
 
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.world.World;
+import com.github.thehilikus.alife.world.ui.AgentKeyframe;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -70,8 +71,10 @@ public interface Agent {
     interface View {
         void drawInConsole(StringBuilder builder, Agent agent);
 
-        Shape drawKeyframe(Graphics2D g2d, Agent agent, boolean selected);
+        AgentKeyframe createAgentFrame(Agent agent);
 
-        void drawTweenFrame(Graphics2D g2d, Agent agent, double percentToKeyFrame);
+        Shape drawKeyframe(Graphics2D g2d, AgentKeyframe newKeyframe, boolean selected);
+
+        void drawTweenFrame(Graphics2D g2d, AgentKeyframe lastKeyframe, AgentKeyframe newKeyframe, double percentToKeyframe);
     }
 }
