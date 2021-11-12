@@ -325,6 +325,7 @@ public class World {
                 LOG.trace("Painting keyframe for hour = {}", nextKeyframe.getWorldAge());
             }
 
+            agentsShapes.clear();
             for (AgentKeyframe agentFrame : newKeyframe) {
                 boolean selectedAgent = agentFrame.getAgentId() == agentSelectedId;
                 Shape agentShape = agentsView.drawKeyframe(g2d, agentFrame, selectedAgent);
