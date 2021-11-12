@@ -9,7 +9,6 @@ import com.github.thehilikus.alife.world.ui.Keyframe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -255,31 +254,26 @@ public class World {
     }
 
     public class GraphicalView extends JPanel implements ActionListener {
-        private static final int FRAME_RATE = 30; //FPS
-
         private final Agent.View agentsView = new AgentsView();
         private final Map<Shape, Integer> agentsShapes = new HashMap<>();
         private int agentSelectedId = -1;
-        private final Timer animationClock = new Timer(1000 / FRAME_RATE, this);
-        private int currentFrame = 0;
-        private int totalFrames;
-        private int refreshDelay;
+        private final Animation animation;
         private final BlockingQueue<Keyframe> frameBuffer = new ArrayBlockingQueue<>(5);
         private Keyframe lastKeyframe;
         private Keyframe nextKeyframe;
-        private boolean stopAfterNext;
+
         private final InfoPanel infoPanel;
 
-        public GraphicalView(InfoPanel infoPanel) {
+        public GraphicalView(InfoPanel infoPanel, Animation animation) {
             this.infoPanel = infoPanel;
+            this.animation = animation;
             final int edgePadding = 20;
             setPreferredSize(new Dimension(World.this.getWidth() + edgePadding, World.this.getHeight() + edgePadding));
             setBorder(BorderFactory.createLineBorder(Color.BLACK));
             setBackground(Color.WHITE);
-            animationClock.setActionCommand("animation-timer");
         }
 
-        public void refresh() throws InterruptedException {
+        public void createNextKeyframe() throws InterruptedException {
             if (SwingUtilities.isEventDispatchThread()) {
                 throw new IllegalStateException("Don't refresh from the EDT");
             }
@@ -307,25 +301,21 @@ public class World {
                 return;
             }
 
-            if (currentFrame == totalFrames || currentFrame == 0) {
+            if (animation.isKeyframe()) {
                 LOG.trace("Painting keyframe for hour = {}", nextKeyframe.getWorldAge());
                 paintAgentsKeyframes(g2d, nextKeyframe);
                 lastKeyframe = nextKeyframe;
-                currentFrame = 0;
-                if (animationClock.isRunning() && stopAfterNext) {
-                    animationClock.stop();
-                    stopAfterNext = false;
-                }
+                animation.keyframeCompleted();
             } else {
-                if (currentFrame == 1) {
+                if (animation.isFirstTween()) {
                     nextKeyframe = frameBuffer.poll();
                     if (nextKeyframe == null) {
                         LOG.warn("No frames available");
-                        detectIfSimulationNotMoving();
+                        animation.detectIfSimulationNotMoving();
                     }
                 }
-                LOG.trace("Painting tween frame # {} between hour {} and {}", currentFrame, lastKeyframe.getWorldAge(), nextKeyframe.getWorldAge());
-                paintAgentsTweenFrames(g2d, lastKeyframe, nextKeyframe, (double) currentFrame / totalFrames);
+                LOG.trace("Painting tween frame # {} between hour {} and {}", animation.getCurrentFrame(), lastKeyframe.getWorldAge(), nextKeyframe.getWorldAge());
+                paintAgentsTweenFrames(g2d, lastKeyframe, nextKeyframe, animation.getPercentageComplete());
             }
         }
 
@@ -361,14 +351,6 @@ public class World {
             }
         }
 
-        private void detectIfSimulationNotMoving() {
-            if (currentFrame >= totalFrames + 5) {
-                LOG.info("Simulation has not progressed in a while. Stopping animation clock");
-                animationClock.stop();
-            }
-        }
-
-
         public void selectAgentIn(Point clickPoint) {
             double shortestDistance = Double.MAX_VALUE;
             int result = -1;
@@ -389,29 +371,9 @@ public class World {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            switch (e.getActionCommand().toLowerCase()) {
-                case "reset":
-                    break;
-                case "step":
-                    stopAfterNext = true;
-                case "start":
-                    totalFrames = (int) ((double) refreshDelay / 1000 * FRAME_RATE);
-                    LOG.trace("Starting animation clock");
-                    animationClock.start();
-                    break;
-                case "pause":
-                    stopAfterNext = true;
-                    break;
-                case "animation-timer":
-                    LOG.trace("Animation clock ticked");
-                    currentFrame++;
-                    repaint();
-                    break;
+            if ("animation-timer".equalsIgnoreCase(e.getActionCommand())) {
+                repaint();
             }
-        }
-
-        public void setRefreshDelay(int refreshDelay) {
-            this.refreshDelay = refreshDelay;
         }
     }
 

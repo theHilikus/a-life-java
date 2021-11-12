@@ -122,14 +122,16 @@ public class Simulation {
         LOG.info("Initializing GUI");
 
         InfoPanel infoPanel = new InfoPanel();
-        World.GraphicalView worldView = world.new GraphicalView(infoPanel);
+        Animation animation = new Animation();
+        World.GraphicalView worldView = world.new GraphicalView(infoPanel, animation);
         simulationView = new SimulationGraphicalView(worldView, infoPanel);
-        SimulationGraphicalController graphicalController = new SimulationGraphicalController(worldView, simulationView.getToolbar());
+        SimulationGraphicalController graphicalController = new SimulationGraphicalController(worldView, animation, simulationView.getToolbar());
         simulationView.addActionListener(graphicalController);
         worldView.addMouseListener(graphicalController);
+        animation.addActionListener(graphicalController);
         world.setWorldListener(graphicalController);
         try {
-            worldView.refresh();
+            worldView.createNextKeyframe();
         } catch (InterruptedException e) {
             throw new AssertionError("Should never happen since there are no interrupts at this stage");
         }

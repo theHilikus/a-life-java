@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.world.ui;
 
+import com.github.thehilikus.alife.world.Animation;
 import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +19,12 @@ import java.awt.event.MouseListener;
 public class SimulationGraphicalController implements MouseListener, World.WorldListener, ActionListener, ChangeListener {
     private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class.getSimpleName());
     private final World.GraphicalView worldView;
+    private final Animation animation;
     private final MainToolbar toolbar;
 
-    public SimulationGraphicalController(World.GraphicalView worldView, MainToolbar toolbar) {
+    public SimulationGraphicalController(World.GraphicalView worldView, Animation animation, MainToolbar toolbar) {
         this.worldView = worldView;
+        this.animation = animation;
         this.toolbar = toolbar;
     }
 
@@ -55,7 +58,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
         try {
             LOG.trace("World ticked after hour = {}", hour);
             try {
-                worldView.refresh();
+                worldView.createNextKeyframe();
             } catch (InterruptedException exc) {
                 result = false;
             }
@@ -73,6 +76,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        animation.actionPerformed(e);
         worldView.actionPerformed(e);
     }
 
@@ -80,7 +84,7 @@ public class SimulationGraphicalController implements MouseListener, World.World
     public void stateChanged(ChangeEvent e) {
         JSlider slider = (JSlider) e.getSource();
         if (!slider.getValueIsAdjusting()) {
-            worldView.setRefreshDelay(slider.getValue());
+            animation.setRefreshDelay(slider.getValue());
         }
     }
 }
