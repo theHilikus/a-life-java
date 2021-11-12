@@ -302,19 +302,9 @@ public class World {
             }
 
             if (animation.isKeyframe()) {
-                LOG.trace("Painting keyframe for hour = {}", nextKeyframe.getWorldAge());
                 paintAgentsKeyframes(g2d, nextKeyframe);
                 lastKeyframe = nextKeyframe;
-                animation.keyframeCompleted();
             } else {
-                if (animation.isFirstTween()) {
-                    nextKeyframe = frameBuffer.poll();
-                    if (nextKeyframe == null) {
-                        LOG.warn("No frames available");
-                        animation.detectIfSimulationNotMoving();
-                    }
-                }
-                LOG.trace("Painting tween frame # {} between hour {} and {}", animation.getCurrentFrame(), lastKeyframe.getWorldAge(), nextKeyframe.getWorldAge());
                 paintAgentsTweenFrames(g2d, lastKeyframe, nextKeyframe, animation.getPercentageComplete());
             }
         }
@@ -325,11 +315,16 @@ public class World {
             } else {
                 nextKeyframe = lastKeyframe;
             }
-            LOG.trace("Painting initial keyframe");
             paintAgentsKeyframes(g2d, lastKeyframe);
         }
 
         private void paintAgentsKeyframes(Graphics2D g2d, Iterable<AgentKeyframe> newKeyframe) {
+            if (nextKeyframe == null) {
+                LOG.trace("Painting initial keyframe");
+            } else {
+                LOG.trace("Painting keyframe for hour = {}", nextKeyframe.getWorldAge());
+            }
+
             for (AgentKeyframe agentFrame : newKeyframe) {
                 boolean selectedAgent = agentFrame.getAgentId() == agentSelectedId;
                 Shape agentShape = agentsView.drawKeyframe(g2d, agentFrame, selectedAgent);
@@ -338,9 +333,18 @@ public class World {
                     infoPanel.showAgentDetails(agentFrame.getAgentDetails());
                 }
             }
+            animation.keyframeCompleted();
         }
 
         private void paintAgentsTweenFrames(Graphics2D g2d, Keyframe lastKeyframe, Iterable<AgentKeyframe> newKeyframe, double percentageToKeyframe) {
+            if (animation.isFirstTween()) {
+                nextKeyframe = frameBuffer.poll();
+                if (nextKeyframe == null) {
+                    LOG.warn("No frames available");
+                }
+            }
+
+            LOG.trace("Painting tween frame # {} between hour {} and {}", animation.getCurrentFrame(), lastKeyframe.getWorldAge(), nextKeyframe.getWorldAge());
             for (AgentKeyframe agentNewFrame : newKeyframe) {
                 AgentKeyframe agentLastFrame = lastKeyframe.getAgentKeyframe(agentNewFrame.getAgentId());
                 if (agentLastFrame == null) {
