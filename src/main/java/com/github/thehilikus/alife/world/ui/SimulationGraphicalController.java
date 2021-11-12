@@ -1,7 +1,5 @@
 package com.github.thehilikus.alife.world.ui;
 
-import com.github.thehilikus.alife.api.Agent;
-import com.github.thehilikus.alife.world.Simulation;
 import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +18,10 @@ import java.awt.event.MouseListener;
 public class SimulationGraphicalController implements MouseListener, World.WorldListener, ActionListener, ChangeListener {
     private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class.getSimpleName());
     private final World.GraphicalView worldView;
-    private final InfoPanel infoPanel;
     private final MainToolbar toolbar;
-    private Agent selectedAgent;
 
-
-    public SimulationGraphicalController(World.GraphicalView worldView, InfoPanel infoPanel, MainToolbar toolbar, Simulation.Control control) {
+    public SimulationGraphicalController(World.GraphicalView worldView, MainToolbar toolbar) {
         this.worldView = worldView;
-        this.infoPanel = infoPanel;
         this.toolbar = toolbar;
     }
 

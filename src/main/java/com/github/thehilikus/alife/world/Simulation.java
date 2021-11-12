@@ -124,7 +124,7 @@ public class Simulation {
         InfoPanel infoPanel = new InfoPanel();
         World.GraphicalView worldView = world.new GraphicalView(infoPanel);
         simulationView = new SimulationGraphicalView(worldView, infoPanel);
-        SimulationGraphicalController graphicalController = new SimulationGraphicalController(worldView, infoPanel, simulationView.getToolbar(), control);
+        SimulationGraphicalController graphicalController = new SimulationGraphicalController(worldView, simulationView.getToolbar());
         simulationView.addActionListener(graphicalController);
         worldView.addMouseListener(graphicalController);
         world.setWorldListener(graphicalController);
