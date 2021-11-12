@@ -350,10 +350,10 @@ public class World {
         private void paintAgentsTweenFrames(Graphics2D g2d, Keyframe lastKeyframe, Iterable<AgentKeyframe> newKeyframe, double percentageToKeyframe) {
             for (AgentKeyframe agentNewFrame : newKeyframe) {
                 AgentKeyframe agentLastFrame = lastKeyframe.getAgentKeyframe(agentNewFrame.getAgentId());
-//                if (previousKeyframe == null) {
-                //new agent in the world. just take its new keyframe as previous keyframe
-//                    previousKeyframe = newKeyframe;
-//                }
+                if (agentLastFrame == null) {
+                    //new agent in the world. just take its new keyframe as previous keyframe
+                    agentLastFrame = agentNewFrame;
+                }
                 agentsView.drawTweenFrame(g2d, agentLastFrame, agentNewFrame, percentageToKeyframe);
             }
         }
