@@ -56,7 +56,6 @@ public class PlantView implements Agent.View {
     public AgentKeyframe createAgentFrame(Agent agent) {
         Map<String, Object> details = agent.getDetails();
         AgentKeyframe result = new AgentKeyframe(agent.getId(), Z_ORDER, details);
-        result.addFixedProperty("agentType", agent.getClass());
         result.addPropertyToInterpolate("energy", details.get(VitalSign.PARAMETER_PREFIX + "energy"));
         String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);

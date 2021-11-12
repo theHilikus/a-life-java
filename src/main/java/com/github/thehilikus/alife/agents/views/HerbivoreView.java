@@ -67,17 +67,10 @@ public class HerbivoreView implements Agent.View {
     public AgentKeyframe createAgentFrame(Agent agent) {
         Map<String, Object> details = agent.getDetails();
         AgentKeyframe result = new AgentKeyframe(agent.getId(), Z_ORDER, details);
-        result.addFixedProperty("agentType", agent.getClass());
         result.addPropertyToInterpolate("position", details.get("position"));
         result.addPropertyToInterpolate("orientation", details.get(Locomotion.PARAMETER_PREFIX + "orientation"));
         Color agentColor = computeAgentColor(details);
         result.addPropertyToInterpolate("color", agentColor);
-        if ((int) details.get(VitalSign.PARAMETER_PREFIX + "age") >= (int) details.get(Agent.Evolvable.PARAMETER_PREFIX + "teenAge")) {
-            Stroke stroke = new BasicStroke(2);
-            result.addFixedProperty("stroke", stroke);
-        }
-        Color borderColor = computeBorderColor(details);
-        result.addFixedProperty("borderColor", borderColor);
 
         return result;
     }
@@ -98,13 +91,16 @@ public class HerbivoreView implements Agent.View {
         Color agentColor = newKeyframe.getInterpolatedProperty("color");
         g2d.setColor(agentColor);
 
-        Stroke stroke = Objects.requireNonNullElse(newKeyframe.getFixedProperty("stroke"), new BasicStroke());
+        Stroke stroke = new BasicStroke();
+        if ((int) newKeyframe.getAgentDetails().get(VitalSign.PARAMETER_PREFIX + "age") >= (int) newKeyframe.getAgentDetails().get(Agent.Evolvable.PARAMETER_PREFIX + "teenAge")) {
+            stroke = new BasicStroke(2);
+        }
         g2d.setStroke(stroke);
 
         Shape agentShape = createHerbivoreShape(newKeyframe);
         g2d.fill(agentShape);
 
-        Color borderColor = newKeyframe.getFixedProperty("borderColor");
+        Color borderColor = computeBorderColor(newKeyframe.getAgentDetails());
         g2d.setColor(borderColor);
         g2d.draw(agentShape);
 
@@ -117,14 +113,15 @@ public class HerbivoreView implements Agent.View {
 
         Color agentColor = tweenFrame.getInterpolatedProperty("color");
         g2d.setColor(agentColor);
-        Stroke stroke = tweenFrame.getFixedProperty("stroke");
-        if (stroke != null) {
-            g2d.setStroke(stroke);
+        Stroke stroke = new BasicStroke();
+        if ((int) lastKeyframe.getAgentDetails().get(VitalSign.PARAMETER_PREFIX + "age") >= (int) lastKeyframe.getAgentDetails().get(Agent.Evolvable.PARAMETER_PREFIX + "teenAge")) {
+            stroke = new BasicStroke(2);
         }
+        g2d.setStroke(stroke);
         Shape agentShape = createHerbivoreShape(tweenFrame);
         g2d.fill(agentShape);
 
-        Color borderColor = lastKeyframe.getFixedProperty("borderColor");
+        Color borderColor = computeBorderColor(lastKeyframe.getAgentDetails());
         g2d.setColor(borderColor);
 
         g2d.draw(agentShape);

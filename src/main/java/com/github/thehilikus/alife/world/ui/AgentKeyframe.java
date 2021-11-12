@@ -42,15 +42,6 @@ public class AgentKeyframe implements Comparable<AgentKeyframe> {
         return (T) propertiesToInterpolate.get(name);
     }
 
-    public void addFixedProperty(String name, Object value) {
-        fixedProperties.put(name, value);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> T getFixedProperty(String name) {
-        return (T) fixedProperties.get(name);
-    }
-
     public Map<String, Object> getAgentDetails() {
         return agentDetails;
     }
