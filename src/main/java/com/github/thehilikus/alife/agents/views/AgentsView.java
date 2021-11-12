@@ -31,7 +31,7 @@ public class AgentsView implements Agent.View {
     public Shape drawKeyframe(Graphics2D g2d, AgentKeyframe newKeyframe, boolean selected) {
         Stroke originalStroke = g2d.getStroke();
 
-        Agent.View view = agentsViews.get(newKeyframe.getAgentDetails().get("type"));
+        Agent.View view = agentsViews.get(newKeyframe.getAgentDetail("type"));
         Objects.requireNonNull(view, "No view found that can draw " + newKeyframe);
         Shape result = view.drawKeyframe(g2d, newKeyframe, selected);
 
@@ -44,7 +44,7 @@ public class AgentsView implements Agent.View {
     public void drawTweenFrame(Graphics2D g2d, AgentKeyframe lastKeyframe, AgentKeyframe newKeyframe, double percentToKeyframe) {
         Stroke originalStroke = g2d.getStroke();
 
-        Agent.View view = agentsViews.get(newKeyframe.getAgentDetails().get("type"));
+        Agent.View view = agentsViews.get(newKeyframe.getAgentDetail("type"));
         Objects.requireNonNull(view, "No view found that can draw " + newKeyframe);
         view.drawTweenFrame(g2d, lastKeyframe, newKeyframe, percentToKeyframe);
 

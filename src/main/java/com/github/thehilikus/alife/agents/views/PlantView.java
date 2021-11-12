@@ -79,14 +79,14 @@ public class PlantView implements Agent.View {
     }
 
     private Shape createPlantShape(AgentKeyframe frame) {
-        int agentSize = (int) frame.getAgentDetails().get("size");
+        int agentSize = frame.getAgentDetail("size");
 
         double vitality = ((Integer) frame.getInterpolatedProperty("energy")).doubleValue() / EnergyTracker.MAX_ENERGY;
         //noinspection MagicNumber
         double radius = agentSize / 2.0 * vitality;
 
-        int x = ((Position.Immutable) frame.getAgentDetails().get("position")).getX();
-        int y = ((Position.Immutable) frame.getAgentDetails().get("position")).getY();
+        int x = ((Position.Immutable) frame.getAgentDetail("position")).getX();
+        int y = ((Position.Immutable) frame.getAgentDetail("position")).getY();
         return new Ellipse2D.Double(x - radius, y - radius, radius * 2, radius * 2);
     }
 

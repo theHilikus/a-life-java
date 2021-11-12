@@ -360,7 +360,8 @@ public class World {
             int result = -1;
             for (Map.Entry<Shape, Integer> agentShape : agentsShapes.entrySet()) {
                 if (agentShape.getKey().getBounds2D().contains(clickPoint)) {
-                    Position.Immutable agentPosition = (Position.Immutable) lastKeyframe.getAgentKeyframe(agentShape.getValue()).getAgentDetails().get("position");
+                    AgentKeyframe agentKeyframe = lastKeyframe.getAgentKeyframe(agentShape.getValue());
+                    Position.Immutable agentPosition = agentKeyframe.getAgentDetail("position");
                     double distanceToAgent = clickPoint.distanceSq(agentPosition.getX(), agentPosition.getY());
                     if (distanceToAgent < shortestDistance) {
                         shortestDistance = distanceToAgent;

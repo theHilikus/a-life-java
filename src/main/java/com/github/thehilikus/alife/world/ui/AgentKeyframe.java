@@ -42,6 +42,10 @@ public class AgentKeyframe implements Comparable<AgentKeyframe> {
         return (T) propertiesToInterpolate.get(name);
     }
 
+    public <T> T getAgentDetail(String name) {
+        return (T) agentDetails.get(name);
+    }
+
     public Map<String, Object> getAgentDetails() {
         return agentDetails;
     }
