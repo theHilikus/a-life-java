@@ -255,10 +255,9 @@ public class World {
     }
 
     public class GraphicalView extends JPanel implements ActionListener {
-
         private static final int FRAME_RATE = 30; //FPS
-        private final Agent.View agentsView = new AgentsView();
 
+        private final Agent.View agentsView = new AgentsView();
         private final Map<Shape, Integer> agentsShapes = new HashMap<>();
         private int agentSelectedId = -1;
         private final Timer animationClock = new Timer(1000 / FRAME_RATE, this);
@@ -300,40 +299,44 @@ public class World {
             }
             super.paintComponent(g);
 
-            Keyframe workingFrame;
-            if (animationClock.isRunning() && currentFrame == 1 || lastKeyframe == null) {
-                workingFrame = frameBuffer.poll();
-            } else {
-                workingFrame = lastKeyframe;
-            }
-            if (workingFrame != null) {
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                if (currentFrame == totalFrames || totalFrames == 0 || currentFrame == 0) {
-                    if (nextKeyframe == null) {
-                        //for simulation initialization only
-                        nextKeyframe = workingFrame;
-                    }
-                    LOG.trace("Painting keyframe for hour = {}", nextKeyframe.getWorldAge());
-                    paintAgentsKeyframes(g2d, nextKeyframe);
-                    lastKeyframe = nextKeyframe;
-                    currentFrame = 0;
-                    if (animationClock.isRunning() && stopAfterNext) {
-                        animationClock.stop();
-                        stopAfterNext = false;
-                    }
-                } else {
-                    if (currentFrame == 1) {
-                        nextKeyframe = workingFrame;
-                    }
-                    LOG.trace("Painting tween frame # {} between hour {} and {}", currentFrame, lastKeyframe.getWorldAge(), nextKeyframe.getWorldAge());
-                    paintAgentsTweenFrames(g2d, lastKeyframe, nextKeyframe, (double) currentFrame / totalFrames);
+            if (lastKeyframe == null || nextKeyframe == null) {
+                initialDraw(g2d);
+                return;
+            }
+
+            if (currentFrame == totalFrames || currentFrame == 0) {
+                LOG.trace("Painting keyframe for hour = {}", nextKeyframe.getWorldAge());
+                paintAgentsKeyframes(g2d, nextKeyframe);
+                lastKeyframe = nextKeyframe;
+                currentFrame = 0;
+                if (animationClock.isRunning() && stopAfterNext) {
+                    animationClock.stop();
+                    stopAfterNext = false;
                 }
             } else {
-                LOG.warn("No frames available");
-                detectIfSimulationNotMoving();
+                if (currentFrame == 1) {
+                    nextKeyframe = frameBuffer.poll();
+                    if (nextKeyframe == null) {
+                        LOG.warn("No frames available");
+                        detectIfSimulationNotMoving();
+                    }
+                }
+                LOG.trace("Painting tween frame # {} between hour {} and {}", currentFrame, lastKeyframe.getWorldAge(), nextKeyframe.getWorldAge());
+                paintAgentsTweenFrames(g2d, lastKeyframe, nextKeyframe, (double) currentFrame / totalFrames);
             }
+        }
+
+        private void initialDraw(Graphics2D g2d) {
+            if (lastKeyframe == null) {
+                lastKeyframe = frameBuffer.poll();
+            } else {
+                nextKeyframe = lastKeyframe;
+            }
+            LOG.trace("Painting initial keyframe");
+            paintAgentsKeyframes(g2d, lastKeyframe);
         }
 
         private void paintAgentsKeyframes(Graphics2D g2d, Iterable<AgentKeyframe> newKeyframe) {
