@@ -2,11 +2,11 @@ package com.github.thehilikus.alife.agents.plants;
 
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.plants.moods.BeingEaten;
-import com.github.thehilikus.alife.agents.plants.moods.Growing;
-import com.github.thehilikus.alife.api.*;
-import com.github.thehilikus.alife.world.IdsProvider;
+import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.api.Mood;
+import com.github.thehilikus.alife.api.Position;
+import com.github.thehilikus.alife.api.VitalSign;
 import com.github.thehilikus.alife.world.RandomProvider;
-import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,20 +24,7 @@ public class Plant implements Agent.Eatable {
     private Mood mood;
     private final EnergyTracker energyTracker;
 
-    public static void create(int count, World world) {
-        for (int current = 0; current < count; current++) {
-            int id = IdsProvider.getNextId();
-            Mood startingMood = new Growing(id);
-
-            final double maxSizeProportionToWorld = 0.09;
-            int maxSize = (int) (Math.min(world.getWidth(), world.getHeight()) * maxSizeProportionToWorld);
-            Agent.Living newAgent = new Plant(id, world.getRandomPosition(), startingMood, maxSize);
-            LOG.info("Created {}", newAgent);
-            world.addAgent(newAgent);
-        }
-    }
-
-    private Plant(int id, Position startingPosition, Mood startingMood, int maxSize) {
+    Plant(int id, Position startingPosition, Mood startingMood, int maxSize) {
         this.id = id;
         this.position = startingPosition;
         this.mood = startingMood;

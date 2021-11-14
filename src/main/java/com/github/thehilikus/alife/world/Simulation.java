@@ -5,8 +5,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.spi.AppenderAttachable;
-import com.github.thehilikus.alife.agents.animals.Herbivore;
-import com.github.thehilikus.alife.agents.plants.Plant;
+import com.github.thehilikus.alife.agents.LivingAgentFactory;
+import com.github.thehilikus.alife.agents.animals.HerbivoreFactory;
+import com.github.thehilikus.alife.agents.plants.PlantFactory;
 import com.github.thehilikus.alife.world.ui.InfoPanel;
 import com.github.thehilikus.alife.world.ui.SimulationConsoleController;
 import com.github.thehilikus.alife.world.ui.SimulationGraphicalController;
@@ -98,9 +99,9 @@ public class Simulation {
         }
 
         world = World.createWorld(options);
-        Herbivore.create(options.getHerbivoresCount(), world);
-        Plant.create(options.getPlantsCount(), world);
-
+        LivingAgentFactory.setWorld(world);
+        new HerbivoreFactory().createAgents(options.getHerbivoresCount());
+        new PlantFactory().createAgents(options.getPlantsCount());
         control = new Control(world);
 
         if (options.isGraphical()) {

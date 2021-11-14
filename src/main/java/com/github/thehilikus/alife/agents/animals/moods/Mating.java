@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
+import com.github.thehilikus.alife.agents.animals.HerbivoreFactory;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.controllers.ReproductionTracker;
 import com.github.thehilikus.alife.agents.genetics.Genome;
@@ -24,18 +25,16 @@ public class Mating implements Mood {
     private final Agent.Evolvable mate;
     private final Vision vision;
     private final int matingDuration;
-    private final World world;
     private int matingEnergySpent;
     private int timeWithMate;
 
-    public Mating(MoodController moodController, Vision vision, Genome genome, ReproductionTracker reproductionTracker, Agent.Evolvable mate, World world) {
+    public Mating(MoodController moodController, Vision vision, Genome genome, ReproductionTracker reproductionTracker, Agent.Evolvable mate) {
         this.moodController = moodController;
         this.vision = vision;
         this.genome = genome;
         this.reproductionTracker = reproductionTracker;
         this.mate = mate;
         this.matingDuration = genome.getGene(Agent.Evolvable.PARAMETER_PREFIX + "matingDuration");
-        this.world = world;
     }
 
 
@@ -48,10 +47,8 @@ public class Mating implements Mood {
                 LOG.debug("Mating with {}: {}/{}", mate, timeWithMate, matingDuration);
                 if (timeWithMate >= matingDuration) {
                     LOG.info("Giving birth");
-                    Genome offspringGenome = genome.crossover(mate.getGenome());
-                    offspringGenome.mutate();
 
-                    Agent.Evolvable offspring = mate.reproduce(getAgentId(), world, offspringGenome);
+                    Agent.Living offspring = new HerbivoreFactory().createOffspring(vision.getAgentId(), genome, mate.getGenome());
                     reproductionTracker.gaveBirth(mate.getId(), offspring.getId());
 
                     return moodController.startIdling();

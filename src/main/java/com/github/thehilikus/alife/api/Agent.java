@@ -64,8 +64,6 @@ public interface Agent {
 
         @NotNull
         Genome getGenome();
-
-        Evolvable reproduce(int fatherId, World world, Genome offspringGenome);
     }
 
     interface View {

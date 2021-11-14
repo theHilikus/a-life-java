@@ -18,9 +18,8 @@ public class HerbivoreMoodController implements MoodController {
     private final AgeTracker ageTracker;
     private final ReproductionTracker reproductionTracker;
     private final SizeTracker sizeTracker;
-    private final World world;
 
-    public HerbivoreMoodController(Vision vision, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker, SizeTracker sizeTracker, World world) {
+    public HerbivoreMoodController(Vision vision, Locomotion locomotion, Genome genome, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker, SizeTracker sizeTracker) {
         this.vision = vision;
         this.locomotion = locomotion;
         this.genome = genome;
@@ -29,7 +28,6 @@ public class HerbivoreMoodController implements MoodController {
         this.ageTracker = ageTracker;
         this.reproductionTracker = reproductionTracker;
         this.sizeTracker = sizeTracker;
-        this.world = world;
     }
 
     @Override

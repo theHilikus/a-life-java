@@ -30,31 +30,7 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     private Mood mood;
     private final VitalsController vitals;
 
-    public static void create(int count, World world) {
-        HerbivoreGenome.configureEnvironmentalLimits(world);
-
-        for (int current = 0; current < count; current++) {
-            int id = IdsProvider.getNextId();
-            Genome genome = new HerbivoreGenome();
-            Vision vision = new SurroundingsVision(id, genome, world);
-            Locomotion locomotion = new StraightWalkWithRandomTurn(id, world.getRandomPosition(), genome);
-            Mood startingMood = new Existing(vision, genome, locomotion);
-
-            HungerTracker hungerTracker = new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
-            EnergyTracker energyTracker = new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
-            AgeTracker ageTracker = new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
-            ReproductionTracker reproductionTracker = new ReproductionTracker();
-            SizeTracker sizeTracker = new SizeTracker(genome.getGene("maxSize"));
-            MoodController moodController = new HerbivoreMoodController(vision, locomotion, genome, hungerTracker, energyTracker, ageTracker, reproductionTracker, sizeTracker, world);
-            VitalsController vitals = new VitalsController(id, moodController, hungerTracker, energyTracker, ageTracker, reproductionTracker, sizeTracker);
-
-            Living newAgent = new Herbivore(id, vision, locomotion, startingMood, genome, vitals);
-            LOG.info("Created {}", newAgent);
-            world.addAgent(newAgent);
-        }
-    }
-
-    private Herbivore(int id, Vision vision, Locomotion locomotion, Mood startingMood, Genome genome, VitalsController vitals) {
+    Herbivore(int id, Genome genome, Vision vision, Locomotion locomotion, Mood startingMood, VitalsController vitals) {
         this.id = id;
         this.vision = vision;
         this.locomotion = locomotion;
@@ -114,30 +90,6 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     @Override
     public Genome getGenome() {
         return genome;
-    }
-
-    @Override
-    public Evolvable reproduce(int fatherId, World world, Genome offspringGenome) {
-        int id = IdsProvider.getNextId();
-        Vision vision = new SurroundingsVision(id, offspringGenome, world);
-        Position offspringPosition = new Position(getPosition().getX(), getPosition().getY());
-        Locomotion offspringLocomotion = new StraightWalkWithRandomTurn(id, offspringPosition, offspringGenome);
-        Mood offspringStartingMood = new Existing(vision, offspringGenome, offspringLocomotion);
-
-        HungerTracker offspringHungerTracker = new HungerTracker(offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
-        EnergyTracker offspringEnergyTracker = new EnergyTracker(id, offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
-        AgeTracker offspringAgeTracker = new AgeTracker(offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
-        ReproductionTracker offspringReproductionTracker = new ReproductionTracker();
-        SizeTracker offspringSizeTracker = new SizeTracker(offspringGenome.getGene("maxSize"));
-        MoodController offspringMoodController = new HerbivoreMoodController(vision, offspringLocomotion, offspringGenome, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, offspringSizeTracker, world);
-        VitalsController offspringVitals = new VitalsController(id, offspringMoodController, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, offspringSizeTracker);
-
-        Evolvable result = new Herbivore(id, vision, offspringLocomotion, offspringStartingMood, offspringGenome, offspringVitals);
-        LOG.info("Created offspring {}", result);
-        world.addAgent(result);
-
-        vitals.gaveBirth(fatherId, result);
-        return result;
     }
 
     @Override
