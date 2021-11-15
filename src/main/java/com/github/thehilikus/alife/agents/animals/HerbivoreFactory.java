@@ -1,6 +1,7 @@
 package com.github.thehilikus.alife.agents.animals;
 
 import com.github.thehilikus.alife.agents.LivingAgentFactory;
+import com.github.thehilikus.alife.agents.animals.moods.AgentModules;
 import com.github.thehilikus.alife.agents.animals.moods.Existing;
 import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
 import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
@@ -34,26 +35,24 @@ public class HerbivoreFactory extends LivingAgentFactory {
 
     private Herbivore createAgentFromGenome(Genome genome, Position position) {
         int id = IdsProvider.getNextId();
-        Vision vision = new SurroundingsVision(id, genome, getWorld());
-        Locomotion locomotion = new StraightWalkWithRandomTurn(id, position, genome);
-        Mood startingMood = new Existing(vision, genome, locomotion);
-        VitalsController vitalsController = createVitalsController(id, genome, vision, locomotion);
+        AgentModules dependencies = new AgentModules(genome);
+        dependencies.addComponent(Vision.class, new SurroundingsVision(id, genome, getWorld()));
+        dependencies.addComponent(Locomotion.class, new StraightWalkWithRandomTurn(id, position, genome));
 
-        Herbivore result = new Herbivore(id, genome, vision, locomotion, startingMood, vitalsController);
+        dependencies.addVitalSign(HungerTracker.class, new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold")));
+        dependencies.addVitalSign(EnergyTracker.class, new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold")));
+        dependencies.addVitalSign(AgeTracker.class, new AgeTracker(genome.getGene(Agent.Evolvable.PARAMETER_PREFIX + "teenAge"), genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy")));
+        dependencies.addVitalSign(ReproductionTracker.class, new ReproductionTracker());
+        dependencies.addVitalSign(SizeTracker.class, new SizeTracker(genome.getGene("maxSize")));
+
+        VitalsController vitalsController = new VitalsController(id, dependencies);
+        SocialController socialController = new SocialController(id, dependencies, vitalsController);
+
+        Mood startingMood = new Existing(dependencies);
+        Herbivore result = new Herbivore(id, dependencies, startingMood, vitalsController, socialController);
         getWorld().addAgent(result);
 
         return result;
-    }
-
-    private VitalsController createVitalsController(int id, Genome genome, Vision vision, Locomotion locomotion) {
-        HungerTracker hungerTracker = new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
-        EnergyTracker energyTracker = new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
-        AgeTracker ageTracker = new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
-        ReproductionTracker reproductionTracker = new ReproductionTracker();
-        SizeTracker sizeTracker = new SizeTracker(genome.getGene("maxSize"));
-        MoodController moodController = new HerbivoreMoodController(vision, locomotion, genome, hungerTracker, energyTracker, ageTracker, reproductionTracker, sizeTracker);
-
-        return new VitalsController(id, moodController, hungerTracker, energyTracker, ageTracker, reproductionTracker, sizeTracker);
     }
 
     public Agent.Living createOffspring(int motherId, Genome motherGenome, Genome father) {

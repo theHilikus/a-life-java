@@ -32,9 +32,9 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
 
     Herbivore(int id, Genome genome, Vision vision, Locomotion locomotion, Mood startingMood, VitalsController vitals) {
         this.id = id;
-        this.vision = vision;
-        this.locomotion = locomotion;
-        this.genome = genome;
+        this.vision = dependencies.getVision();
+        this.locomotion = dependencies.getLocomotion();
+        this.genome = dependencies.getGenome();
         this.vitals = vitals;
         mood = startingMood;
     }

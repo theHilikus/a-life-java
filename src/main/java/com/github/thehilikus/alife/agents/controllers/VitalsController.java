@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agents.controllers;
 
+import com.github.thehilikus.alife.agents.animals.moods.AgentModules;
 import com.github.thehilikus.alife.agents.animals.moods.Scouting;
 import com.github.thehilikus.alife.agents.animals.moods.Sleeping;
 import com.github.thehilikus.alife.api.*;
@@ -14,22 +15,22 @@ import java.util.Map;
  */
 public class VitalsController implements Component {
     private static final Logger LOG = LoggerFactory.getLogger(VitalsController.class.getSimpleName());
-    private final MoodController moodController;
     private final HungerTracker hungerTracker;
     private final EnergyTracker energyTracker;
     private final AgeTracker ageTracker;
     private final ReproductionTracker reproductionTracker;
     private final SizeTracker sizeTracker;
+    private final AgentModules dependencies;
     private final int agentId;
 
-    public VitalsController(int agentId, MoodController moodController, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker, SizeTracker sizeTracker) {
+    public VitalsController(int agentId, AgentModules dependencies) {
         this.agentId = agentId;
-        this.moodController = moodController;
-        this.hungerTracker = hungerTracker;
-        this.energyTracker = energyTracker;
-        this.ageTracker = ageTracker;
-        this.reproductionTracker = reproductionTracker;
-        this.sizeTracker = sizeTracker;
+        this.dependencies = dependencies;
+        this.hungerTracker = dependencies.getHungerTracker();
+        this.energyTracker = dependencies.getEnergyTracker();
+        this.ageTracker = dependencies.getAgeTracker();
+        this.reproductionTracker = dependencies.getReproductionTracker();
+        this.sizeTracker = dependencies.getSizeTracker();
     }
 
     public Mood update(Mood lastMood, Mood newMood) {

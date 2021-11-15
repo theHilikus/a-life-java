@@ -18,12 +18,12 @@ public class Mating implements Mood {
     private static final int PRIORITY = 65;
     private static final Logger LOG = LoggerFactory.getLogger(Mating.class.getSimpleName());
     private static final double MATE_ENERGY_FACTOR = 1.25;
-    private final MoodController moodController;
     private final Genome genome;
     private final ReproductionTracker reproductionTracker;
     private final Agent.Evolvable mate;
     private final Vision vision;
     private final int matingDuration;
+    private final AgentModules dependencies;
     private int matingEnergySpent;
     private int timeWithMate;
 
@@ -50,19 +50,19 @@ public class Mating implements Mood {
                     Agent.Living offspring = new HerbivoreFactory().createOffspring(vision.getAgentId(), genome, mate.getGenome());
                     reproductionTracker.gaveBirth(mate.getId(), offspring.getId());
 
-                    return moodController.startIdling();
+                    return new Existing(dependencies);
                 }
                 timeWithMate++;
                 matingEnergySpent += Math.round(EnergyTracker.ENERGY_DERIVATIVE * MATE_ENERGY_FACTOR);
             } else {
                 timeWithMate = 0;
                 LOG.debug("Mate {} is too far", mate);
-                return moodController.startFollowing(mate);
+                return new InHeatChasing(dependencies, mate);
             }
         } else {
             LOG.debug("Mate {} is gone :'(", mate.getId());
             timeWithMate = 0;
-            return moodController.startScouting();
+            return new Scouting(dependencies);
         }
 
         return this;

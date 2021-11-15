@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
-import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.Edge;
 
@@ -19,10 +18,11 @@ public class Existing implements Mood {
     private final double speedFactor;
     private int lastMovement;
 
-    public Existing(Vision vision, Genome genome, Locomotion locomotion) {
-        this.vision = vision;
-        this.locomotion = locomotion;
-        this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor");
+
+    public Existing(AgentModules dependencies) {
+        this.vision = dependencies.getVision();
+        this.locomotion = dependencies.getLocomotion();
+        this.speedFactor = dependencies.getGenome().getGene(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor");
     }
 
     @Override

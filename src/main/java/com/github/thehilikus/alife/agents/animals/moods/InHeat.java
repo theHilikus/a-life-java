@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.github.thehilikus.alife.agents.animals.Herbivore;
-import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 
 import javax.validation.constraints.NotNull;
@@ -14,15 +13,15 @@ import java.util.SortedSet;
 public class InHeat implements Mood {
     private static final int PRIORITY = 60;
     private final Existing existing;
-    private final MoodController moodController;
     private final Vision vision;
     private final Locomotion locomotion;
+    private final AgentModules dependencies;
 
-    public InHeat(MoodController moodController, Vision vision, Genome genome, Locomotion locomotion) {
-        this.existing = new Existing(vision, genome, locomotion);
-        this.moodController = moodController;
-        this.vision = vision;
-        this.locomotion = locomotion;
+    public InHeat(AgentModules dependencies) {
+        this.dependencies = dependencies;
+        this.existing = new Existing(dependencies);
+        this.vision = dependencies.getVision();
+        this.locomotion = dependencies.getLocomotion();
     }
 
     @Override
