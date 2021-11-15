@@ -47,7 +47,7 @@ public class Hunting implements Mood {
     }
 
     @Override
-    public Mood tick() {
+    public Mood tick(Agent.Living me) {
         //scan to see if target is still there
         SortedSet<ScanResult> scanResult = vision.scan(target.getClass()::isInstance);
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.target.getId()).findFirst();

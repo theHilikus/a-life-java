@@ -36,7 +36,7 @@ public class Plant implements Agent.Eatable {
     public VitalSign tick() {
         LOG.debug("#### Updating state of {} ####", this);
         Mood oldMood = mood;
-        mood = oldMood.tick();
+        mood = oldMood.tick(this);
         if (oldMood != mood) {
             LOG.info("Transitioning from {} to {}", oldMood, mood);
         }

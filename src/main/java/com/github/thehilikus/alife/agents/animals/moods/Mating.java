@@ -5,7 +5,6 @@ import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.controllers.ReproductionTracker;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
-import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +38,7 @@ public class Mating implements Mood {
 
 
     @Override
-    public Mood tick() {
+    public Mood tick(Agent.Living me) {
         SortedSet<ScanResult> mateScans = vision.scan(agent -> agent == mate);
         if (!mateScans.isEmpty()) {
             ScanResult mateScan = mateScans.first();

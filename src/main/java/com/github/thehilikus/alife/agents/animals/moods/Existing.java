@@ -26,7 +26,7 @@ public class Existing implements Mood {
     }
 
     @Override
-    public Mood tick() {
+    public Mood tick(Agent.Living me) {
         SortedSet<ScanResult> foundAgents = vision.scan(Edge.class::isInstance);
         lastMovement = locomotion.move(speedFactor, foundAgents);
 

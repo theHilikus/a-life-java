@@ -33,7 +33,7 @@ public class Scouting implements Mood {
     }
 
     @Override
-    public Mood tick() {
+    public Mood tick(Agent.Living me) {
         //scout the area
         SortedSet<ScanResult> foundAgents = vision.scan(agent -> agent instanceof Plant || agent instanceof Edge);
         if (!foundAgents.isEmpty()) {

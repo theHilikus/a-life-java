@@ -26,14 +26,14 @@ public class InHeat implements Mood {
     }
 
     @Override
-    public @NotNull Mood tick() {
+    public @NotNull Mood tick(Agent.Living me) {
         SortedSet<ScanResult> potentialMates = vision.scan(Herbivore.class::isInstance);
         if (!potentialMates.isEmpty()) {
             ScanResult closest = potentialMates.first();
             locomotion.turn(closest.getRelativeDirection());
             return moodController.startFollowing((Agent.Evolvable) closest.getAgent());
         } else {
-            existing.tick();
+            existing.tick(me);
             return this;
         }
     }

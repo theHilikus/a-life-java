@@ -1,6 +1,7 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
+import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.MoodController;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public class Sleeping implements Mood {
     }
 
     @Override
-    public @NotNull Mood tick() {
+    public @NotNull Mood tick(Agent.Living me) {
         if (energyTracker.isRested()) {
             LOG.debug("Agent {} is rested", getAgentId());
             return moodController.startIdling();
