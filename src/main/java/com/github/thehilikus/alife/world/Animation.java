@@ -43,13 +43,6 @@ public class Animation implements ActionListener {
         return currentFrame == 1;
     }
 
-    private void detectIfSimulationNotMoving() {
-        if (currentFrame >= totalFrames + 5) {
-            LOG.info("Simulation has not progressed in a while. Stopping animation clock");
-            animationClock.stop();
-        }
-    }
-
     public Object getCurrentFrame() {
         return currentFrame;
     }
@@ -81,7 +74,6 @@ public class Animation implements ActionListener {
             case "animation-timer":
                 LOG.trace("Animation clock ticked");
                 currentFrame++;
-                detectIfSimulationNotMoving();
                 break;
         }
     }

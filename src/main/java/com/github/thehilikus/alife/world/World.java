@@ -339,9 +339,13 @@ public class World {
 
         private void paintAgentsTweenFrames(Graphics2D g2d, Keyframe lastKeyframe, Iterable<AgentKeyframe> newKeyframe, double percentageToKeyframe) {
             if (animation.isFirstTween()) {
-                nextKeyframe = frameBuffer.poll();
-                if (nextKeyframe == null) {
-                    LOG.warn("No frames available");
+                Keyframe bufferedFrame = frameBuffer.poll();
+                if (bufferedFrame == null) {
+                    LOG.warn("No frames available. Pausing animation");
+                    animation.actionPerformed(new ActionEvent(this, 1, "pause"));
+                    return;
+                } else {
+                    nextKeyframe = bufferedFrame;
                 }
             }
 
