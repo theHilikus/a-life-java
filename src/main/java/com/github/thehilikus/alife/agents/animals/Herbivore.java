@@ -38,16 +38,26 @@ public class Herbivore implements Agent.Social {
     @Override
     public VitalSign tick() {
         LOG.debug("#### Updating state of {} ####", this);
-        Mood oldMood = mood;
-        mood = oldMood.tick();
-        Mood priorityMood = vitals.update(oldMood, mood);
-        boolean alive = vitals.isAlive();
-        if (alive && !priorityMood.getClass().equals(mood.getClass())) {
-            LOG.info("Overwriting mood {} with {} due to vital need", mood, priorityMood);
-            mood = priorityMood;
-        } else if (oldMood != mood) {
-            LOG.info("Transitioning from {} to {}", oldMood, mood);
+        Mood newMood = mood.tick(this);
+        vitals.updateTrackers(mood);
+
+        Mood vitalMood = vitals.nextMood(newMood);
+        if (vitalMood.getPriority() > newMood.getPriority()) {
+            LOG.info("Overwriting next mood {} with {} due to vital needs", newMood, vitalMood);
+            newMood = vitalMood;
         }
+        boolean alive = vitals.isAlive();
+
+        Mood socialMood = social.nextMood(newMood);
+        if (socialMood.getPriority() > newMood.getPriority()) {
+            LOG.info("Overwriting next mood {} with {} due to social interaction", newMood, socialMood);
+            newMood = socialMood;
+        }
+
+        if (alive && newMood != mood) {
+            LOG.info("Transitioning from {} to {}", mood, newMood);
+        }
+        mood = newMood;
 
         return alive ? null : vitals.getCauseOfDeath();
     }

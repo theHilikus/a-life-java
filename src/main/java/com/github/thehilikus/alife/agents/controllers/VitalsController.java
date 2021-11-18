@@ -1,6 +1,7 @@
 package com.github.thehilikus.alife.agents.controllers;
 
 import com.github.thehilikus.alife.agents.animals.moods.AgentModules;
+import com.github.thehilikus.alife.agents.animals.moods.InHeat;
 import com.github.thehilikus.alife.agents.animals.moods.Scouting;
 import com.github.thehilikus.alife.agents.animals.moods.Sleeping;
 import com.github.thehilikus.alife.api.*;
@@ -33,28 +34,12 @@ public class VitalsController implements Component {
         this.sizeTracker = dependencies.getSizeTracker();
     }
 
-    public Mood update(Mood lastMood, Mood newMood) {
-        hungerTracker.update(lastMood);
-        energyTracker.update(lastMood);
+    public void updateTrackers(Mood currentMood) {
+        hungerTracker.update(currentMood);
+        energyTracker.update(currentMood);
         ageTracker.update();
-        reproductionTracker.update();
+        reproductionTracker.update(currentMood);
         sizeTracker.update();
-
-        Mood result = newMood;
-        if (energyTracker.isTired()) {
-            LOG.debug("{} is tired", agentId);
-            if (newMood.getPriority() < Sleeping.PRIORITY) {
-                result = moodController.startSleeping();
-            }
-        }
-        if (hungerTracker.isHungry()) {
-            LOG.debug("{} is hungry", agentId);
-            if (newMood.getPriority() < Scouting.PRIORITY) {
-                result = moodController.startScouting();
-            }
-        }
-
-        return result;
     }
 
     public boolean isAlive() {
@@ -93,5 +78,29 @@ public class VitalsController implements Component {
 
     public void gaveBirth(int fatherId, Agent offspring) {
         reproductionTracker.gaveBirth(fatherId, offspring.getId());
+    }
+
+    public Mood nextMood(Mood currentMood) {
+        Mood result = currentMood;
+        if (energyTracker.isTired()) {
+            LOG.debug("{} is tired", agentId);
+            result = new Sleeping(dependencies);
+        }
+        if (hungerTracker.isHungry()) {
+            Mood scouting = new Scouting(dependencies);
+            if (scouting.getPriority() > result.getPriority()) {
+                LOG.debug("{} is hungry", agentId);
+                result = scouting;
+            }
+        }
+        if (ageTracker.isTeenAge() && reproductionTracker.isWombRested()) {
+            Mood inHeat = new InHeat(dependencies);
+            if (inHeat.getPriority() > result.getPriority()) {
+                LOG.debug("{} is in heat", agentId);
+                result = inHeat;
+            }
+        }
+
+        return result;
     }
 }
