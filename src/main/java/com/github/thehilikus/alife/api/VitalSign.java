@@ -25,5 +25,5 @@ public interface VitalSign {
 
     int getValue();
 
-    Map<String, Object> getParameters();
+    Map<String, Object> getDetails();
 }

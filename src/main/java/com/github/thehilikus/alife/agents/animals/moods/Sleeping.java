@@ -60,7 +60,7 @@ public class Sleeping implements Mood {
     }
 
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getDetails() {
         return Collections.emptyMap();
     }
 

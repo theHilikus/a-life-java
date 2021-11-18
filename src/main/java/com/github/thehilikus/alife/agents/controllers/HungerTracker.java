@@ -44,7 +44,7 @@ public class HungerTracker implements VitalSign {
     }
 
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getDetails() {
         return Map.of(
                 PARAMETER_PREFIX + "hunger", currentHunger,
                 PARAMETER_PREFIX + "hungryThreshold", hungryThreshold

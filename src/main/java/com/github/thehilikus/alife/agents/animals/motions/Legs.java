@@ -199,7 +199,7 @@ public class Legs implements Locomotion {
     }
 
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getDetails() {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put(PARAMETER_PREFIX + "topSpeed", topSpeed);
         result.put(PARAMETER_PREFIX + "orientation", orientation);

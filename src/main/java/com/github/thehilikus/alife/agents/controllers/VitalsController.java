@@ -52,13 +52,13 @@ public class VitalsController implements Component {
     }
 
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getDetails() {
         Map<String, Object> result = new LinkedHashMap<>();
-        result.putAll(hungerTracker.getParameters());
-        result.putAll(energyTracker.getParameters());
-        result.putAll(ageTracker.getParameters());
-        result.putAll(reproductionTracker.getParameters());
-        result.putAll(sizeTracker.getParameters());
+        result.putAll(hungerTracker.getDetails());
+        result.putAll(energyTracker.getDetails());
+        result.putAll(ageTracker.getDetails());
+        result.putAll(reproductionTracker.getDetails());
+        result.putAll(sizeTracker.getDetails());
 
         return result;
     }

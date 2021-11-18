@@ -38,7 +38,7 @@ public class SurroundingsVision implements Vision {
     }
 
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getDetails() {
         return Map.of(PARAMETER_PREFIX + "distance", distance);
     }
 

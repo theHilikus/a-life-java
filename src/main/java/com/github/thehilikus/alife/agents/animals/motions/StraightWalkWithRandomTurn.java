@@ -42,8 +42,8 @@ public class StraightWalkWithRandomTurn extends Legs {
     }
 
     @Override
-    public Map<String, Object> getParameters() {
-        Map<String, Object> result = super.getParameters();
+    public Map<String, Object> getDetails() {
+        Map<String, Object> result = super.getDetails();
         result.put(PARAMETER_PREFIX + "turningProbability", turningProbability);
 
         return result;

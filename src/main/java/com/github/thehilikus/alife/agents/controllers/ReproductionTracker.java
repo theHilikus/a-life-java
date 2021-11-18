@@ -42,7 +42,7 @@ public class ReproductionTracker implements VitalSign {
     }
 
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getDetails() {
         return Map.of(
                 Agent.Evolvable.PARAMETER_PREFIX + "timeSinceReproduction", timeSinceReproduction,
                 Agent.Evolvable.PARAMETER_PREFIX + "mates", mates,

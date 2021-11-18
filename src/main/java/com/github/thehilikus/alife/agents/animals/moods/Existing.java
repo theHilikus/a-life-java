@@ -49,7 +49,7 @@ public class Existing implements Mood {
     }
 
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getDetails() {
         return Map.of(
                 PARAMETER_PREFIX + "speedFactor", speedFactor
         );

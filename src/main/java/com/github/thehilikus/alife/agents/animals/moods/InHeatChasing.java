@@ -31,8 +31,8 @@ public class InHeatChasing extends Hunting {
     @Override
     protected Mood reachedTarget(Agent.Social me) {
         Map<String, Object> details = new HashMap<>();
-        details.putAll(ageTracker.getParameters());
-        details.putAll(sizeTracker.getParameters());
+        details.putAll(ageTracker.getDetails());
+        details.putAll(sizeTracker.getDetails());
         Message message = new Message(me, SocialController.MessageType.MATING_CALL, details);
         mate.communicate(message);
 

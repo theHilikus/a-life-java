@@ -45,7 +45,7 @@ public class SocialController implements Component {
     }
 
     private void mateRequest(Agent.Social sender, Map<String, Object> senderDetails) {
-        double senderFitness = calculateFitness(vitals.getParameters(), senderDetails);
+        double senderFitness = calculateFitness(vitals.getDetails(), senderDetails);
         final double fitnessLeeway = 0.20;
         if (reproduction.isWombRested() && RandomProvider.nextDouble(1.0) < senderFitness + fitnessLeeway) {
             Mood newMood = new Mating(dependencies, sender);
@@ -78,7 +78,7 @@ public class SocialController implements Component {
     }
 
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getDetails() {
         return null;
     }
 

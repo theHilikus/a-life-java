@@ -62,8 +62,8 @@ public class Plant implements Agent.Eatable {
         result.put("position", position.toImmutable());
         result.put(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
 
-        result.putAll(mood.getParameters());
-        result.putAll(energyTracker.getParameters());
+        result.putAll(mood.getDetails());
+        result.putAll(energyTracker.getDetails());
 
         return result;
     }

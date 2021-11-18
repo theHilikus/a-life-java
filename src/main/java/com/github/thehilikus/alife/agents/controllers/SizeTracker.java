@@ -39,7 +39,7 @@ public class SizeTracker implements VitalSign {
     }
 
     @Override
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getDetails() {
         return Map.of("size", size,
                 PARAMETER_PREFIX + "maxSize", maxSize);
     }
