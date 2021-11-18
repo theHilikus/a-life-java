@@ -15,7 +15,7 @@ import java.util.Map;
 public class ReproductionTracker implements VitalSign {
     private static final int POST_REPRODUCTION_WAIT = 10;
     private int timeSinceReproduction;
-    private final Collection<Integer> offspring = new ArrayList<>();
+    private final Collection<Integer> offsprings = new ArrayList<>();
     private final Collection<Integer> mates = new ArrayList<>();
 
     @Override
@@ -36,7 +36,7 @@ public class ReproductionTracker implements VitalSign {
     }
 
     public void gaveBirth(int otherParentId, int offspringId) {
-        offspring.add(offspringId);
+        offsprings.add(offspringId);
         mates.add(otherParentId);
         timeSinceReproduction = 0;
     }
@@ -46,7 +46,7 @@ public class ReproductionTracker implements VitalSign {
         return Map.of(
                 Agent.Evolvable.PARAMETER_PREFIX + "timeSinceReproduction", timeSinceReproduction,
                 Agent.Evolvable.PARAMETER_PREFIX + "mates", mates,
-                Agent.Evolvable.PARAMETER_PREFIX + "offspring", offspring
+                Agent.Evolvable.PARAMETER_PREFIX + "offspring", offsprings
         );
     }
 

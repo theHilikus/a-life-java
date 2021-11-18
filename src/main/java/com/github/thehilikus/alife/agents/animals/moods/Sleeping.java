@@ -16,7 +16,7 @@ public class Sleeping implements Mood {
     /**
      * The priority of the mood from 1-100
      */
-    public static final int PRIORITY = 90;
+    private static final int PRIORITY = 90;
     private static final Logger LOG = LoggerFactory.getLogger(Sleeping.class.getSimpleName());
     private static final double HUNGER_SLOWDOWN_FACTOR = 0.5;
     private static final int ENERGY_RECOVERY_RATE = 10;

@@ -30,8 +30,7 @@ public class HungerTracker implements VitalSign {
 
     @Override
     public void update(Mood currentMood) {
-        int result = currentMood.getHungerDelta();
-        currentHunger += result;
+        currentHunger += currentMood.getHungerDelta();
     }
 
     @Override

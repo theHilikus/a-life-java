@@ -92,7 +92,7 @@ public class Plant implements Agent.Eatable {
         energyCost = Math.min(energyCost, energyTracker.getValue());
 
         ((BeingEaten) mood).bite(energyCost);
-        LOG.debug("Plant lost {} energy", energyCost);
+        LOG.debug("Plant {} lost {} energy", id, energyCost);
 
         int actualBiteSize = (int) Math.round((energyCost / (double) EnergyTracker.MAX_ENERGY) * size);
         return Math.min(desiredBiteSize, actualBiteSize);
