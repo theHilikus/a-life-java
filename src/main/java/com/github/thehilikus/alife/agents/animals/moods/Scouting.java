@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
-import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.agents.plants.Plant;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.Edge;
@@ -17,23 +16,23 @@ public class Scouting implements Mood {
     /**
      * The priority of the mood from 1-100
      */
-    public static final int PRIORITY = 80;
+    private static final int PRIORITY = 80;
     private final Vision vision;
     private final Locomotion locomotion;
-    private final MoodController moodController;
+    private final AgentModules dependencies;
     private int lastMovement;
     private final double speedFactor;
 
 
-    public Scouting(MoodController moodController, Vision vision, Locomotion locomotion, Genome genome) {
-        this.moodController = moodController;
-        this.vision = vision;
-        this.locomotion = locomotion;
-        this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor");
+    public Scouting(AgentModules dependencies) {
+        this.dependencies = dependencies;
+        this.vision = dependencies.getVision();
+        this.locomotion = dependencies.getLocomotion();
+        this.speedFactor = dependencies.getGenome().getGene(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor");
     }
 
     @Override
-    public Mood tick() {
+    public Mood tick(Agent.Living me) {
         //scout the area
         SortedSet<ScanResult> foundAgents = vision.scan(agent -> agent instanceof Plant || agent instanceof Edge);
         if (!foundAgents.isEmpty()) {
@@ -41,7 +40,7 @@ public class Scouting implements Mood {
             if (plantScanOptional.isPresent()) {
                 ScanResult plantScan = plantScanOptional.get();
                 locomotion.turn(plantScan.getRelativeDirection());
-                return moodController.startHunting((Agent.Eatable) plantScan.getAgent());
+                return new Hunting(dependencies, plantScan.getAgent());
             } else {
                 //only found edges
                 lastMovement = locomotion.move(speedFactor, foundAgents);

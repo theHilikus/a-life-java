@@ -80,13 +80,18 @@ public class World {
             LOG.info("Starting hour {}", ++hour);
             Collection<Agent.Living> toRemove = new HashSet<>();
             livingAgents.forEach(agent -> {
-                VitalSign causeOfDeath;
-                if (agent instanceof Agent.Movable) {
-                    causeOfDeath = tickMovableAgent((Agent.Movable) agent);
+                Position.Immutable originalPosition = agent.getPosition();
+                VitalSign causeOfDeath = agent.tick();
+                if (causeOfDeath == null) {
+                    Position.Immutable newPosition = agent.getPosition();
+                    if (!originalPosition.equals(newPosition)) {
+                        LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
+                    }
+                    assert newPosition.getX() > 0
+                            && newPosition.getY() > 0
+                            && newPosition.getX() <= width - 2
+                            && newPosition.getY() <= height - 2 : "Agent " + agent.getId() + " moved out of the world: " + newPosition;
                 } else {
-                    causeOfDeath = agent.tick();
-                }
-                if (causeOfDeath != null) {
                     LOG.debug("{} died. Cause of death={}", agent, causeOfDeath);
                     toRemove.add(agent);
                 }
@@ -98,35 +103,18 @@ public class World {
                 shouldContinue = worldListener.ticked(hour);
             }
 
-            boolean movableAgentsAlive = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Movable);
-            if (!movableAgentsAlive) {
+            boolean socialAgentsAlive = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Social);
+            if (!socialAgentsAlive) {
                 if (worldListener != null) {
                     worldListener.ended(hour);
                 }
             }
-            LOG.info("Ending hour {}. Will continue? {}\n", hour, movableAgentsAlive && shouldContinue);
-            return movableAgentsAlive && shouldContinue;
+            LOG.info("Ending hour {}. Will continue? {}\n", hour, socialAgentsAlive && shouldContinue);
+            return socialAgentsAlive && shouldContinue;
         } catch (Exception | AssertionError exc) {
             LOG.error("Error simulating the World", exc);
             return false;
         }
-    }
-
-    private VitalSign tickMovableAgent(Agent.Movable agent) {
-        Position.Immutable originalPosition = agent.getPosition();
-        VitalSign causeOfDeath = agent.tick();
-        if (causeOfDeath == null) {
-            Position.Immutable newPosition = agent.getPosition();
-            if (!originalPosition.equals(newPosition)) {
-                LOG.debug("Moved {} from {} to {}", agent, originalPosition, newPosition);
-            }
-            assert newPosition.getX() > 0
-                    && newPosition.getY() > 0
-                    && newPosition.getX() <= width - 2
-                    && newPosition.getY() <= height - 2 : "Agent " + agent.getId() + " moved out of the world: " + newPosition;
-        }
-
-        return causeOfDeath;
     }
 
     public void addAgent(Agent.Living agent) {
@@ -140,6 +128,10 @@ public class World {
         cemetery.put(agent.getId(), agent);
     }
 
+    public Optional<Agent.Living> getLivingAgent(int agentId) {
+        return livingAgents.stream().filter(agent2 -> agent2.getId() == agentId).findFirst();
+    }
+
     public Position getRandomPosition() {
         int x = RandomProvider.nextInt(1, getWidth() - 1);
         int y = RandomProvider.nextInt(1, getHeight() - 1);
@@ -148,14 +140,8 @@ public class World {
 
     private Map<String, Object> getAgentDetails(int agentId) {
         Map<String, Object> result;
-        Agent agent = livingAgents.stream().filter(agent2 -> agent2.getId() == agentId).findFirst().orElse(null);
-        if (agent == null) {
-            agent = cemetery.get(agentId);
-            if (agent == null) {
-                return Collections.emptyMap();
-            }
-        }
-        result = agent.getDetails();
+        Optional<Agent.Living> agentOptional = getLivingAgent(agentId).or(() -> Optional.ofNullable(cemetery.get(agentId)));
+        result = agentOptional.map(Agent::getDetails).orElse(Collections.emptyMap());
 
         return result;
     }
@@ -339,9 +325,13 @@ public class World {
 
         private void paintAgentsTweenFrames(Graphics2D g2d, Keyframe lastKeyframe, Iterable<AgentKeyframe> newKeyframe, double percentageToKeyframe) {
             if (animation.isFirstTween()) {
-                nextKeyframe = frameBuffer.poll();
-                if (nextKeyframe == null) {
-                    LOG.warn("No frames available");
+                Keyframe bufferedFrame = frameBuffer.poll();
+                if (bufferedFrame == null) {
+                    LOG.warn("No frames available. Pausing animation");
+                    animation.actionPerformed(new ActionEvent(this, 1, "pause"));
+                    return;
+                } else {
+                    nextKeyframe = bufferedFrame;
                 }
             }
 

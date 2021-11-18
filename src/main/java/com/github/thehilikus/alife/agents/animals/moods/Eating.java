@@ -20,37 +20,37 @@ public class Eating implements Mood {
     private static final double EATING_FATIGUE_FACTOR = 1.5;
     private static final int PRIORITY = 85;
 
-    private final MoodController moodController;
     private final Vision vision;
     private final Agent.Eatable food;
     private final HungerTracker hungerTracker;
     private final SizeTracker sizeTracker;
+    private final AgentModules dependencies;
     private int lastBite;
 
-    public Eating(MoodController moodController, Vision vision, SizeTracker sizeTracker, Agent.Eatable foodAgent, HungerTracker hungerTracker) {
-        this.moodController = moodController;
-        this.vision = vision;
+    public Eating(AgentModules dependencies, Agent.Eatable foodAgent) {
         this.food = foodAgent;
-        this.hungerTracker = hungerTracker;
-        this.sizeTracker = sizeTracker;
+        this.dependencies = dependencies;
+        this.vision = dependencies.getVision();
+        this.hungerTracker = dependencies.getHungerTracker();
+        this.sizeTracker = dependencies.getSizeTracker();
     }
 
     @Override
-    public Mood tick() {
+    public Mood tick(Agent.Living me) {
         SortedSet<ScanResult> scanResult = vision.scan(food.getClass()::isInstance);
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.food.getId()).findFirst();
         if (targetOptional.isPresent()) {
-            if (hungerTracker.isFull()) {
-                LOG.debug("Agent {} is full", getAgentId());
-                return moodController.startIdling();
-            }
             int eatSpeed = (int) Math.max(1, Math.round(sizeTracker.getValue() * SIZE_TO_BITE_RATIO));
             int biteSize = Math.min(eatSpeed, HungerTracker.FULL_THRESHOLD - hungerTracker.getValue());
             LOG.trace("Biting agent {} with bite size = {}. Current hunger = {}", food.getId(), biteSize, hungerTracker.getValue());
             lastBite = food.transferEnergy(biteSize);
+            if (hungerTracker.isFullAfter(lastBite)) {
+                LOG.debug("Agent {} is full", getAgentId());
+                return new Existing(dependencies);
+            }
         } else {
             LOG.debug("Food {} is finished", food.getId());
-            return moodController.startIdling();
+            return new Existing(dependencies);
         }
 
         return this;

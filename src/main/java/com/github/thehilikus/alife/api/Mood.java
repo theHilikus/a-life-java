@@ -11,8 +11,14 @@ public interface Mood extends Component {
      */
     String PARAMETER_PREFIX = "mood.";
 
+    /**
+     * Executes the current mood
+     *
+     * @param me a reference to the agent that's being acted on
+     * @return the mood for the next hour
+     */
     @NotNull
-    Mood tick();
+    Mood tick(Agent.Living me);
 
     default int getHungerDelta() {
         return HUNGER_DERIVATIVE;

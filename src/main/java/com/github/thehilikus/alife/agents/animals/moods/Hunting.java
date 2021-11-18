@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
-import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,18 +15,18 @@ import java.util.SortedSet;
 public class Hunting implements Mood {
     private static final int PRIORITY = 82;
     private static final Logger LOG = LoggerFactory.getLogger(Hunting.class.getSimpleName());
-    private final MoodController moodController;
     private final Vision vision;
     private final Locomotion locomotion;
     private final double speedFactor;
     private final Agent target;
+    private final AgentModules dependencies;
     private int lastMovement;
 
-    public Hunting(MoodController moodController, Vision vision, Locomotion locomotion, Genome genome, Agent target) {
-        this.moodController = moodController;
-        this.vision = vision;
-        this.locomotion = locomotion;
-        this.speedFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor");
+    public Hunting(AgentModules dependencies, Agent target) {
+        this.dependencies = dependencies;
+        this.vision = dependencies.getVision();
+        this.locomotion = dependencies.getLocomotion();
+        this.speedFactor = dependencies.getGenome().getGene(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor");
         this.target = target;
     }
 
@@ -47,7 +46,7 @@ public class Hunting implements Mood {
     }
 
     @Override
-    public Mood tick() {
+    public Mood tick(Agent.Living me) {
         //scan to see if target is still there
         SortedSet<ScanResult> scanResult = vision.scan(target.getClass()::isInstance);
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.target.getId()).findFirst();
@@ -55,20 +54,20 @@ public class Hunting implements Mood {
             ScanResult targetScan = targetOptional.get();
             int maxMovement = locomotion.moveTowardsTarget(speedFactor, (int) Math.sqrt(targetScan.getDistanceSquared()), targetScan.getRelativeDirection());
             if (locomotion.getPosition().isNextTo(targetScan.getAgent().getPosition())) {
-                return reachedTarget();
+                return reachedTarget((Agent.Social) me);
             } else {
                 lastMovement = maxMovement;
             }
         } else {
             LOG.info("Target {} is gone :(", target.getId());
-            return moodController.startScouting();
+            return new Scouting(dependencies);
         }
 
         return this;
     }
 
-    protected Mood reachedTarget() {
-        return moodController.startEating((Agent.Eatable) target);
+    protected Mood reachedTarget(Agent.Social me) {
+        return new Eating(dependencies, (Agent.Eatable) target);
     }
 
     @Override

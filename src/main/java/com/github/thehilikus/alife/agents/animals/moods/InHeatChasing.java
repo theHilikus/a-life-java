@@ -1,24 +1,42 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
-import com.github.thehilikus.alife.agents.genetics.Genome;
-import com.github.thehilikus.alife.api.*;
+import com.github.thehilikus.alife.agents.controllers.AgeTracker;
+import com.github.thehilikus.alife.agents.controllers.SizeTracker;
+import com.github.thehilikus.alife.agents.controllers.SocialController;
+import com.github.thehilikus.alife.api.Agent;
+import com.github.thehilikus.alife.api.Message;
+import com.github.thehilikus.alife.api.Mood;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * When an agent has found a potential mate
  */
 public class InHeatChasing extends Hunting {
     private static final int PRIORITY = 62;
-    private final MoodController moodController;
-    private final Agent.Evolvable mate;
+    private final AgeTracker ageTracker;
+    private final SizeTracker sizeTracker;
+    private final Agent.Social mate;
+    private final AgentModules dependencies;
 
-    public InHeatChasing(MoodController moodController, Vision vision, Locomotion locomotion, Genome genome, Agent.Evolvable mate) {
-        super(moodController, vision, locomotion, genome, mate);
-        this.moodController = moodController;
+    public InHeatChasing(AgentModules dependencies, Agent.Social mate) {
+        super(dependencies, mate);
+        this.dependencies = dependencies;
+        this.ageTracker = dependencies.getAgeTracker();
+        this.sizeTracker = dependencies.getSizeTracker();
         this.mate = mate;
     }
+
     @Override
-    protected Mood reachedTarget() {
-        return moodController.startMating(mate);
+    protected Mood reachedTarget(Agent.Social me) {
+        Map<String, Object> details = new HashMap<>();
+        details.putAll(ageTracker.getParameters());
+        details.putAll(sizeTracker.getParameters());
+        Message message = new Message(me, SocialController.MessageType.MATING_CALL, details);
+        mate.communicate(message);
+
+        return new Mating(dependencies, mate);
     }
 
     @Override

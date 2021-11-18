@@ -1,14 +1,10 @@
 package com.github.thehilikus.alife.agents.animals;
 
-import com.github.thehilikus.alife.agents.animals.moods.Existing;
-import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
-import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
-import com.github.thehilikus.alife.agents.controllers.*;
+import com.github.thehilikus.alife.agents.animals.moods.AgentModules;
+import com.github.thehilikus.alife.agents.controllers.SocialController;
+import com.github.thehilikus.alife.agents.controllers.VitalsController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
-import com.github.thehilikus.alife.agents.genetics.HerbivoreGenome;
 import com.github.thehilikus.alife.api.*;
-import com.github.thehilikus.alife.world.IdsProvider;
-import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,66 +14,57 @@ import java.util.Map;
 /**
  * A living agent that eats {@link com.github.thehilikus.alife.agents.plants.Plant}
  */
-public class Herbivore implements Agent.Movable, Agent.Evolvable {
+public class Herbivore implements Agent.Social {
 
     private static final Logger LOG = LoggerFactory.getLogger(Herbivore.class.getSimpleName());
     private final Vision vision;
     private final Locomotion locomotion;
-
     private final Genome genome;
-
     private final int id;
     private Mood mood;
+    private final SocialController social;
     private final VitalsController vitals;
 
-    public static void create(int count, World world) {
-        HerbivoreGenome.configureEnvironmentalLimits(world);
-
-        for (int current = 0; current < count; current++) {
-            int id = IdsProvider.getNextId();
-            Genome genome = new HerbivoreGenome();
-            Vision vision = new SurroundingsVision(id, genome, world);
-            Locomotion locomotion = new StraightWalkWithRandomTurn(id, world.getRandomPosition(), genome);
-            Mood startingMood = new Existing(vision, genome, locomotion);
-
-            HungerTracker hungerTracker = new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
-            EnergyTracker energyTracker = new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
-            AgeTracker ageTracker = new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
-            ReproductionTracker reproductionTracker = new ReproductionTracker();
-            SizeTracker sizeTracker = new SizeTracker(genome.getGene("maxSize"));
-            MoodController moodController = new HerbivoreMoodController(vision, locomotion, genome, hungerTracker, energyTracker, ageTracker, reproductionTracker, sizeTracker, world);
-            VitalsController vitals = new VitalsController(id, moodController, hungerTracker, energyTracker, ageTracker, reproductionTracker, sizeTracker);
-
-            Living newAgent = new Herbivore(id, vision, locomotion, startingMood, genome, vitals);
-            LOG.info("Created {}", newAgent);
-            world.addAgent(newAgent);
-        }
-    }
-
-    private Herbivore(int id, Vision vision, Locomotion locomotion, Mood startingMood, Genome genome, VitalsController vitals) {
+    Herbivore(int id, AgentModules dependencies, Mood startingMood, VitalsController vitals, SocialController social) {
         this.id = id;
-        this.vision = vision;
-        this.locomotion = locomotion;
-        this.genome = genome;
+        this.vision = dependencies.getVision();
+        this.locomotion = dependencies.getLocomotion();
+        this.genome = dependencies.getGenome();
         this.vitals = vitals;
         mood = startingMood;
+        this.social = social;
     }
 
     @Override
     public VitalSign tick() {
         LOG.debug("#### Updating state of {} ####", this);
-        Mood oldMood = mood;
-        mood = oldMood.tick();
-        Mood priorityMood = vitals.update(oldMood, mood);
+        Mood newMood = mood.tick(this);
+        vitals.updateTrackers(mood);
+
+        Mood vitalMood = vitals.nextMood(newMood);
+        if (vitalMood.getPriority() > newMood.getPriority()) {
+            LOG.info("Overwriting next mood {} with {} due to vital needs", newMood, vitalMood);
+            newMood = vitalMood;
+        }
         boolean alive = vitals.isAlive();
-        if (alive && !priorityMood.getClass().equals(mood.getClass())) {
-            LOG.info("Overwriting mood {} with {} due to vital need", mood, priorityMood);
-            mood = priorityMood;
-        } else if (oldMood != mood) {
-            LOG.info("Transitioning from {} to {}", oldMood, mood);
+
+        Mood socialMood = social.nextMood(newMood);
+        if (socialMood.getPriority() > newMood.getPriority()) {
+            LOG.info("Overwriting next mood {} with {} due to social interaction", newMood, socialMood);
+            newMood = socialMood;
         }
 
+        if (alive && newMood != mood) {
+            LOG.info("Transitioning from {} to {}", mood, newMood);
+        }
+        mood = newMood;
+
         return alive ? null : vitals.getCauseOfDeath();
+    }
+
+    @Override
+    public void communicate(Message message) {
+        social.receiveMessage(message);
     }
 
     @Override
@@ -114,30 +101,6 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
     @Override
     public Genome getGenome() {
         return genome;
-    }
-
-    @Override
-    public Evolvable reproduce(int fatherId, World world, Genome offspringGenome) {
-        int id = IdsProvider.getNextId();
-        Vision vision = new SurroundingsVision(id, offspringGenome, world);
-        Position offspringPosition = new Position(getPosition().getX(), getPosition().getY());
-        Locomotion offspringLocomotion = new StraightWalkWithRandomTurn(id, offspringPosition, offspringGenome);
-        Mood offspringStartingMood = new Existing(vision, offspringGenome, offspringLocomotion);
-
-        HungerTracker offspringHungerTracker = new HungerTracker(offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold"));
-        EnergyTracker offspringEnergyTracker = new EnergyTracker(id, offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"));
-        AgeTracker offspringAgeTracker = new AgeTracker(offspringGenome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy"));
-        ReproductionTracker offspringReproductionTracker = new ReproductionTracker();
-        SizeTracker offspringSizeTracker = new SizeTracker(offspringGenome.getGene("maxSize"));
-        MoodController offspringMoodController = new HerbivoreMoodController(vision, offspringLocomotion, offspringGenome, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, offspringSizeTracker, world);
-        VitalsController offspringVitals = new VitalsController(id, offspringMoodController, offspringHungerTracker, offspringEnergyTracker, offspringAgeTracker, offspringReproductionTracker, offspringSizeTracker);
-
-        Evolvable result = new Herbivore(id, vision, offspringLocomotion, offspringStartingMood, offspringGenome, offspringVitals);
-        LOG.info("Created offspring {}", result);
-        world.addAgent(result);
-
-        vitals.gaveBirth(fatherId, result);
-        return result;
     }
 
     @Override

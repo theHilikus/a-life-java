@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agents.plants.moods;
 
+import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Mood;
 
 import javax.validation.constraints.NotNull;
@@ -19,7 +20,7 @@ public class Growing implements Mood {
     }
 
     @Override
-    public Mood tick() {
+    public Mood tick(Agent.Living me) {
         return this;
     }
 

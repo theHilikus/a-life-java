@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agents.controllers;
 
+import com.github.thehilikus.alife.agents.animals.moods.Mating;
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
@@ -12,13 +13,16 @@ import java.util.Map;
  * Records information about an agent's pregnancy
  */
 public class ReproductionTracker implements VitalSign {
+    private static final int POST_REPRODUCTION_WAIT = 10;
     private int timeSinceReproduction;
-    private final Collection<Integer> offspring = new ArrayList<>();
+    private final Collection<Integer> offsprings = new ArrayList<>();
     private final Collection<Integer> mates = new ArrayList<>();
 
     @Override
     public void update(Mood currentMood) {
-        timeSinceReproduction++;
+        if (currentMood.getClass() != Mating.class) {
+            timeSinceReproduction++;
+        }
     }
 
     @Override
@@ -32,7 +36,7 @@ public class ReproductionTracker implements VitalSign {
     }
 
     public void gaveBirth(int otherParentId, int offspringId) {
-        offspring.add(offspringId);
+        offsprings.add(offspringId);
         mates.add(otherParentId);
         timeSinceReproduction = 0;
     }
@@ -42,7 +46,11 @@ public class ReproductionTracker implements VitalSign {
         return Map.of(
                 Agent.Evolvable.PARAMETER_PREFIX + "timeSinceReproduction", timeSinceReproduction,
                 Agent.Evolvable.PARAMETER_PREFIX + "mates", mates,
-                Agent.Evolvable.PARAMETER_PREFIX + "offspring", offspring
+                Agent.Evolvable.PARAMETER_PREFIX + "offspring", offsprings
         );
+    }
+
+    public boolean isWombRested() {
+        return timeSinceReproduction > POST_REPRODUCTION_WAIT;
     }
 }

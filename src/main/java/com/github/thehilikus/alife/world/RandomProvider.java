@@ -17,8 +17,8 @@ public class RandomProvider {
         random.setSeed(seed);
     }
 
-    public static int nextInt(int bound) {
-        return nextInt(0, bound);
+    public static int nextInt(int upperBound) {
+        return nextInt(0, upperBound);
     }
 
     public static int get(int fixed) {

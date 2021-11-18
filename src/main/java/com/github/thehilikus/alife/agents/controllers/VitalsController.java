@@ -1,5 +1,7 @@
 package com.github.thehilikus.alife.agents.controllers;
 
+import com.github.thehilikus.alife.agents.animals.moods.AgentModules;
+import com.github.thehilikus.alife.agents.animals.moods.InHeat;
 import com.github.thehilikus.alife.agents.animals.moods.Scouting;
 import com.github.thehilikus.alife.agents.animals.moods.Sleeping;
 import com.github.thehilikus.alife.api.*;
@@ -14,46 +16,30 @@ import java.util.Map;
  */
 public class VitalsController implements Component {
     private static final Logger LOG = LoggerFactory.getLogger(VitalsController.class.getSimpleName());
-    private final MoodController moodController;
     private final HungerTracker hungerTracker;
     private final EnergyTracker energyTracker;
     private final AgeTracker ageTracker;
     private final ReproductionTracker reproductionTracker;
     private final SizeTracker sizeTracker;
+    private final AgentModules dependencies;
     private final int agentId;
 
-    public VitalsController(int agentId, MoodController moodController, HungerTracker hungerTracker, EnergyTracker energyTracker, AgeTracker ageTracker, ReproductionTracker reproductionTracker, SizeTracker sizeTracker) {
+    public VitalsController(int agentId, AgentModules dependencies) {
         this.agentId = agentId;
-        this.moodController = moodController;
-        this.hungerTracker = hungerTracker;
-        this.energyTracker = energyTracker;
-        this.ageTracker = ageTracker;
-        this.reproductionTracker = reproductionTracker;
-        this.sizeTracker = sizeTracker;
+        this.dependencies = dependencies;
+        this.hungerTracker = dependencies.getHungerTracker();
+        this.energyTracker = dependencies.getEnergyTracker();
+        this.ageTracker = dependencies.getAgeTracker();
+        this.reproductionTracker = dependencies.getReproductionTracker();
+        this.sizeTracker = dependencies.getSizeTracker();
     }
 
-    public Mood update(Mood lastMood, Mood newMood) {
-        hungerTracker.update(lastMood);
-        energyTracker.update(lastMood);
+    public void updateTrackers(Mood currentMood) {
+        hungerTracker.update(currentMood);
+        energyTracker.update(currentMood);
         ageTracker.update();
-        reproductionTracker.update();
+        reproductionTracker.update(currentMood);
         sizeTracker.update();
-
-        Mood result = newMood;
-        if (energyTracker.isTired()) {
-            LOG.debug("{} is tired", agentId);
-            if (newMood.getPriority() < Sleeping.PRIORITY) {
-                result = moodController.startSleeping();
-            }
-        }
-        if (hungerTracker.isHungry()) {
-            LOG.debug("{} is hungry", agentId);
-            if (newMood.getPriority() < Scouting.PRIORITY) {
-                result = moodController.startScouting();
-            }
-        }
-
-        return result;
     }
 
     public boolean isAlive() {
@@ -90,7 +76,27 @@ public class VitalsController implements Component {
         return result;
     }
 
-    public void gaveBirth(int fatherId, Agent offspring) {
-        reproductionTracker.gaveBirth(fatherId, offspring.getId());
+    public Mood nextMood(Mood currentMood) {
+        Mood result = currentMood;
+        if (energyTracker.isTired()) {
+            LOG.debug("{} is tired", agentId);
+            result = new Sleeping(dependencies);
+        }
+        if (hungerTracker.isHungry()) {
+            Mood scouting = new Scouting(dependencies);
+            if (scouting.getPriority() > result.getPriority()) {
+                LOG.debug("{} is hungry", agentId);
+                result = scouting;
+            }
+        }
+        if (ageTracker.isTeenAge() && reproductionTracker.isWombRested()) {
+            Mood inHeat = new InHeat(dependencies);
+            if (inHeat.getPriority() > result.getPriority()) {
+                LOG.debug("{} is in heat", agentId);
+                result = inHeat;
+            }
+        }
+
+        return result;
     }
 }

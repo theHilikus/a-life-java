@@ -1,10 +1,11 @@
 package com.github.thehilikus.alife.agents.animals.moods;
 
+import com.github.thehilikus.alife.agents.animals.HerbivoreFactory;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.controllers.ReproductionTracker;
+import com.github.thehilikus.alife.agents.controllers.SocialController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
-import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,29 +19,27 @@ public class Mating implements Mood {
     private static final int PRIORITY = 65;
     private static final Logger LOG = LoggerFactory.getLogger(Mating.class.getSimpleName());
     private static final double MATE_ENERGY_FACTOR = 1.25;
-    private final MoodController moodController;
     private final Genome genome;
     private final ReproductionTracker reproductionTracker;
-    private final Agent.Evolvable mate;
+    private final Agent.Social mate;
     private final Vision vision;
     private final int matingDuration;
-    private final World world;
+    private final AgentModules dependencies;
     private int matingEnergySpent;
     private int timeWithMate;
 
-    public Mating(MoodController moodController, Vision vision, Genome genome, ReproductionTracker reproductionTracker, Agent.Evolvable mate, World world) {
-        this.moodController = moodController;
-        this.vision = vision;
-        this.genome = genome;
-        this.reproductionTracker = reproductionTracker;
+    public Mating(AgentModules dependencies, Agent.Social mate) {
+        this.dependencies = dependencies;
+        this.vision = dependencies.getVision();
+        this.genome = dependencies.getGenome();
+        this.reproductionTracker = dependencies.getReproductionTracker();
         this.mate = mate;
         this.matingDuration = genome.getGene(Agent.Evolvable.PARAMETER_PREFIX + "matingDuration");
-        this.world = world;
     }
 
 
     @Override
-    public Mood tick() {
+    public Mood tick(Agent.Living me) {
         SortedSet<ScanResult> mateScans = vision.scan(agent -> agent == mate);
         if (!mateScans.isEmpty()) {
             ScanResult mateScan = mateScans.first();
@@ -48,28 +47,32 @@ public class Mating implements Mood {
                 LOG.debug("Mating with {}: {}/{}", mate, timeWithMate, matingDuration);
                 if (timeWithMate >= matingDuration) {
                     LOG.info("Giving birth");
-                    Genome offspringGenome = genome.crossover(mate.getGenome());
-                    offspringGenome.mutate();
-
-                    Agent.Evolvable offspring = mate.reproduce(getAgentId(), world, offspringGenome);
+                    Agent.Living offspring = new HerbivoreFactory().createOffspring(vision.getAgentId(), genome, mate.getGenome());
                     reproductionTracker.gaveBirth(mate.getId(), offspring.getId());
+                    notifyOtherParent((Agent.Social) me, offspring.getId());
 
-                    return moodController.startIdling();
+                    return new Existing(dependencies);
                 }
                 timeWithMate++;
                 matingEnergySpent += Math.round(EnergyTracker.ENERGY_DERIVATIVE * MATE_ENERGY_FACTOR);
             } else {
                 timeWithMate = 0;
                 LOG.debug("Mate {} is too far", mate);
-                return moodController.startFollowing(mate);
+                return new InHeatChasing(dependencies, mate);
             }
         } else {
             LOG.debug("Mate {} is gone :'(", mate.getId());
             timeWithMate = 0;
-            return moodController.startScouting();
+            return new Scouting(dependencies);
         }
 
         return this;
+    }
+
+    private void notifyOtherParent(Agent.Social me, int offspringId) {
+        Map<String, Object> details = Map.of("offspringId", offspringId);
+        Message newOffspringMessage = new Message(me, SocialController.MessageType.NEW_OFFSPRING, details);
+        mate.communicate(newOffspringMessage);
     }
 
     @Override
