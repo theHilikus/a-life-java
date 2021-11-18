@@ -49,11 +49,6 @@ public interface Agent {
      * An agent that has a genotype
      */
     interface Evolvable extends Living {
-        /**
-         * The prefix for evolution parameters
-         */
-        String PARAMETER_PREFIX = "reproduction.";
-
         @NotNull
         Genome getGenome();
     }

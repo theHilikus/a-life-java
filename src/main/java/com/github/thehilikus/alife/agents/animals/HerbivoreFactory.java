@@ -41,7 +41,7 @@ public class HerbivoreFactory extends LivingAgentFactory {
 
         dependencies.addVitalSign(HungerTracker.class, new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold")));
         dependencies.addVitalSign(EnergyTracker.class, new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold")));
-        dependencies.addVitalSign(AgeTracker.class, new AgeTracker(genome.getGene(Agent.Evolvable.PARAMETER_PREFIX + "teenAge"), genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy")));
+        dependencies.addVitalSign(AgeTracker.class, new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "teenAge"), genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy")));
         dependencies.addVitalSign(ReproductionTracker.class, new ReproductionTracker());
         dependencies.addVitalSign(SizeTracker.class, new SizeTracker(genome.getGene("maxSize")));
 

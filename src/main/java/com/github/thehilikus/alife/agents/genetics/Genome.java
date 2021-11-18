@@ -1,8 +1,6 @@
 package com.github.thehilikus.alife.agents.genetics;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * A set of parameters that control the fitness of an agent
@@ -12,11 +10,6 @@ public abstract class Genome {
 
     protected Genome(Map<String, Object> genes) {
         this.genes = genes;
-    }
-
-    public Map<String, Object> getParameters() {
-        Map<String, Object> mapWithStrings = genes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        return Collections.unmodifiableMap(mapWithStrings);
     }
 
     @SuppressWarnings("unchecked")

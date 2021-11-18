@@ -54,8 +54,8 @@ public class HerbivoreGenome extends Genome {
         result.put(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", lifeExpectancy);
         result.put(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold", RandomProvider.nextInt(MAX_LOW_ENERGY_THRESHOLD));
         result.put(VitalSign.PARAMETER_PREFIX + "hungryThreshold", RandomProvider.nextInt(MAX_HUNGRY_THRESHOLD));
-        result.put(Agent.Evolvable.PARAMETER_PREFIX + "teenAge", (int) (lifeExpectancy * RandomProvider.nextDouble(MIN_TEEN_AGE_PROPORTION, MAX_TEEN_AGE_PROPORTION)));
-        result.put(Agent.Evolvable.PARAMETER_PREFIX + "matingDuration", RandomProvider.nextInt(MIN_MATING_DURATION, MAX_MATING_DURATION));
+        result.put(VitalSign.PARAMETER_PREFIX + "teenAge", (int) (lifeExpectancy * RandomProvider.nextDouble(MIN_TEEN_AGE_PROPORTION, MAX_TEEN_AGE_PROPORTION)));
+        result.put(VitalSign.PARAMETER_PREFIX + "matingDuration", RandomProvider.nextInt(MIN_MATING_DURATION, MAX_MATING_DURATION));
 
         return result;
     }

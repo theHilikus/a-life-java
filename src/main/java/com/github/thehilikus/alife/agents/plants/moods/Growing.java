@@ -3,8 +3,8 @@ package com.github.thehilikus.alife.agents.plants.moods;
 import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Mood;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -45,8 +45,8 @@ public class Growing implements Mood {
     }
 
     @Override
-    public @NotNull Map<String, Object> getDetails() {
-        return Map.of(PARAMETER_PREFIX + "recoveryRate", RECOVERY_RATE);
+    public Map<String, Object> getDetails() {
+        return Collections.emptyMap();
     }
 
     @Override

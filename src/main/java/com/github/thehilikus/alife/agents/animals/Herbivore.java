@@ -84,7 +84,6 @@ public class Herbivore implements Agent.Social {
         result.putAll(mood.getDetails());
         result.putAll(vision.getDetails());
         result.putAll(locomotion.getDetails());
-        result.putAll(genome.getParameters());
 
         return result;
     }

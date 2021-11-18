@@ -92,7 +92,7 @@ public class HerbivoreView implements Agent.View {
         g2d.setColor(agentColor);
 
         Stroke stroke = new BasicStroke();
-        if ((int) newKeyframe.getAgentDetail(VitalSign.PARAMETER_PREFIX + "age") >= (int) newKeyframe.getAgentDetail(Agent.Evolvable.PARAMETER_PREFIX + "teenAge")) {
+        if ((int) newKeyframe.getAgentDetail(VitalSign.PARAMETER_PREFIX + "age") >= (int) newKeyframe.getAgentDetail(VitalSign.PARAMETER_PREFIX + "teenAge")) {
             stroke = new BasicStroke(2);
         }
         g2d.setStroke(stroke);
@@ -114,7 +114,7 @@ public class HerbivoreView implements Agent.View {
         Color agentColor = tweenFrame.getInterpolatedProperty("color");
         g2d.setColor(agentColor);
         Stroke stroke = new BasicStroke();
-        if ((int) lastKeyframe.getAgentDetail(VitalSign.PARAMETER_PREFIX + "age") >= (int) lastKeyframe.getAgentDetail(Agent.Evolvable.PARAMETER_PREFIX + "teenAge")) {
+        if ((int) lastKeyframe.getAgentDetail(VitalSign.PARAMETER_PREFIX + "age") >= (int) lastKeyframe.getAgentDetail(VitalSign.PARAMETER_PREFIX + "teenAge")) {
             stroke = new BasicStroke(2);
         }
         g2d.setStroke(stroke);

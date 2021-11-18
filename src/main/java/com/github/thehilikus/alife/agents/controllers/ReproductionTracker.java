@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.agents.controllers;
 
 import com.github.thehilikus.alife.agents.animals.moods.Mating;
-import com.github.thehilikus.alife.api.Agent;
 import com.github.thehilikus.alife.api.Mood;
 import com.github.thehilikus.alife.api.VitalSign;
 
@@ -44,9 +43,9 @@ public class ReproductionTracker implements VitalSign {
     @Override
     public Map<String, Object> getDetails() {
         return Map.of(
-                Agent.Evolvable.PARAMETER_PREFIX + "timeSinceReproduction", timeSinceReproduction,
-                Agent.Evolvable.PARAMETER_PREFIX + "mates", mates,
-                Agent.Evolvable.PARAMETER_PREFIX + "offspring", offsprings
+                PARAMETER_PREFIX + "timeSinceReproduction", timeSinceReproduction,
+                PARAMETER_PREFIX + "mates", mates,
+                PARAMETER_PREFIX + "offspring", offsprings
         );
     }
 

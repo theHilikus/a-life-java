@@ -34,7 +34,7 @@ public class Mating implements Mood {
         this.genome = dependencies.getGenome();
         this.reproductionTracker = dependencies.getReproductionTracker();
         this.mate = mate;
-        this.matingDuration = genome.getGene(Agent.Evolvable.PARAMETER_PREFIX + "matingDuration");
+        this.matingDuration = genome.getGene(VitalSign.PARAMETER_PREFIX + "matingDuration");
     }
 
 
