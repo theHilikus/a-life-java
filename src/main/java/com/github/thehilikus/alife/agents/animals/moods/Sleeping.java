@@ -30,7 +30,7 @@ public class Sleeping implements Mood {
 
     @Override
     public @NotNull Mood tick(Agent.Living me) {
-        if (energyTracker.isRested()) {
+        if (energyTracker.isRestedAfter(ENERGY_RECOVERY_RATE)) {
             LOG.debug("Agent {} is rested", getAgentId());
             return new Existing(dependencies);
         }

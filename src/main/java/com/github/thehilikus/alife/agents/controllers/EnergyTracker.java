@@ -75,8 +75,8 @@ public class EnergyTracker implements VitalSign {
         return currentEnergy <= lowEnergyThreshold;
     }
 
-    public boolean isRested() {
-        boolean rested = currentEnergy >= MAX_ENERGY;
+    public boolean isRestedAfter(int nextEnergyIncrease) {
+        boolean rested = currentEnergy + nextEnergyIncrease >= MAX_ENERGY;
         if (!rested) {
             LOG.debug("Agent {} energy: {}", agentId, currentEnergy);
         }

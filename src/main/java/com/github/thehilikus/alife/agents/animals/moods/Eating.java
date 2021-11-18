@@ -40,14 +40,14 @@ public class Eating implements Mood {
         SortedSet<ScanResult> scanResult = vision.scan(food.getClass()::isInstance);
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.food.getId()).findFirst();
         if (targetOptional.isPresent()) {
-            if (hungerTracker.isFull()) {
-                LOG.debug("Agent {} is full", getAgentId());
-                return new Existing(dependencies);
-            }
             int eatSpeed = (int) Math.max(1, Math.round(sizeTracker.getValue() * SIZE_TO_BITE_RATIO));
             int biteSize = Math.min(eatSpeed, HungerTracker.FULL_THRESHOLD - hungerTracker.getValue());
             LOG.trace("Biting agent {} with bite size = {}. Current hunger = {}", food.getId(), biteSize, hungerTracker.getValue());
             lastBite = food.transferEnergy(biteSize);
+            if (hungerTracker.isFullAfter(lastBite)) {
+                LOG.debug("Agent {} is full", getAgentId());
+                return new Existing(dependencies);
+            }
         } else {
             LOG.debug("Food {} is finished", food.getId());
             return new Existing(dependencies);

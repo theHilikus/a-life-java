@@ -57,8 +57,8 @@ public class HungerTracker implements VitalSign {
         return currentHunger <= hungryThreshold;
     }
 
-    public boolean isFull() {
-        return currentHunger >= FULL_THRESHOLD;
+    public boolean isFullAfter(int lastBite) {
+        return currentHunger + lastBite >= FULL_THRESHOLD;
     }
 
     @Override
