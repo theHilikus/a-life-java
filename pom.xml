@@ -71,7 +71,7 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        com.github.thehilikus.alife.world.Simulation
+                                        com.github.thehilikus.alife.simulation.Simulation
                                     </mainClass>
                                 </manifest>
                             </archive>

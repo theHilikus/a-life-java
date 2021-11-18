@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.api;
 
+import com.github.thehilikus.alife.agent.api.Position;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

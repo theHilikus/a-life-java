@@ -1,11 +1,17 @@
 package com.github.thehilikus.alife.world;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agents.views.AgentsView;
-import com.github.thehilikus.alife.api.*;
-import com.github.thehilikus.alife.world.ui.AgentKeyframe;
-import com.github.thehilikus.alife.world.ui.InfoPanel;
-import com.github.thehilikus.alife.world.ui.Keyframe;
+import com.github.thehilikus.alife.agent.api.*;
+import com.github.thehilikus.alife.agent.vision.api.ScanResult;
+import com.github.thehilikus.alife.agent.motion.api.Locomotion;
+import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
+import com.github.thehilikus.alife.simulation.CliOptions;
+import com.github.thehilikus.alife.simulation.ui.AgentKeyframe;
+import com.github.thehilikus.alife.simulation.ui.Animation;
+import com.github.thehilikus.alife.simulation.ui.Keyframe;
+import com.github.thehilikus.alife.simulation.ui.swing.InfoPanel;
+import com.github.thehilikus.alife.simulation.ui.views.AgentView;
+import com.github.thehilikus.alife.simulation.ui.views.AgentsViewDelegator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +38,7 @@ public class World {
     private int hour;
     private WorldListener worldListener;
 
-
-    static World createWorld(CliOptions options) {
+    public static World createWorld(CliOptions options) {
         return new World(options.getWorldWidth(), options.getWorldHeight());
     }
 
@@ -184,7 +189,7 @@ public class World {
     public class ConsoleView {
 
         private final Semaphore semaphore = new Semaphore(0);
-        private final Agent.View agentsView = new AgentsView();
+        private final AgentView agentsView = new AgentsViewDelegator();
         private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
         public void runAutomatic(int refreshDelay) {
@@ -240,7 +245,7 @@ public class World {
     }
 
     public class GraphicalView extends JPanel implements ActionListener {
-        private final Agent.View agentsView = new AgentsView();
+        private final AgentView agentsView = new AgentsViewDelegator();
         private final Map<Shape, Integer> agentsShapes = new HashMap<>();
         private int agentSelectedId = -1;
         private final Animation animation;

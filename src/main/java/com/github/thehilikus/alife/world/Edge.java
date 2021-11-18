@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.world;
 
-import com.github.thehilikus.alife.api.Agent;
-import com.github.thehilikus.alife.api.Position;
+import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.Position;
 
 import java.util.Collections;
 import java.util.Map;
