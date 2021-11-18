@@ -148,7 +148,7 @@ public class HerbivoreView implements Agent.View {
         Path2D triangle = new Path2D.Double();
         triangle.moveTo(size / -2.4, -size / 2.0);
         triangle.lineTo(size / -2.4, size / 2.0);
-        triangle.lineTo(size / 1.2, 0 );
+        triangle.lineTo(size / 1.2, 0);
         triangle.closePath();
 
         AffineTransform transform = new AffineTransform();
@@ -172,7 +172,8 @@ public class HerbivoreView implements Agent.View {
         float[] rgbColorComponents = moodColor.getRGBColorComponents(null);
         float vitality = calculateVitality(details);
 
-        return new Color(rgbColorComponents[0], rgbColorComponents[1], rgbColorComponents[2], vitality);
+        final float minimumTransparency = 0.15f;
+        return new Color(rgbColorComponents[0], rgbColorComponents[1], rgbColorComponents[2], Math.max(vitality, minimumTransparency));
     }
 
     private float calculateVitality(Map<String, Object> details) {
