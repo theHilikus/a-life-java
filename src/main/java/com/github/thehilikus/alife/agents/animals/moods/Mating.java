@@ -20,18 +20,18 @@ public class Mating implements Mood {
     private static final double MATE_ENERGY_FACTOR = 1.25;
     private final Genome genome;
     private final ReproductionTracker reproductionTracker;
-    private final Agent.Evolvable mate;
+    private final Agent.Social mate;
     private final Vision vision;
     private final int matingDuration;
     private final AgentModules dependencies;
     private int matingEnergySpent;
     private int timeWithMate;
 
-    public Mating(MoodController moodController, Vision vision, Genome genome, ReproductionTracker reproductionTracker, Agent.Evolvable mate) {
-        this.moodController = moodController;
-        this.vision = vision;
-        this.genome = genome;
-        this.reproductionTracker = reproductionTracker;
+    public Mating(AgentModules dependencies, Agent.Social mate) {
+        this.dependencies = dependencies;
+        this.vision = dependencies.getVision();
+        this.genome = dependencies.getGenome();
+        this.reproductionTracker = dependencies.getReproductionTracker();
         this.mate = mate;
         this.matingDuration = genome.getGene(Agent.Evolvable.PARAMETER_PREFIX + "matingDuration");
     }

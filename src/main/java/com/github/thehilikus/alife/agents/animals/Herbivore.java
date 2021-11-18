@@ -1,14 +1,10 @@
 package com.github.thehilikus.alife.agents.animals;
 
-import com.github.thehilikus.alife.agents.animals.moods.Existing;
-import com.github.thehilikus.alife.agents.animals.motions.StraightWalkWithRandomTurn;
-import com.github.thehilikus.alife.agents.animals.visions.SurroundingsVision;
-import com.github.thehilikus.alife.agents.controllers.*;
+import com.github.thehilikus.alife.agents.animals.moods.AgentModules;
+import com.github.thehilikus.alife.agents.controllers.SocialController;
+import com.github.thehilikus.alife.agents.controllers.VitalsController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
-import com.github.thehilikus.alife.agents.genetics.HerbivoreGenome;
 import com.github.thehilikus.alife.api.*;
-import com.github.thehilikus.alife.world.IdsProvider;
-import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,25 +14,25 @@ import java.util.Map;
 /**
  * A living agent that eats {@link com.github.thehilikus.alife.agents.plants.Plant}
  */
-public class Herbivore implements Agent.Movable, Agent.Evolvable {
+public class Herbivore implements Agent.Social {
 
     private static final Logger LOG = LoggerFactory.getLogger(Herbivore.class.getSimpleName());
     private final Vision vision;
     private final Locomotion locomotion;
-
     private final Genome genome;
-
     private final int id;
     private Mood mood;
+    private final SocialController social;
     private final VitalsController vitals;
 
-    Herbivore(int id, Genome genome, Vision vision, Locomotion locomotion, Mood startingMood, VitalsController vitals) {
+    Herbivore(int id, AgentModules dependencies, Mood startingMood, VitalsController vitals, SocialController social) {
         this.id = id;
         this.vision = dependencies.getVision();
         this.locomotion = dependencies.getLocomotion();
         this.genome = dependencies.getGenome();
         this.vitals = vitals;
         mood = startingMood;
+        this.social = social;
     }
 
     @Override
@@ -54,6 +50,11 @@ public class Herbivore implements Agent.Movable, Agent.Evolvable {
         }
 
         return alive ? null : vitals.getCauseOfDeath();
+    }
+
+    @Override
+    public void communicate(Message message) {
+        social.receiveMessage(message);
     }
 
     @Override

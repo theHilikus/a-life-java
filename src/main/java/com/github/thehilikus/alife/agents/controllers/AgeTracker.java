@@ -12,9 +12,11 @@ import java.util.Map;
 public class AgeTracker implements VitalSign {
     @PositiveOrZero
     private int currentAge;
+    private final int teenAge;
     private final int lifeExpectancy;
 
-    public AgeTracker(int lifeExpectancy) {
+    public AgeTracker(int teenAge, int lifeExpectancy) {
+        this.teenAge = teenAge;
         this.lifeExpectancy = lifeExpectancy;
     }
 
@@ -37,6 +39,7 @@ public class AgeTracker implements VitalSign {
     public Map<String, Object> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "age", currentAge,
+                PARAMETER_PREFIX + "teenAge", teenAge,
                 PARAMETER_PREFIX + "lifeExpectancy", lifeExpectancy
         );
     }
@@ -47,5 +50,9 @@ public class AgeTracker implements VitalSign {
                 "currentAge=" + currentAge +
                 ", lifeExpectancy=" + lifeExpectancy +
                 '}';
+    }
+
+    public boolean isTeenAge() {
+        return currentAge >= teenAge;
     }
 }

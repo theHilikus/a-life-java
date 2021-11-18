@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.api;
 
 import com.github.thehilikus.alife.agents.genetics.Genome;
-import com.github.thehilikus.alife.world.World;
 import com.github.thehilikus.alife.world.ui.AgentKeyframe;
 
 import javax.validation.constraints.NotNull;
@@ -47,13 +46,6 @@ public interface Agent {
     }
 
     /**
-     * An agent that can change positions
-     */
-    interface Movable extends Living {
-
-    }
-
-    /**
      * An agent that has a genotype
      */
     interface Evolvable extends Living {
@@ -64,6 +56,13 @@ public interface Agent {
 
         @NotNull
         Genome getGenome();
+    }
+
+    /**
+     * An agent that can communicate with others
+     */
+    interface Social extends Evolvable {
+        void communicate(Message message);
     }
 
     interface View {

@@ -54,7 +54,7 @@ public class Hunting implements Mood {
             ScanResult targetScan = targetOptional.get();
             int maxMovement = locomotion.moveTowardsTarget(speedFactor, (int) Math.sqrt(targetScan.getDistanceSquared()), targetScan.getRelativeDirection());
             if (locomotion.getPosition().isNextTo(targetScan.getAgent().getPosition())) {
-                return reachedTarget();
+                return reachedTarget((Agent.Social) me);
             } else {
                 lastMovement = maxMovement;
             }
@@ -66,8 +66,8 @@ public class Hunting implements Mood {
         return this;
     }
 
-    protected Mood reachedTarget() {
-        return moodController.startEating((Agent.Eatable) target);
+    protected Mood reachedTarget(Agent.Social me) {
+        return new Eating(dependencies, (Agent.Eatable) target);
     }
 
     @Override

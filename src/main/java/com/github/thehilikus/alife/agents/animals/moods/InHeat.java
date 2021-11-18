@@ -30,7 +30,7 @@ public class InHeat implements Mood {
         if (!potentialMates.isEmpty()) {
             ScanResult closest = potentialMates.first();
             locomotion.turn(closest.getRelativeDirection());
-            return moodController.startFollowing((Agent.Evolvable) closest.getAgent());
+            return new InHeatChasing(dependencies, (Agent.Social) closest.getAgent());
         } else {
             existing.tick(me);
             return this;
