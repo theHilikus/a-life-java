@@ -76,10 +76,6 @@ public class VitalsController implements Component {
         return result;
     }
 
-    public void gaveBirth(int fatherId, Agent offspring) {
-        reproductionTracker.gaveBirth(fatherId, offspring.getId());
-    }
-
     public Mood nextMood(Mood currentMood) {
         Mood result = currentMood;
         if (energyTracker.isTired()) {

@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.agents.controllers;
 
 import com.github.thehilikus.alife.agents.animals.moods.AgentModules;
-import com.github.thehilikus.alife.agents.animals.moods.InHeatChasing;
 import com.github.thehilikus.alife.agents.animals.moods.Mating;
 import com.github.thehilikus.alife.api.*;
 import com.github.thehilikus.alife.world.RandomProvider;
@@ -29,10 +28,19 @@ public class SocialController implements Component {
         this.reproduction = dependencies.getReproductionTracker();
     }
 
+    public Mood nextMood(Mood currentMood) {
+        Mood result = Objects.requireNonNullElse(socialMood, currentMood);
+        socialMood = null;
+
+        return result;
+    }
+
     public void receiveMessage(Message message) {
         LOG.debug("Agent {} received message {}", agentId, message);
-        if (message.getMessage().equals(InHeatChasing.MATING_CALL)) {
-            mateRequest(message.getSender(), message.getSenderDetails());
+        if (message.getMessage().equals(MessageType.MATING_CALL)) {
+            mateRequest(message.getSender(), message.getDetails());
+        } else if (message.getMessage().equals(MessageType.NEW_OFFSPRING)) {
+            newOffspring(message);
         }
     }
 
@@ -45,24 +53,23 @@ public class SocialController implements Component {
         }
     }
 
+    private double calculateFitness(Map<String, Object> myDetails, Map<String, Object> theirDetails) {
+        double sizeFitness = (double) (int) theirDetails.get("size") / (int) myDetails.get(VitalSign.PARAMETER_PREFIX + "maxSize");
+        double ageFitness = (double) (int) theirDetails.get(VitalSign.PARAMETER_PREFIX + "age") / (int) myDetails.get(VitalSign.PARAMETER_PREFIX + "lifeExpectancy");
+
+        return (sizeFitness + ageFitness) / 2;
+    }
+
     private void changeMoodFromExternal(Mood newMood) {
         if (socialMood == null || newMood.getPriority() > socialMood.getPriority()) {
             socialMood = newMood;
         }
     }
 
-    public Mood nextMood(Mood currentMood) {
-        Mood result = Objects.requireNonNullElse(socialMood, currentMood);
-        socialMood = null;
-
-        return result;
-    }
-
-    private double calculateFitness(Map<String, Object> myDetails, Map<String, Object> theirDetails) {
-        double sizeFitness = (double) (int) theirDetails.get("size") / (int) myDetails.get(VitalSign.PARAMETER_PREFIX + "maxSize");
-        double ageFitness = (double) (int) theirDetails.get(VitalSign.PARAMETER_PREFIX + "age") / (int) myDetails.get(VitalSign.PARAMETER_PREFIX + "lifeExpectancy");
-
-        return (sizeFitness + ageFitness) / 2;
+    private void newOffspring(Message message) {
+        int offspringId = (int) message.getDetails().get("offspringId");
+        int motherId = message.getSender().getId();
+        reproduction.gaveBirth(motherId, offspringId);
     }
 
     @Override
@@ -73,5 +80,16 @@ public class SocialController implements Component {
     @Override
     public Map<String, Object> getParameters() {
         return null;
+    }
+
+    public static class MessageType {
+        /**
+         * the agent has a new offspring birthed by another agent
+         */
+        public static final String NEW_OFFSPRING = "you have a baby";
+        /**
+         * the agent is trying to convince another agent to mate
+         */
+        public static final String MATING_CALL = "how you doin";
     }
 }

@@ -8,12 +8,12 @@ import java.util.Map;
 public class Message {
     private final Agent.Social sender;
     private final String message;
-    private final Map<String, Object> senderDetails;
+    private final Map<String, Object> details;
 
-    public Message(Agent.Social sender, String message, Map<String, Object> senderDetails) {
+    public Message(Agent.Social sender, String message, Map<String, Object> details) {
         this.sender = sender;
         this.message = message;
-        this.senderDetails = senderDetails;
+        this.details = details;
     }
 
     public Agent.Social getSender() {
@@ -24,7 +24,7 @@ public class Message {
         return message;
     }
 
-    public Map<String, Object> getSenderDetails() {
-        return senderDetails;
+    public Map<String, Object> getDetails() {
+        return details;
     }
 }

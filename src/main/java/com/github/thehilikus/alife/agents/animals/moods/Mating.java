@@ -3,6 +3,7 @@ package com.github.thehilikus.alife.agents.animals.moods;
 import com.github.thehilikus.alife.agents.animals.HerbivoreFactory;
 import com.github.thehilikus.alife.agents.controllers.EnergyTracker;
 import com.github.thehilikus.alife.agents.controllers.ReproductionTracker;
+import com.github.thehilikus.alife.agents.controllers.SocialController;
 import com.github.thehilikus.alife.agents.genetics.Genome;
 import com.github.thehilikus.alife.api.*;
 import org.slf4j.Logger;
@@ -46,9 +47,9 @@ public class Mating implements Mood {
                 LOG.debug("Mating with {}: {}/{}", mate, timeWithMate, matingDuration);
                 if (timeWithMate >= matingDuration) {
                     LOG.info("Giving birth");
-
                     Agent.Living offspring = new HerbivoreFactory().createOffspring(vision.getAgentId(), genome, mate.getGenome());
                     reproductionTracker.gaveBirth(mate.getId(), offspring.getId());
+                    notifyOtherParent((Agent.Social) me, offspring.getId());
 
                     return new Existing(dependencies);
                 }
@@ -66,6 +67,12 @@ public class Mating implements Mood {
         }
 
         return this;
+    }
+
+    private void notifyOtherParent(Agent.Social me, int offspringId) {
+        Map<String, Object> details = Map.of("offspringId", offspringId);
+        Message newOffspringMessage = new Message(me, SocialController.MessageType.NEW_OFFSPRING, details);
+        mate.communicate(newOffspringMessage);
     }
 
     @Override
