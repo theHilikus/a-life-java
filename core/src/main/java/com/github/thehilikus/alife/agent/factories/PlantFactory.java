@@ -1,8 +1,8 @@
 package com.github.thehilikus.alife.agent.factories;
 
-import com.github.thehilikus.alife.agent.api.Agent;
-import com.github.thehilikus.alife.agent.api.IdsProvider;
+import com.github.thehilikus.alife.agent.api.internal.IdsProvider;
 import com.github.thehilikus.alife.agent.api.LivingAgentFactory;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.Growing;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.plants.Plant;
@@ -16,13 +16,13 @@ public class PlantFactory extends LivingAgentFactory {
     private static final Logger LOG = LoggerFactory.getLogger(PlantFactory.class);
 
     @Override
-    protected Agent.Living createAgent() {
+    protected LivingAgent createAgent() {
         int id = IdsProvider.getNextId();
         Mood startingMood = new Growing(id);
 
         final double maxSizeProportionToWorld = 0.09;
         int maxSize = (int) (Math.min(getWorld().getWidth(), getWorld().getHeight()) * maxSizeProportionToWorld);
-        Agent.Living result = new Plant(id, getWorld().getRandomPosition(), startingMood, maxSize);
+        LivingAgent result = new Plant(id, getWorld().getRandomPosition(), startingMood, maxSize);
         LOG.info("Created {}", result);
         getWorld().addAgent(result);
 

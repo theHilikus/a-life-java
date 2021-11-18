@@ -1,6 +1,6 @@
 package com.github.thehilikus.alife.agent.vitals;
 
-import com.github.thehilikus.alife.agent.api.Component;
+import com.github.thehilikus.alife.agent.api.internal.Component;
 import com.github.thehilikus.alife.agent.genetics.Genome;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 import com.github.thehilikus.alife.agent.vision.api.Vision;

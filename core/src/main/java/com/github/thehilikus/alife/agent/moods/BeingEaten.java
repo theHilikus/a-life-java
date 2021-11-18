@@ -1,6 +1,6 @@
 package com.github.thehilikus.alife.agent.moods;
 
-import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 
 import java.util.Map;
@@ -23,7 +23,7 @@ public class BeingEaten implements Mood {
     }
 
     @Override
-    public Mood tick(Agent.Living me) {
+    public Mood tick(LivingAgent me) {
         hoursSinceLastBite++;
 
         Mood result = this;

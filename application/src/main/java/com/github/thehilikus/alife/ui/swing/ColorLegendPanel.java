@@ -35,7 +35,9 @@ class ColorLegendPanel extends JPanel {
         JLabel item = new JLabel("");
         item.setBackground(color);
         item.setOpaque(true);
-        item.setPreferredSize(new Dimension(50, 20));
+        final int colorItemWidth = 50;
+        final int colorItemHeight = 20;
+        item.setPreferredSize(new Dimension(colorItemWidth, colorItemHeight));
         panel.add(item);
     }
 }

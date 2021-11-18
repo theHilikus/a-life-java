@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agent.motion;
 
-import com.github.thehilikus.alife.agent.api.OrientationHelper;
 import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.genetics.DummyGenome;
 import com.github.thehilikus.alife.agent.genetics.Genome;
@@ -24,7 +23,7 @@ public class LegsTest {
 
     private static final double SPEED_FACTOR = 0.5;
     private static final int TOP_SPEED = 20;
-    private static final int ORIENTATION = OrientationHelper.SOUTH;
+    private static final int ORIENTATION = Locomotion.Orientation.SOUTH;
     private static final int ORIGINAL_COORD = 10;
     private Legs testingUnit;
 
@@ -73,7 +72,7 @@ public class LegsTest {
 
         int distance = testingUnit.move(SPEED_FACTOR, scanResults);
         assertEquals(distance, edgeY - ORIGINAL_COORD - 1);
-        assertEquals(testingUnit.getOrientation(), OrientationHelper.NORTH);
+        assertEquals(testingUnit.getOrientation(), Locomotion.Orientation.NORTH);
         Position.Immutable expectedPosition = new Position(ORIGINAL_COORD, edgeY - 1).toImmutable();
         assertEquals(testingUnit.getPosition(), expectedPosition);
     }

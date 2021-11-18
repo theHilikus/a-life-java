@@ -1,6 +1,6 @@
 package com.github.thehilikus.alife.agent.moods;
 
-import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.AgentModules;
 import com.github.thehilikus.alife.agent.vitals.EnergyTracker;
@@ -31,7 +31,7 @@ public class Sleeping implements Mood {
     }
 
     @Override
-    public @NotNull Mood tick(Agent.Living me) {
+    public @NotNull Mood tick(LivingAgent me) {
         if (energyTracker.isRestedAfter(ENERGY_RECOVERY_RATE)) {
             LOG.debug("Agent {} is rested", getAgentId());
             return new Existing(dependencies);

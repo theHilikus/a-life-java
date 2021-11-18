@@ -14,13 +14,13 @@ import java.util.SortedSet;
 /**
  * Motion that moves always in the direction being faced and random turns
  */
-public class StraightWalkWithRandomTurn extends Legs {
-    private static final Logger LOG = LoggerFactory.getLogger(StraightWalkWithRandomTurn.class.getSimpleName());
+public class RandomWalk extends Legs {
+    private static final Logger LOG = LoggerFactory.getLogger(RandomWalk.class.getSimpleName());
     @DecimalMax("1.0")
     private final double turningProbability;
 
 
-    public StraightWalkWithRandomTurn(int agentId, Position position, Genome genome) {
+    public RandomWalk(int agentId, Position position, Genome genome) {
         super(agentId, position, genome);
         this.turningProbability = genome.getGene(PARAMETER_PREFIX + "turningProbability");
     }
@@ -29,7 +29,7 @@ public class StraightWalkWithRandomTurn extends Legs {
     public int move(double speedFactor, SortedSet<ScanResult> scanResults) {
         if (shouldTurn()) {
             int originalOrientation = getOrientation();
-            turn(LEFT_TURN);
+            turn(Turn.LEFT);
             LOG.info("Turned from {}° to {}°", originalOrientation, getOrientation());
         } else {
             return super.move(speedFactor, scanResults);

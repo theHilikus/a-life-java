@@ -1,6 +1,7 @@
 package com.github.thehilikus.alife.agent.moods;
 
-import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
+import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 import com.github.thehilikus.alife.agent.social.Herbivore;
@@ -30,12 +31,12 @@ public class InHeat implements Mood {
     }
 
     @Override
-    public @NotNull Mood tick(Agent.Living me) {
+    public @NotNull Mood tick(LivingAgent me) {
         SortedSet<ScanResult> potentialMates = vision.scan(Herbivore.class::isInstance);
         if (!potentialMates.isEmpty()) {
             ScanResult closest = potentialMates.first();
             locomotion.turn(closest.getRelativeDirection());
-            return new InHeatChasing(dependencies, (Agent.Social) closest.getAgent());
+            return new InHeatChasing(dependencies, (SocialAgent) closest.getAgent());
         } else {
             existing.tick(me);
             return this;

@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.agent.vision.api;
 
 import com.github.thehilikus.alife.agent.api.Agent;
-import com.github.thehilikus.alife.agent.api.Component;
+import com.github.thehilikus.alife.agent.api.internal.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.SortedSet;

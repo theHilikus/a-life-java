@@ -22,5 +22,5 @@ public abstract class LivingAgentFactory {
         LivingAgentFactory.world = world;
     }
 
-    protected abstract Agent.Living createAgent();
+    protected abstract LivingAgent createAgent();
 }

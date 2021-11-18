@@ -1,4 +1,4 @@
-package com.github.thehilikus.alife.agent.api;
+package com.github.thehilikus.alife.agent.api.internal;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;

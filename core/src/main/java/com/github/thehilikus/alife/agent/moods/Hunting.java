@@ -1,6 +1,9 @@
 package com.github.thehilikus.alife.agent.moods;
 
 import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.internal.EatableAgent;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
+import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
@@ -51,7 +54,7 @@ public class Hunting implements Mood {
     }
 
     @Override
-    public Mood tick(Agent.Living me) {
+    public Mood tick(LivingAgent me) {
         //scan to see if target is still there
         SortedSet<ScanResult> scanResult = vision.scan(target.getClass()::isInstance);
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.target.getId()).findFirst();
@@ -59,7 +62,7 @@ public class Hunting implements Mood {
             ScanResult targetScan = targetOptional.get();
             int maxMovement = locomotion.moveTowardsTarget(speedFactor, (int) Math.sqrt(targetScan.getDistanceSquared()), targetScan.getRelativeDirection());
             if (locomotion.getPosition().isNextTo(targetScan.getAgent().getPosition())) {
-                return reachedTarget((Agent.Social) me);
+                return reachedTarget((SocialAgent) me);
             } else {
                 lastMovement = maxMovement;
             }
@@ -71,8 +74,8 @@ public class Hunting implements Mood {
         return this;
     }
 
-    protected Mood reachedTarget(Agent.Social me) {
-        return new Eating(dependencies, (Agent.Eatable) target);
+    protected Mood reachedTarget(SocialAgent me) {
+        return new Eating(dependencies, (EatableAgent) target);
     }
 
     @Override

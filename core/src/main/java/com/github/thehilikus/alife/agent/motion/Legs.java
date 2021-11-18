@@ -34,7 +34,7 @@ public class Legs implements Locomotion {
     private final double energyExpenditureFactor;
 
     protected Legs(int agentId, Position position, Genome genome) {
-        this(agentId, position, RandomProvider.nextInt(Locomotion.FULL_TURN), genome);
+        this(agentId, position, RandomProvider.nextInt(Turn.FULL), genome);
     }
 
     Legs(int agentId, Position position, int orientation, Genome genome) {
@@ -66,7 +66,7 @@ public class Legs implements Locomotion {
     }
 
     private Optional<ScanResult> findEdgeInCurrentOrientation(Iterable<ScanResult> scanResults) {
-        ScanResult smallestDirection = new ScanResult(1000, Locomotion.FULL_TURN, null);
+        ScanResult smallestDirection = new ScanResult(1000, Turn.FULL, null);
         for (ScanResult scanResult : scanResults) {
             if (scanResult.getAgent() instanceof Edge) {
                 int positiveRelativeDirection = Math.abs(scanResult.getRelativeDirection());
@@ -85,10 +85,10 @@ public class Legs implements Locomotion {
     }
 
     private boolean isFacing(Agent edge) {
-        boolean facingWest = orientation > 90 && orientation < 270;
-        boolean facingNorth = orientation > Locomotion.HALF_TURN;
-        boolean facingEast = orientation > 270 || orientation < 90;
-        boolean facingSouth = orientation < Locomotion.HALF_TURN;
+        boolean facingWest = orientation > Orientation.SOUTH && orientation < Orientation.NORTH;
+        boolean facingNorth = orientation > Turn.HALF;
+        boolean facingEast = orientation > Orientation.NORTH || orientation < Orientation.SOUTH;
+        boolean facingSouth = orientation < Turn.HALF;
 
         int deltaX = edge.getPosition().getX() - position.getX();
         int deltaY = edge.getPosition().getY() - position.getY();
@@ -108,64 +108,64 @@ public class Legs implements Locomotion {
         int edgeY = edge.getPosition().getY();
         int positiveOrientation = orientation;
         if (orientation < 0) {
-            positiveOrientation = Locomotion.FULL_TURN + orientation;
+            positiveOrientation = Turn.FULL + orientation;
         }
         if (edgeX == 0 && edgeY != 0) {
             //left wall
-            if (positiveOrientation < Locomotion.HALF_TURN) {
-                turn(Locomotion.LEFT_TURN);
-            } else if (positiveOrientation > Locomotion.HALF_TURN) {
-                turn(Locomotion.RIGHT_TURN);
+            if (positiveOrientation < Turn.HALF) {
+                turn(Turn.LEFT);
+            } else if (positiveOrientation > Turn.HALF) {
+                turn(Turn.RIGHT);
             } else {
-                turn(Locomotion.HALF_TURN);
+                turn(Turn.HALF);
             }
         } else if (edgeY == 0 && edgeX != 0) {
             //top wall
-            if (positiveOrientation < 270) {
-                turn(Locomotion.LEFT_TURN);
-            } else if (positiveOrientation > 270) {
-                turn(Locomotion.RIGHT_TURN);
+            if (positiveOrientation < Orientation.NORTH) {
+                turn(Turn.LEFT);
+            } else if (positiveOrientation > Orientation.NORTH) {
+                turn(Turn.RIGHT);
             } else {
-                turn(Locomotion.HALF_TURN);
+                turn(Turn.HALF);
             }
         } else if (edgeX > position.getX() && edgeY != 0) {
             //right wall
-            if (positiveOrientation < Locomotion.HALF_TURN) {
-                turn(Locomotion.RIGHT_TURN);
-            } else if (positiveOrientation > Locomotion.HALF_TURN) {
-                turn(Locomotion.LEFT_TURN);
+            if (positiveOrientation < Turn.HALF) {
+                turn(Turn.RIGHT);
+            } else if (positiveOrientation > Turn.HALF) {
+                turn(Turn.LEFT);
             } else {
-                turn(Locomotion.HALF_TURN);
+                turn(Turn.HALF);
             }
         } else if (edgeY > position.getY() && edgeX != 0) {
             //bottom wall
-            if (positiveOrientation < HALF_TURN / 2) {
-                turn(Locomotion.LEFT_TURN);
-            } else if (positiveOrientation > HALF_TURN / 2) {
-                turn(Locomotion.RIGHT_TURN);
+            if (positiveOrientation < Turn.HALF / 2) {
+                turn(Turn.LEFT);
+            } else if (positiveOrientation > Turn.HALF / 2) {
+                turn(Turn.RIGHT);
             } else {
-                turn(Locomotion.HALF_TURN);
+                turn(Turn.HALF);
             }
         } else {
             //corners
-            turn(Locomotion.HALF_TURN);
+            turn(Turn.HALF);
         }
     }
 
     @Override
     public int moveTowardsTarget(double speedFactor, int distance, int orientationOffset) {
-        if (Math.abs(orientationOffset) > Locomotion.HALF_TURN) {
+        if (Math.abs(orientationOffset) > Turn.HALF) {
             throw new IllegalArgumentException("Orientation offset must be reduced to its smallest representation: e.g. 359 -> -1");
         }
         int movement = 0;
         if (distance > 1) { //since otherwise we are already next to the target
             if (Math.abs(orientationOffset) < MOVE_AND_ROTATE_MAX) {
-                orientation = Math.floorMod(orientation + orientationOffset, Locomotion.FULL_TURN);
+                orientation = Math.floorMod(orientation + orientationOffset, Turn.FULL);
                 movement = moveForwards(speedFactor, distance - 1);
             } else {
                 //only rotate
                 LOG.debug("Only adjusting angle to target by {}", orientationOffset);
-                orientation = Math.floorMod(orientation + orientationOffset, Locomotion.FULL_TURN);
+                orientation = Math.floorMod(orientation + orientationOffset, Turn.FULL);
             }
         }
         return movement;
@@ -215,6 +215,6 @@ public class Legs implements Locomotion {
 
     @Override
     public void turn(int degrees) {
-        orientation = Math.floorMod(orientation + degrees, Locomotion.FULL_TURN);
+        orientation = Math.floorMod(orientation + degrees, Turn.FULL);
     }
 }

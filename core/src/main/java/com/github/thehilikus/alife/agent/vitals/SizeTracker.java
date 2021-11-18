@@ -1,6 +1,6 @@
 package com.github.thehilikus.alife.agent.vitals;
 
-import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 public class SizeTracker implements VitalSign {
     private static final int SLOWING_FACTOR = 3;
     private final int maxSize;
-    private int size = Agent.MIN_SIZE;
+    private int size = LivingAgent.MIN_SIZE;
     private int updates;
 
     public SizeTracker(int maxSize) {

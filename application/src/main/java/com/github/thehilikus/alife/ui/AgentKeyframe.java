@@ -42,6 +42,7 @@ public class AgentKeyframe implements Comparable<AgentKeyframe> {
         return (T) propertiesToInterpolate.get(name);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getAgentDetail(String name) {
         return (T) agentDetails.get(name);
     }
@@ -104,25 +105,25 @@ public class AgentKeyframe implements Comparable<AgentKeyframe> {
         int result;
         if (endAngle > startAngle) {
             //turned clockwise. see if anti clock is shorter
-            if (endAngle - startAngle > Locomotion.HALF_TURN) {
+            if (endAngle - startAngle > Locomotion.Turn.HALF) {
                 //anti is shorter
-                result = (int) interpolateNumber(startAngle + Locomotion.FULL_TURN, endAngle, percentToKeyFrame);
+                result = (int) interpolateNumber(startAngle + Locomotion.Turn.FULL, endAngle, percentToKeyFrame);
             } else {
                 // clockwise is shorter
                 result = (int) interpolateNumber(startAngle, endAngle, percentToKeyFrame);
             }
         } else { //endAngle < startAngle
             //turned anticlock or wrapped around
-            if (startAngle - endAngle > Locomotion.HALF_TURN) {
+            if (startAngle - endAngle > Locomotion.Turn.HALF) {
                 //clock is shorter
-                result = (int) interpolateNumber(startAngle, endAngle + Locomotion.FULL_TURN, percentToKeyFrame);
+                result = (int) interpolateNumber(startAngle, endAngle + Locomotion.Turn.FULL, percentToKeyFrame);
             } else {
                 result = (int) interpolateNumber(startAngle, endAngle, percentToKeyFrame);
             }
 
         }
 
-        return result % (Locomotion.FULL_TURN);
+        return result % (Locomotion.Turn.FULL);
     }
 
     private Color interpolateColor(Color startColor, Color endColor, double percentToKeyFrame) {

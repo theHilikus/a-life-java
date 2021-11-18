@@ -1,6 +1,6 @@
 package com.github.thehilikus.alife.agent.moods;
 
-import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 import com.github.thehilikus.alife.agent.plants.Plant;
@@ -37,7 +37,7 @@ public class Scouting implements Mood {
     }
 
     @Override
-    public Mood tick(Agent.Living me) {
+    public Mood tick(LivingAgent me) {
         //scout the area
         SortedSet<ScanResult> foundAgents = vision.scan(agent -> agent instanceof Plant || agent instanceof Edge);
         if (!foundAgents.isEmpty()) {

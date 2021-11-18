@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.agent.genetics;
 
-import com.github.thehilikus.alife.agent.api.Agent;
 import com.github.thehilikus.alife.agent.api.RandomProvider;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 import com.github.thehilikus.alife.agent.vision.api.Vision;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
@@ -39,7 +39,7 @@ public class HerbivoreGenome extends Genome {
 
     private static Map<String, Object> createGenes() {
         Map<String, Object> result = new HashMap<>();
-        int size = RandomProvider.nextInt(Agent.MIN_SIZE, maxSize);
+        int size = RandomProvider.nextInt(LivingAgent.MIN_SIZE, maxSize);
         result.put("maxSize", size);
         int visionDistance = RandomProvider.nextInt(Math.max(MIN_VISION_DISTANCE, size), maxVisionDistance); //vision should cover at least its body
         result.put("type", "Herbivore");
@@ -72,7 +72,7 @@ public class HerbivoreGenome extends Genome {
         maxVisionDistance = Math.max(world.getWidth(), world.getHeight()) / 2; //max vision is half the world
         final double maxSizeProportionToWorld = 0.05;
         maxSize = (int) (Math.min(world.getWidth(), world.getHeight()) * maxSizeProportionToWorld);
-        maxSize = Math.max(maxSize, Agent.MIN_SIZE + 1); //to allow a valid RNG range when world is small
+        maxSize = Math.max(maxSize, LivingAgent.MIN_SIZE + 1); //to allow a valid RNG range when world is small
     }
 
     @Override

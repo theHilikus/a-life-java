@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Representations for {@link com.github.thehilikus.alife.agent.social.Herbivore}
+ * Representations for Herbivores
  */
 public class HerbivoreView implements AgentView {
 

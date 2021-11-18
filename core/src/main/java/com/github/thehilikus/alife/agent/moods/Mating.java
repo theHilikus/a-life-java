@@ -1,7 +1,9 @@
 package com.github.thehilikus.alife.agent.moods;
 
 import com.github.thehilikus.alife.agent.api.Agent;
-import com.github.thehilikus.alife.agent.api.Message;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
+import com.github.thehilikus.alife.agent.api.internal.Message;
+import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.controllers.SocialController;
 import com.github.thehilikus.alife.agent.factories.HerbivoreFactory;
 import com.github.thehilikus.alife.agent.genetics.Genome;
@@ -27,14 +29,14 @@ public class Mating implements Mood {
     private static final double MATE_ENERGY_FACTOR = 1.25;
     private final Genome genome;
     private final ReproductionTracker reproductionTracker;
-    private final Agent.Social mate;
+    private final SocialAgent mate;
     private final Vision vision;
     private final int matingDuration;
     private final AgentModules dependencies;
     private int matingEnergySpent;
     private int timeWithMate;
 
-    public Mating(AgentModules dependencies, Agent.Social mate) {
+    public Mating(AgentModules dependencies, SocialAgent mate) {
         this.dependencies = dependencies;
         this.vision = dependencies.getVision();
         this.genome = dependencies.getGenome();
@@ -45,7 +47,7 @@ public class Mating implements Mood {
 
 
     @Override
-    public Mood tick(Agent.Living me) {
+    public Mood tick(LivingAgent me) {
         SortedSet<ScanResult> mateScans = vision.scan(agent -> agent == mate);
         if (!mateScans.isEmpty()) {
             ScanResult mateScan = mateScans.first();
@@ -53,9 +55,9 @@ public class Mating implements Mood {
                 LOG.debug("Mating with {}: {}/{}", mate, timeWithMate, matingDuration);
                 if (timeWithMate >= matingDuration) {
                     LOG.info("Giving birth");
-                    Agent.Living offspring = new HerbivoreFactory().createOffspring(vision.getAgentId(), genome, mate.getGenome());
+                    Agent offspring = new HerbivoreFactory().createOffspring(me, genome, mate.getGenome());
                     reproductionTracker.gaveBirth(mate.getId(), offspring.getId());
-                    notifyOtherParent((Agent.Social) me, offspring.getId());
+                    notifyOtherParent((SocialAgent) me, offspring.getId());
 
                     return new Existing(dependencies);
                 }
@@ -75,7 +77,7 @@ public class Mating implements Mood {
         return this;
     }
 
-    private void notifyOtherParent(Agent.Social me, int offspringId) {
+    private void notifyOtherParent(SocialAgent me, int offspringId) {
         Map<String, Object> details = Map.of("offspringId", offspringId);
         Message newOffspringMessage = new Message(me, SocialController.MessageType.NEW_OFFSPRING, details);
         mate.communicate(newOffspringMessage);

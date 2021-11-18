@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.agent.moods.api;
 
-import com.github.thehilikus.alife.agent.api.Agent;
-import com.github.thehilikus.alife.agent.api.Component;
+import com.github.thehilikus.alife.agent.api.internal.Component;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
 
 import javax.validation.constraints.NotNull;
 
@@ -21,7 +21,7 @@ public interface Mood extends Component {
      * @return the mood for the next hour
      */
     @NotNull
-    Mood tick(Agent.Living me);
+    Mood tick(LivingAgent me);
 
     default int getHungerDelta() {
         return HUNGER_DERIVATIVE;

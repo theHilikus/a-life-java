@@ -1,6 +1,6 @@
 package com.github.thehilikus.alife.agent.moods;
 
-import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
@@ -31,7 +31,7 @@ public class Existing implements Mood {
     }
 
     @Override
-    public Mood tick(Agent.Living me) {
+    public Mood tick(LivingAgent me) {
         SortedSet<ScanResult> foundAgents = vision.scan(Edge.class::isInstance);
         lastMovement = locomotion.move(speedFactor, foundAgents);
 

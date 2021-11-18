@@ -1,8 +1,8 @@
 package com.github.thehilikus.alife.agent.social;
 
-import com.github.thehilikus.alife.agent.api.Agent;
-import com.github.thehilikus.alife.agent.api.Message;
+import com.github.thehilikus.alife.agent.api.internal.Message;
 import com.github.thehilikus.alife.agent.api.Position;
+import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.controllers.SocialController;
 import com.github.thehilikus.alife.agent.controllers.VitalsController;
 import com.github.thehilikus.alife.agent.genetics.Genome;
@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * A living agent that eats {@link com.github.thehilikus.alife.agent.plants.Plant}
  */
-public class Herbivore implements Agent.Social {
+public class Herbivore implements SocialAgent {
 
     private static final Logger LOG = LoggerFactory.getLogger(Herbivore.class.getSimpleName());
     private final Vision vision;

@@ -1,8 +1,9 @@
 package com.github.thehilikus.alife.agent.plants;
 
-import com.github.thehilikus.alife.agent.api.Agent;
 import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.api.RandomProvider;
+import com.github.thehilikus.alife.agent.api.internal.EatableAgent;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.BeingEaten;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.EnergyTracker;
@@ -16,7 +17,7 @@ import java.util.Map;
 /**
  * An inanimate agent that gets eaten
  */
-public class Plant implements Agent.Eatable {
+public class Plant implements EatableAgent {
     private static final Logger LOG = LoggerFactory.getLogger(Plant.class.getSimpleName());
     private final int id;
     private final Position position;
@@ -29,7 +30,7 @@ public class Plant implements Agent.Eatable {
         this.position = startingPosition;
         this.mood = startingMood;
         this.energyTracker = new EnergyTracker(id);
-        this.size = RandomProvider.nextInt(Agent.MIN_SIZE, Math.max(maxSize, Agent.MIN_SIZE + 1));
+        this.size = RandomProvider.nextInt(LivingAgent.MIN_SIZE, Math.max(maxSize, LivingAgent.MIN_SIZE + 1));
     }
 
     @Override

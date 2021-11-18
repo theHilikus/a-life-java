@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Representations for {@link com.github.thehilikus.alife.agent.plants.Plant}
+ * Representations for Plants
  */
 public class PlantView implements AgentView {
 

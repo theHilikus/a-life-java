@@ -1,7 +1,8 @@
 package com.github.thehilikus.alife.agent.controllers;
 
-import com.github.thehilikus.alife.agent.api.Component;
+import com.github.thehilikus.alife.agent.api.internal.Component;
 import com.github.thehilikus.alife.agent.moods.InHeat;
+import com.github.thehilikus.alife.agent.moods.Mating;
 import com.github.thehilikus.alife.agent.moods.Scouting;
 import com.github.thehilikus.alife.agent.moods.Sleeping;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
@@ -40,8 +41,11 @@ public class VitalsController implements Component {
         hungerTracker.update(currentMood);
         energyTracker.update(currentMood);
         ageTracker.update();
-        reproductionTracker.update(currentMood);
         sizeTracker.update();
+
+        if (currentMood.getClass() != Mating.class) {
+            reproductionTracker.update();
+        }
     }
 
     public boolean isAlive() {

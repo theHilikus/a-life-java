@@ -1,9 +1,9 @@
 package com.github.thehilikus.alife.agent.controllers;
 
-import com.github.thehilikus.alife.agent.api.Agent;
-import com.github.thehilikus.alife.agent.api.Component;
-import com.github.thehilikus.alife.agent.api.Message;
+import com.github.thehilikus.alife.agent.api.internal.Component;
+import com.github.thehilikus.alife.agent.api.internal.Message;
 import com.github.thehilikus.alife.agent.api.RandomProvider;
+import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.moods.Mating;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.AgentModules;
@@ -49,7 +49,7 @@ public class SocialController implements Component {
         }
     }
 
-    private void mateRequest(Agent.Social sender, Map<String, Object> senderDetails) {
+    private void mateRequest(SocialAgent sender, Map<String, Object> senderDetails) {
         double senderFitness = calculateFitness(vitals.getDetails(), senderDetails);
         final double fitnessLeeway = 0.20;
         if (reproduction.isWombRested() && RandomProvider.nextDouble(1.0) < senderFitness + fitnessLeeway) {

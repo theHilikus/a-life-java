@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agent.api;
 
+import com.github.thehilikus.alife.agent.motion.api.Locomotion.Orientation;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -21,35 +22,35 @@ public class PositionTest {
 
     @Test
     void testMoveNorth() {
-        testingUnit.move(OrientationHelper.NORTH, SPEED);
+        testingUnit.move(Orientation.NORTH, SPEED);
         assertEquals(X, testingUnit.getX());
         assertEquals(Y - SPEED, testingUnit.getY());
     }
 
     @Test
     void testMoveEast() {
-        testingUnit.move(OrientationHelper.EAST, SPEED);
+        testingUnit.move(Orientation.EAST, SPEED);
         assertEquals(X + SPEED, testingUnit.getX());
         assertEquals(Y, testingUnit.getY());
     }
 
     @Test
     void testMoveSouth() {
-        testingUnit.move(OrientationHelper.SOUTH, SPEED);
+        testingUnit.move(Orientation.SOUTH, SPEED);
         assertEquals(X, testingUnit.getX());
         assertEquals(Y + SPEED, testingUnit.getY());
     }
 
     @Test
     void testMoveWest() {
-        testingUnit.move(OrientationHelper.WEST, SPEED);
+        testingUnit.move(Orientation.WEST, SPEED);
         assertEquals(X - SPEED, testingUnit.getX());
         assertEquals(Y, testingUnit.getY());
     }
 
     @Test
     void testMoveSouthWest() {
-        int southEast = (OrientationHelper.SOUTH + OrientationHelper.WEST) / 2;
+        int southEast = (Orientation.SOUTH + Orientation.WEST) / 2;
         testingUnit.move(southEast, SPEED);
         int delta = 7; // sin(southEast) * SPEED
         assertEquals(X - delta, testingUnit.getX());

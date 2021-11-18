@@ -3,6 +3,8 @@ package com.github.thehilikus.alife.world;
 import com.github.thehilikus.alife.agent.api.Agent;
 import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.api.RandomProvider;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
+import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
@@ -21,9 +23,9 @@ import java.util.stream.Stream;
  */
 public class World {
     private static final Logger LOG = LoggerFactory.getLogger(World.class.getSimpleName());
-    private final Collection<Agent.Living> livingAgents = new CopyOnWriteArrayList<>();
+    private final Collection<LivingAgent> livingAgents = new CopyOnWriteArrayList<>();
     private final Collection<Agent> edges = new ArrayList<>();
-    private final Map<Integer, Agent.Living> cemetery = new HashMap<>();
+    private final Map<Integer, LivingAgent> cemetery = new HashMap<>();
     private final int width;
     private final int height;
     private int hour;
@@ -70,7 +72,7 @@ public class World {
     public boolean tick() {
         try {
             LOG.info("Starting hour {}", ++hour);
-            Collection<Agent.Living> toRemove = new HashSet<>();
+            Collection<LivingAgent> toRemove = new HashSet<>();
             livingAgents.forEach(agent -> {
                 Position.Immutable originalPosition = agent.getPosition();
                 VitalSign causeOfDeath = agent.tick();
@@ -95,7 +97,7 @@ public class World {
                 shouldContinue = worldListener.ticked(hour);
             }
 
-            boolean socialAgentsAlive = livingAgents.stream().anyMatch(agent -> agent instanceof Agent.Social);
+            boolean socialAgentsAlive = livingAgents.stream().anyMatch(agent -> agent instanceof SocialAgent);
             if (!socialAgentsAlive) {
                 if (worldListener != null) {
                     worldListener.ended(hour);
@@ -109,18 +111,18 @@ public class World {
         }
     }
 
-    public void addAgent(Agent.Living agent) {
+    public void addAgent(Agent agent) {
         LOG.info("Adding {} to world", agent);
-        livingAgents.add(agent);
+        livingAgents.add((LivingAgent) agent);
     }
 
-    private void removeAgent(Agent.Living agent) {
+    private void removeAgent(LivingAgent agent) {
         LOG.info("Removing {} from world", agent);
         livingAgents.remove(agent);
         cemetery.put(agent.getId(), agent);
     }
 
-    public Optional<Agent.Living> getLivingAgent(int agentId) {
+    private Optional<LivingAgent> getLivingAgent(int agentId) {
         return livingAgents.stream().filter(agent2 -> agent2.getId() == agentId).findFirst();
     }
 
@@ -132,7 +134,7 @@ public class World {
 
     public Map<String, Object> getAgentDetails(int agentId) {
         Map<String, Object> result;
-        Optional<Agent.Living> agentOptional = getLivingAgent(agentId).or(() -> Optional.ofNullable(cemetery.get(agentId)));
+        Optional<LivingAgent> agentOptional = getLivingAgent(agentId).or(() -> Optional.ofNullable(cemetery.get(agentId)));
         result = agentOptional.map(Agent::getDetails).orElse(Collections.emptyMap());
 
         return result;
@@ -147,7 +149,7 @@ public class World {
     }
 
     public SortedSet<ScanResult> getAgentsInAreaRelativeTo(int agentId, Shape viewingArea, Predicate<Agent> test) {
-        Agent centerAgent = livingAgents.stream().filter(agent -> agent.getId() == agentId).findFirst().orElseThrow();
+        LivingAgent centerAgent = livingAgents.stream().filter(agent -> agent.getId() == agentId).findFirst().orElseThrow();
         int centerAgentX = centerAgent.getPosition().getX();
         int centerAgentY = centerAgent.getPosition().getY();
         Set<Agent> agentsFound = Stream.concat(livingAgents.stream(), edges.stream())
@@ -161,19 +163,19 @@ public class World {
             int xDelta = found.getPosition().getX() - centerAgent.getPosition().getX();
             int yDelta = found.getPosition().getY() - centerAgent.getPosition().getY();
             double agentAngleInRadians = Math.atan2(yDelta, xDelta);
-            int direction = (int) Math.round(Math.toDegrees(agentAngleInRadians) - centerAgent.getOrientation()) % Locomotion.FULL_TURN;
-            if (direction < -Locomotion.HALF_TURN) {
+            int direction = (int) Math.round(Math.toDegrees(agentAngleInRadians) - centerAgent.getOrientation()) % Locomotion.Turn.FULL;
+            if (direction < -Locomotion.Turn.HALF) {
                 //represent it in the other direction to make it smaller than 180
-                direction = (direction + Locomotion.FULL_TURN) % Locomotion.FULL_TURN;
+                direction = (direction + Locomotion.Turn.FULL) % Locomotion.Turn.FULL;
             }
-            assert Math.abs(direction) <= Locomotion.HALF_TURN : "Relative angle must be > -180 and < 180 but was " + direction;
+            assert Math.abs(direction) <= Locomotion.Turn.HALF : "Relative angle must be > -180 and < 180 but was " + direction;
             result.add(new ScanResult(xDelta * xDelta + yDelta * yDelta, direction, found));
         }
 
         return result;
     }
 
-    public Collection<Agent.Living> getLivingAgents() {
+    public Collection<? extends Agent> getLivingAgents() {
         return livingAgents;
     }
 

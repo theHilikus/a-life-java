@@ -3,6 +3,7 @@ package com.github.thehilikus.alife.ui;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static com.github.thehilikus.alife.agent.motion.api.Locomotion.Orientation.*;
 import static org.testng.Assert.*;
 
 /**
@@ -12,11 +13,6 @@ public class AgentKeyframeTest {
     private static final String ORIENTATION = "orientation";
     private static final double MID_POINT = 0.5;
     private AgentKeyframe testingUnit;
-
-    private static final int EAST = 0;
-    private static final int SOUTH = 90;
-    private static final int WEST = 180;
-    private static final int NORTH = 270;
 
     @BeforeMethod
     public void setup() {

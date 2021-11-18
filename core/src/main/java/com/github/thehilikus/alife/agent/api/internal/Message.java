@@ -1,4 +1,4 @@
-package com.github.thehilikus.alife.agent.api;
+package com.github.thehilikus.alife.agent.api.internal;
 
 import java.util.Map;
 
@@ -6,17 +6,17 @@ import java.util.Map;
  * A message from one agent to another
  */
 public class Message {
-    private final Agent.Social sender;
+    private final SocialAgent sender;
     private final String message;
     private final Map<String, Object> details;
 
-    public Message(Agent.Social sender, String message, Map<String, Object> details) {
+    public Message(SocialAgent sender, String message, Map<String, Object> details) {
         this.sender = sender;
         this.message = message;
         this.details = details;
     }
 
-    public Agent.Social getSender() {
+    public SocialAgent getSender() {
         return sender;
     }
 

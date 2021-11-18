@@ -1,4 +1,4 @@
-package com.github.thehilikus.alife.agent.api;
+package com.github.thehilikus.alife.agent.api.internal;
 
 /**
  * A global assigner of sequential ids

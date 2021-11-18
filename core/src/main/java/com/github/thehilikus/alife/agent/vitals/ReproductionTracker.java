@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agent.vitals;
 
-import com.github.thehilikus.alife.agent.moods.Mating;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 
@@ -19,9 +18,7 @@ public class ReproductionTracker implements VitalSign {
 
     @Override
     public void update(Mood currentMood) {
-        if (currentMood.getClass() != Mating.class) {
-            timeSinceReproduction++;
-        }
+        timeSinceReproduction++;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.github.thehilikus.alife.agent.moods;
 
-import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.internal.EatableAgent;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
 import com.github.thehilikus.alife.agent.vision.api.Vision;
@@ -26,13 +27,13 @@ public class Eating implements Mood {
     private static final int PRIORITY = 85;
 
     private final Vision vision;
-    private final Agent.Eatable food;
+    private final EatableAgent food;
     private final HungerTracker hungerTracker;
     private final SizeTracker sizeTracker;
     private final AgentModules dependencies;
     private int lastBite;
 
-    public Eating(AgentModules dependencies, Agent.Eatable foodAgent) {
+    public Eating(AgentModules dependencies, EatableAgent foodAgent) {
         this.food = foodAgent;
         this.dependencies = dependencies;
         this.vision = dependencies.getVision();
@@ -41,7 +42,7 @@ public class Eating implements Mood {
     }
 
     @Override
-    public Mood tick(Agent.Living me) {
+    public Mood tick(LivingAgent me) {
         SortedSet<ScanResult> scanResult = vision.scan(food.getClass()::isInstance);
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.food.getId()).findFirst();
         if (targetOptional.isPresent()) {
