@@ -47,7 +47,6 @@ public class HungerTracker implements VitalSign {
     public Map<String, Object> getParameters() {
         return Map.of(
                 PARAMETER_PREFIX + "hunger", currentHunger,
-                PARAMETER_PREFIX + "hungerRateOfChange", Mood.HUNGER_DERIVATIVE,
                 PARAMETER_PREFIX + "hungryThreshold", hungryThreshold
         );
     }

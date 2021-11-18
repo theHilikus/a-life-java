@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -60,10 +61,7 @@ public class Sleeping implements Mood {
 
     @Override
     public Map<String, Object> getParameters() {
-        return Map.of(
-                PARAMETER_PREFIX + "energyRecovery", ENERGY_RECOVERY_RATE,
-                PARAMETER_PREFIX + "hungerSlowdownFactor", HUNGER_SLOWDOWN_FACTOR
-        );
+        return Collections.emptyMap();
     }
 
     @Override

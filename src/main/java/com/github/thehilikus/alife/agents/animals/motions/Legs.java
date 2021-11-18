@@ -202,7 +202,6 @@ public class Legs implements Locomotion {
     public Map<String, Object> getParameters() {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put(PARAMETER_PREFIX + "topSpeed", topSpeed);
-        result.put(PARAMETER_PREFIX + "energyExpenditureFactor", energyExpenditureFactor);
         result.put(PARAMETER_PREFIX + "orientation", orientation);
 
         return result;
