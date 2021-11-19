@@ -1,13 +1,10 @@
 package com.github.thehilikus.alife.agent.motion.api;
 
-import com.github.thehilikus.alife.agent.api.internal.Component;
 import com.github.thehilikus.alife.agent.api.Position;
+import com.github.thehilikus.alife.agent.api.internal.Component;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
 
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.SortedSet;
 
 /**
@@ -24,10 +21,9 @@ public interface Locomotion extends Component {
      *
      * @param speedFactor the proportion of the max velocity to use as speed
      * @param scanResults the result of the latest scan
-     * @return the distance travelled
+     * @return the energy spent in the last movement
      */
-    @PositiveOrZero
-    int move(double speedFactor, SortedSet<ScanResult> scanResults);
+    double move(double speedFactor, SortedSet<ScanResult> scanResults);
 
     /**
      * Move the agent towards a specific destination
@@ -35,14 +31,9 @@ public interface Locomotion extends Component {
      * @param speedFactor     the proportion of the max velocity to use as speed
      * @param targetDistance  the target distance relative to its own
      * @param targetDirection the target direction relative to its own
-     * @return the distance travelled
+     * @return the energy spent in the last movement
      */
-    @PositiveOrZero
-    int moveTowardsTarget(double speedFactor, int targetDistance, int targetDirection);
-
-    @DecimalMin("-1.0")
-    @DecimalMax("0.0")
-    double getEnergyExpenditureFactor();
+    double moveTowardsTarget(double speedFactor, int targetDistance, int targetDirection);
 
     @NotNull
     Position.Immutable getPosition();

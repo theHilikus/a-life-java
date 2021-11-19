@@ -32,6 +32,7 @@ public class Legs implements Locomotion {
     @DecimalMin("-1.0")
     @DecimalMax("0.0")
     private final double energyExpenditureFactor;
+    private int lastMovement;
 
     protected Legs(int agentId, Position position, Genome genome) {
         this(agentId, position, RandomProvider.nextInt(Turn.FULL), genome);
@@ -46,14 +47,14 @@ public class Legs implements Locomotion {
     }
 
     @Override
-    public int move(double speedFactor, SortedSet<ScanResult> scanResults) {
+    public double move(double speedFactor, SortedSet<ScanResult> scanResults) {
         Optional<ScanResult> edgeOptional = findEdgeInCurrentOrientation(scanResults);
-        int result;
+        double result;
         if (edgeOptional.isPresent()) {
             ScanResult scanResult = edgeOptional.get();
             int distanceToEdge = (int) Math.sqrt(scanResult.getDistanceSquared());
             result = moveTowardsTarget(speedFactor, distanceToEdge, scanResult.getRelativeDirection());
-            if (result == distanceToEdge - 1) {
+            if (lastMovement == distanceToEdge - 1) {
                 //agent hit the edge, turn
                 LOG.debug("Bouncing off edge");
                 turnAfterEdgeCollision(scanResult.getAgent());
@@ -153,25 +154,25 @@ public class Legs implements Locomotion {
     }
 
     @Override
-    public int moveTowardsTarget(double speedFactor, int distance, int orientationOffset) {
+    public double moveTowardsTarget(double speedFactor, int distance, int orientationOffset) {
         if (Math.abs(orientationOffset) > Turn.HALF) {
             throw new IllegalArgumentException("Orientation offset must be reduced to its smallest representation: e.g. 359 -> -1");
         }
-        int movement = 0;
+        double movementEnergy = 0;
         if (distance > 1) { //since otherwise we are already next to the target
             if (Math.abs(orientationOffset) < MOVE_AND_ROTATE_MAX) {
                 orientation = Math.floorMod(orientation + orientationOffset, Turn.FULL);
-                movement = moveForwards(speedFactor, distance - 1);
+                movementEnergy = moveForwards(speedFactor, distance - 1);
             } else {
                 //only rotate
                 LOG.debug("Only adjusting angle to target by {}", orientationOffset);
                 orientation = Math.floorMod(orientation + orientationOffset, Turn.FULL);
             }
         }
-        return movement;
+        return movementEnergy;
     }
 
-    private int moveForwards(double speedFactor, int maxMovement) {
+    private double moveForwards(double speedFactor, int maxMovement) {
         int movementDelta = (int) Math.ceil(topSpeed * speedFactor);
         movementDelta = Math.min(movementDelta, maxMovement);
         if (movementDelta != maxMovement) {
@@ -179,14 +180,10 @@ public class Legs implements Locomotion {
         } else {
             LOG.info("Walking only {} spaces in direction {}° because it is close to the target", movementDelta, orientation);
         }
-
+        lastMovement = movementDelta;
         position.move(orientation, movementDelta);
-        return movementDelta;
-    }
 
-    @Override
-    public double getEnergyExpenditureFactor() {
-        return energyExpenditureFactor;
+        return movementDelta * energyExpenditureFactor;
     }
 
     @Override

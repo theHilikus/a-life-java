@@ -25,7 +25,7 @@ public class Scouting implements Mood {
     private final Vision vision;
     private final Locomotion locomotion;
     private final AgentModules dependencies;
-    private int lastMovement;
+    private double lastMovementEnergy;
     private final double speedFactor;
 
 
@@ -48,10 +48,10 @@ public class Scouting implements Mood {
                 return new Hunting(dependencies, plantScan.getAgent());
             } else {
                 //only found edges
-                lastMovement = locomotion.move(speedFactor, foundAgents);
+                lastMovementEnergy = locomotion.move(speedFactor, foundAgents);
             }
         } else {
-            lastMovement = locomotion.move(speedFactor, foundAgents);
+            lastMovementEnergy = locomotion.move(speedFactor, foundAgents);
         }
 
         return this;
@@ -59,7 +59,7 @@ public class Scouting implements Mood {
 
     @Override
     public int getEnergyDelta() {
-        return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
+        return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovementEnergy);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class Scouting implements Mood {
     public Map<String, Object> getDetails() {
         return Map.of(
                 PARAMETER_PREFIX + "speedFactor", speedFactor,
-                PARAMETER_PREFIX + "lastMovement", lastMovement
+                PARAMETER_PREFIX + "lastMovementEnergy", lastMovementEnergy
         );
     }
 

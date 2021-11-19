@@ -21,7 +21,7 @@ public class Existing implements Mood {
     private final Vision vision;
     private final Locomotion locomotion;
     private final double speedFactor;
-    private int lastMovement;
+    private double lastMovementEnergy;
 
 
     public Existing(AgentModules dependencies) {
@@ -33,14 +33,14 @@ public class Existing implements Mood {
     @Override
     public Mood tick(LivingAgent me) {
         SortedSet<ScanResult> foundAgents = vision.scan(Edge.class::isInstance);
-        lastMovement = locomotion.move(speedFactor, foundAgents);
+        lastMovementEnergy = locomotion.move(speedFactor, foundAgents);
 
         return this;
     }
 
     @Override
     public int getEnergyDelta() {
-        return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
+        return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovementEnergy);
     }
 
     @Override

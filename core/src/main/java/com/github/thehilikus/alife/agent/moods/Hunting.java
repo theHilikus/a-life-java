@@ -28,7 +28,7 @@ public class Hunting implements Mood {
     private final double speedFactor;
     private final Agent target;
     private final AgentModules dependencies;
-    private int lastMovement;
+    private double lastMovementEnergy;
 
     public Hunting(AgentModules dependencies, Agent target) {
         this.dependencies = dependencies;
@@ -47,7 +47,7 @@ public class Hunting implements Mood {
     public Map<String, Object> getDetails() {
         return Map.of(
                 PARAMETER_PREFIX + "speedFactor", speedFactor,
-                PARAMETER_PREFIX + "lastMovement", lastMovement,
+                PARAMETER_PREFIX + "lastMovementEnergy", lastMovementEnergy,
                 PARAMETER_PREFIX + "target", target.getId(),
                 PARAMETER_PREFIX + "targetPosition", target.getPosition()
         );
@@ -60,11 +60,11 @@ public class Hunting implements Mood {
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.target.getId()).findFirst();
         if (targetOptional.isPresent()) {
             ScanResult targetScan = targetOptional.get();
-            int maxMovement = locomotion.moveTowardsTarget(speedFactor, (int) Math.sqrt(targetScan.getDistanceSquared()), targetScan.getRelativeDirection());
+            double movementEnergy = locomotion.moveTowardsTarget(speedFactor, (int) Math.sqrt(targetScan.getDistanceSquared()), targetScan.getRelativeDirection());
             if (locomotion.getPosition().isNextTo(targetScan.getAgent().getPosition())) {
                 return reachedTarget((SocialAgent) me);
             } else {
-                lastMovement = maxMovement;
+                lastMovementEnergy = movementEnergy;
             }
         } else {
             LOG.info("Target {} is gone :(", target.getId());
@@ -80,7 +80,7 @@ public class Hunting implements Mood {
 
     @Override
     public int getEnergyDelta() {
-        return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovement * locomotion.getEnergyExpenditureFactor());
+        return EnergyTracker.ENERGY_DERIVATIVE + (int) Math.round(lastMovementEnergy);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class RandomWalk extends Legs {
     }
 
     @Override
-    public int move(double speedFactor, SortedSet<ScanResult> scanResults) {
+    public double move(double speedFactor, SortedSet<ScanResult> scanResults) {
         if (shouldTurn()) {
             int originalOrientation = getOrientation();
             turn(Turn.LEFT);

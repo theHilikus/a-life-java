@@ -32,13 +32,13 @@ public class LegsTest {
         Position position = new Position(ORIGINAL_COORD, ORIGINAL_COORD);
         Genome genome = new DummyGenome(Map.of(
                 Locomotion.PARAMETER_PREFIX + "topSpeed", TOP_SPEED,
-                Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", 0.10));
+                Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", 1.0)); //set it to 1 so energy used = distance moved
         testingUnit = new Legs(1, position, ORIENTATION, genome);
     }
 
     @Test
     void testMoveFreely() {
-        int distance = testingUnit.move(SPEED_FACTOR, Collections.emptySortedSet());
+        double distance = testingUnit.move(SPEED_FACTOR, Collections.emptySortedSet());
         assertEquals(distance, TOP_SPEED * SPEED_FACTOR);
         assertEquals(testingUnit.getOrientation(), ORIENTATION);
         Position.Immutable expectedPosition = new Position(ORIGINAL_COORD, (int) (ORIGINAL_COORD + TOP_SPEED * SPEED_FACTOR)).toImmutable();
@@ -54,7 +54,7 @@ public class LegsTest {
         Edge edge2 = new Edge(new Position(ORIGINAL_COORD - 1, edgeY).toImmutable());
         scanResults.add(new ScanResult(TOP_SPEED * TOP_SPEED, 1, edge2));
 
-        int distance = testingUnit.move(SPEED_FACTOR, scanResults);
+        double distance = testingUnit.move(SPEED_FACTOR, scanResults);
         assertEquals(distance, TOP_SPEED * SPEED_FACTOR);
         assertEquals(testingUnit.getOrientation(), ORIENTATION);
         Position.Immutable expectedPosition = new Position(ORIGINAL_COORD, (int) (ORIGINAL_COORD + TOP_SPEED * SPEED_FACTOR)).toImmutable();
@@ -70,7 +70,7 @@ public class LegsTest {
         Edge edge2 = new Edge(new Position(ORIGINAL_COORD - 1, edgeY).toImmutable());
         scanResults.add(new ScanResult(25, 1, edge2));
 
-        int distance = testingUnit.move(SPEED_FACTOR, scanResults);
+        double distance = testingUnit.move(SPEED_FACTOR, scanResults);
         assertEquals(distance, edgeY - ORIGINAL_COORD - 1);
         assertEquals(testingUnit.getOrientation(), Locomotion.Orientation.NORTH);
         Position.Immutable expectedPosition = new Position(ORIGINAL_COORD, edgeY - 1).toImmutable();
@@ -79,7 +79,7 @@ public class LegsTest {
 
     @Test
     void testMoveTowardsTargetInCurrentDirection() {
-        int distance = testingUnit.moveTowardsTarget(SPEED_FACTOR, 8, 0);
+        double distance = testingUnit.moveTowardsTarget(SPEED_FACTOR, 8, 0);
         assertEquals(distance, 7);
         distance = testingUnit.moveTowardsTarget(SPEED_FACTOR, 1, 0);
         assertEquals(distance, 0);
@@ -91,7 +91,7 @@ public class LegsTest {
     @Test
     void testMoveTowardsTargetInDifferentDirection() {
         final int orientationOffset = 90;
-        int distance = testingUnit.moveTowardsTarget(SPEED_FACTOR, 8, orientationOffset);
+        double distance = testingUnit.moveTowardsTarget(SPEED_FACTOR, 8, orientationOffset);
         assertEquals(distance, 0);
         distance = testingUnit.moveTowardsTarget(SPEED_FACTOR, 8, 0);
         assertEquals(distance, 7);
