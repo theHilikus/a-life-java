@@ -54,8 +54,8 @@ public class Mating implements Mood {
             if (mateScan.getDistanceSquared() < 4) {
                 LOG.debug("Mating with {}: {}/{}", mate, timeWithMate, matingDuration);
                 if (timeWithMate >= matingDuration) {
-                    LOG.info("Giving birth");
                     Agent offspring = new HerbivoreFactory().createOffspring(me, genome, mate.getGenome());
+                    LOG.info("Gave birth to {} with mate {}", offspring, mate);
                     reproductionTracker.gaveBirth(mate.getId(), offspring.getId());
                     notifyOtherParent((SocialAgent) me, offspring.getId());
 
