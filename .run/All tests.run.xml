@@ -1,6 +1,5 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="All tests" type="TestNG">
-    <module name="artificial-life" />
     <shortenClasspath name="NONE" />
     <useClassPathOnly />
     <option name="SUITE_NAME" value="" />
@@ -12,6 +11,9 @@
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
     <option name="OUTPUT_DIRECTORY" value="" />
+    <option name="TEST_SEARCH_SCOPE">
+      <value defaultName="wholeProject" />
+    </option>
     <option name="PROPERTIES_FILE" value="" />
     <properties />
     <listeners />
