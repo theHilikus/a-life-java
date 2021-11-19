@@ -5,6 +5,7 @@ import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.api.RandomProvider;
 import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
+import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
@@ -30,6 +31,7 @@ public class World {
     private final int height;
     private int hour;
     private WorldListener worldListener;
+    private final WorldStats stats = new WorldStats();
 
     public World(int width, int height) {
         LOG.info("Creating world of {}x{}", width, height);
@@ -85,12 +87,17 @@ public class World {
                             && newPosition.getY() > 0
                             && newPosition.getX() <= width - 2
                             && newPosition.getY() <= height - 2 : "Agent " + agent.getId() + " moved out of the world: " + newPosition;
+
+                    stats.incrementSeries((String) agent.getDetails().get(Mood.PARAMETER_PREFIX + "current"), hour);
+                    stats.incrementSeries(agent.getClass().getSimpleName(), hour);
                 } else {
                     LOG.debug("{} died. Cause of death={}", agent, causeOfDeath);
+                    stats.incrementDeathCount(agent.getClass().getSimpleName() + ":" + causeOfDeath.getClass().getSimpleName());
                     toRemove.add(agent);
                 }
             });
             toRemove.forEach(this::removeAgent);
+            stats.completeSeries(hour);
 
             boolean shouldContinue = true;
             if (worldListener != null) {
@@ -103,8 +110,13 @@ public class World {
                     worldListener.ended(hour);
                 }
             }
-            LOG.info("Ending hour {}. Will continue? {}\n", hour, socialAgentsAlive && shouldContinue);
-            return socialAgentsAlive && shouldContinue;
+            boolean result = socialAgentsAlive && shouldContinue;
+            LOG.info("Ending hour {}. Will continue? {}\n", hour, result);
+            if (!result) {
+                stats.printStats();
+            }
+
+            return result;
         } catch (Exception | AssertionError exc) {
             LOG.error("Error simulating the World", exc);
             return false;
