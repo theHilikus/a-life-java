@@ -20,8 +20,8 @@ public class RandomWalk extends Legs {
     private final double turningProbability;
 
 
-    public RandomWalk(int agentId, Position position, Genome genome) {
-        super(agentId, position, genome);
+    public RandomWalk(int worldWidth, int worldHeight, int agentId, Position position, Genome genome) {
+        super(worldWidth, worldHeight, agentId, position, genome);
         this.turningProbability = genome.getGene(PARAMETER_PREFIX + "turningProbability");
     }
 

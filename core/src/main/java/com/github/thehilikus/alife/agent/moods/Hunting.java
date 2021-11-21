@@ -60,7 +60,7 @@ public class Hunting implements Mood {
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.target.getId()).findFirst();
         if (targetOptional.isPresent()) {
             ScanResult targetScan = targetOptional.get();
-            double movementEnergy = locomotion.moveTowardsTarget(speedFactor, (int) Math.sqrt(targetScan.getDistanceSquared()), targetScan.getRelativeDirection());
+            double movementEnergy = locomotion.moveTowardsTarget(speedFactor, targetScan.getAgent().getPosition());
             if (locomotion.getPosition().isNextTo(targetScan.getAgent().getPosition())) {
                 return reachedTarget((SocialAgent) me);
             } else {

@@ -29,7 +29,11 @@ public class ScanResult implements Comparable<ScanResult> {
 
     @Override
     public int compareTo(ScanResult other) {
-        return distanceSquared - other.distanceSquared;
+        int result = distanceSquared - other.distanceSquared;
+        if (result == 0) {
+            result = direction - other.direction;
+        }
+        return result;
     }
 
     public int getDistanceSquared() {
@@ -42,5 +46,14 @@ public class ScanResult implements Comparable<ScanResult> {
 
     public Agent getAgent() {
         return agent;
+    }
+
+    @Override
+    public String toString() {
+        return "ScanResult{" +
+                "distanceSquared=" + distanceSquared +
+                ", direction=" + direction +
+                ", agentId=" + agent.getId() +
+                '}';
     }
 }

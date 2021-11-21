@@ -1,5 +1,7 @@
 package com.github.thehilikus.alife.agent.api;
 
+import com.github.thehilikus.alife.agent.motion.api.PolarVector;
+
 import javax.validation.constraints.PositiveOrZero;
 
 /**
@@ -7,28 +9,35 @@ import javax.validation.constraints.PositiveOrZero;
  */
 public class Position {
     @PositiveOrZero
-    private int x;
+    private double x;
     @PositiveOrZero
-    private int y;
+    private double y;
 
-    public Position(int x, int y) {
+    public Position(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public void move(int direction, int speed) {
-        int speedX = (int) Math.round(Math.cos(Math.toRadians(direction)) * speed);
-        int speedY = (int) Math.round(Math.sin(Math.toRadians(direction)) * speed);
+    public void move(PolarVector vector) {
+        double speedX = Math.cos(Math.toRadians(vector.getAngle())) * vector.getMagnitude();
+        double speedY = Math.sin(Math.toRadians(vector.getAngle())) * vector.getMagnitude();
         x += speedX;
         y += speedY;
     }
 
+    public Immutable calculateMove(PolarVector vector) {
+        double speedX = Math.cos(Math.toRadians(vector.getAngle())) * vector.getMagnitude();
+        double speedY = Math.sin(Math.toRadians(vector.getAngle())) * vector.getMagnitude();
+
+        return new Position(x + speedX, y + speedY).toImmutable();
+    }
+
     public int getX() {
-        return x;
+        return (int) Math.round(x);
     }
 
     public int getY() {
-        return y;
+        return (int) Math.round(y);
     }
 
     @Override
@@ -51,8 +60,8 @@ public class Position {
         private final int y;
 
         private Immutable(Position mutable) {
-            this.x = mutable.x;
-            this.y = mutable.y;
+            this.x = (int) Math.round(mutable.x);
+            this.y = (int) Math.round(mutable.y);
         }
 
         public int getX() {

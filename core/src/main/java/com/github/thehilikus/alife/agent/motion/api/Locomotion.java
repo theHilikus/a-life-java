@@ -28,12 +28,11 @@ public interface Locomotion extends Component {
     /**
      * Move the agent towards a specific destination
      *
-     * @param speedFactor     the proportion of the max velocity to use as speed
-     * @param targetDistance  the target distance relative to its own
-     * @param targetDirection the target direction relative to its own
+     * @param speedFactor the proportion of the max velocity to use as speed
+     * @param target      the target to go to
      * @return the energy spent in the last movement
      */
-    double moveTowardsTarget(double speedFactor, int targetDistance, int targetDirection);
+    double moveTowardsTarget(double speedFactor, Position.Immutable target);
 
     @NotNull
     Position.Immutable getPosition();

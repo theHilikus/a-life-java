@@ -45,7 +45,7 @@ public class HerbivoreFactory extends LivingAgentFactory {
         int id = IdsProvider.getNextId();
         AgentModules dependencies = new AgentModules(genome);
         dependencies.addComponent(Vision.class, new SurroundingsVision(id, genome, getWorld()));
-        dependencies.addComponent(Locomotion.class, new RandomWalk(id, position, genome));
+        dependencies.addComponent(Locomotion.class, new RandomWalk(getWorld().getWidth(), getWorld().getHeight(), id, position, genome));
 
         dependencies.addVitalSign(HungerTracker.class, new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold")));
         dependencies.addVitalSign(EnergyTracker.class, new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold")));
