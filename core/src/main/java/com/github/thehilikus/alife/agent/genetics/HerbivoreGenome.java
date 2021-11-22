@@ -34,6 +34,7 @@ public class HerbivoreGenome extends Genome {
     private static final double MAX_TEEN_AGE_PROPORTION = 0.5;
     private static final int MAX_MATING_DURATION = 7;
     private static final int MIN_MATING_DURATION = 1;
+    private static final double MAX_ENERGY_EXPENDITURE_FACTOR = 0.20;
     private static int maxVisionDistance;
     private static int maxSize;
 
@@ -45,7 +46,7 @@ public class HerbivoreGenome extends Genome {
         result.put("type", "Herbivore");
         result.put(Vision.PARAMETER_PREFIX + "distance", visionDistance);
         result.put(Locomotion.PARAMETER_PREFIX + "topSpeed", RandomProvider.nextInt(MIN_TOP_SPEED, visionDistance)); //agent can't move further than it can see
-        result.put(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomProvider.nextDouble(1) * -1);
+        result.put(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor", RandomProvider.nextDouble(MAX_ENERGY_EXPENDITURE_FACTOR) * -1);
         result.put(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomProvider.nextDouble(1));
         result.put(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor", RandomProvider.nextDouble(MAX_IDLE_SPEED_FACTOR));
         result.put(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomProvider.nextDouble(MAX_SCOUT_SPEED_FACTOR));
