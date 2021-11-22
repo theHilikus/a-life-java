@@ -79,19 +79,6 @@ public class AgentKeyframe implements Comparable<AgentKeyframe> {
         return result;
     }
 
-    private Number interpolateNumber(Number startValue, Number endValue, double percentToKeyFrame) {
-        Objects.requireNonNull(startValue);
-        Objects.requireNonNull(endValue);
-        if (startValue instanceof Integer) {
-            return (int) (startValue.intValue() + (endValue.intValue() - startValue.intValue()) * percentToKeyFrame);
-        }
-        if (startValue instanceof Double) {
-            return startValue.doubleValue() + (endValue.doubleValue() - startValue.doubleValue()) * percentToKeyFrame;
-        }
-
-        throw new UnsupportedOperationException("Don't know how to interpolate Number " + startValue.getClass());
-    }
-
     private Position.Immutable interpolatePosition(Position.Immutable startPosition, Position.Immutable endPosition, double percentToKeyFrame) {
         Objects.requireNonNull(startPosition);
         Objects.requireNonNull(endPosition);
@@ -136,6 +123,19 @@ public class AgentKeyframe implements Comparable<AgentKeyframe> {
         int alpha = (int) interpolateNumber(startColor.getAlpha(), endColor.getAlpha(), percentToKeyFrame);
 
         return new Color(red, green, blue, alpha);
+    }
+
+    private Number interpolateNumber(Number startValue, Number endValue, double percentToKeyFrame) {
+        Objects.requireNonNull(startValue);
+        Objects.requireNonNull(endValue);
+        if (startValue instanceof Integer) {
+            return (int) (startValue.intValue() + (endValue.intValue() - startValue.intValue()) * percentToKeyFrame);
+        }
+        if (startValue instanceof Double) {
+            return startValue.doubleValue() + (endValue.doubleValue() - startValue.doubleValue()) * percentToKeyFrame;
+        }
+
+        throw new UnsupportedOperationException("Don't know how to interpolate Number " + startValue.getClass());
     }
 
     @Override
