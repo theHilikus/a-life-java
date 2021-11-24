@@ -1,7 +1,5 @@
 package com.github.thehilikus.alife.agent.api;
 
-import com.github.thehilikus.alife.agent.motion.api.PolarVector;
-
 import javax.validation.constraints.PositiveOrZero;
 
 /**
@@ -18,18 +16,9 @@ public class Position {
         this.y = y;
     }
 
-    public void move(PolarVector vector) {
-        double speedX = Math.cos(Math.toRadians(vector.getAngle())) * vector.getMagnitude();
-        double speedY = Math.sin(Math.toRadians(vector.getAngle())) * vector.getMagnitude();
-        x += speedX;
-        y += speedY;
-    }
-
-    public Immutable calculateMove(PolarVector vector) {
-        double speedX = Math.cos(Math.toRadians(vector.getAngle())) * vector.getMagnitude();
-        double speedY = Math.sin(Math.toRadians(vector.getAngle())) * vector.getMagnitude();
-
-        return new Position(x + speedX, y + speedY).toImmutable();
+    public void move(double velocityX, double velocityY) {
+        x += velocityX;
+        y += velocityY;
     }
 
     public int getX() {

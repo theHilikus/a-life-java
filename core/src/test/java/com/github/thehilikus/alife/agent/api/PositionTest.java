@@ -1,7 +1,5 @@
 package com.github.thehilikus.alife.agent.api;
 
-import com.github.thehilikus.alife.agent.motion.api.Locomotion.Orientation;
-import com.github.thehilikus.alife.agent.motion.api.PolarVector;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -23,39 +21,38 @@ public class PositionTest {
 
     @Test
     void testMoveNorth() {
-        testingUnit.move(new PolarVector(Orientation.NORTH, SPEED));
-        assertEquals(X, testingUnit.getX());
-        assertEquals(Y - SPEED, testingUnit.getY());
+        testingUnit.move(0, -SPEED);
+        assertEquals(testingUnit.getX(), X);
+        assertEquals(testingUnit.getY(), Y - SPEED);
     }
 
     @Test
     void testMoveEast() {
-        testingUnit.move(new PolarVector(Orientation.EAST, SPEED));
-        assertEquals(X + SPEED, testingUnit.getX());
-        assertEquals(Y, testingUnit.getY());
+        testingUnit.move(SPEED, 0);
+        assertEquals(testingUnit.getX(), X + SPEED);
+        assertEquals(testingUnit.getY(), Y);
     }
 
     @Test
     void testMoveSouth() {
-        testingUnit.move(new PolarVector(Orientation.SOUTH, SPEED));
-        assertEquals(X, testingUnit.getX());
-        assertEquals(Y + SPEED, testingUnit.getY());
+        testingUnit.move(0, SPEED);
+        assertEquals(testingUnit.getX(), X);
+        assertEquals(testingUnit.getY(), Y + SPEED);
     }
 
     @Test
     void testMoveWest() {
-        testingUnit.move(new PolarVector(Orientation.WEST, SPEED));
-        assertEquals(X - SPEED, testingUnit.getX());
-        assertEquals(Y, testingUnit.getY());
+        testingUnit.move(-SPEED, 0);
+        assertEquals(testingUnit.getX(), X - SPEED);
+        assertEquals(testingUnit.getY(), Y);
     }
 
     @Test
     void testMoveSouthWest() {
-        int southEast = (Orientation.SOUTH + Orientation.WEST) / 2;
-        testingUnit.move(new PolarVector(southEast, SPEED));
-        int delta = 7; // sin(southEast) * SPEED
-        assertEquals(X - delta, testingUnit.getX());
-        assertEquals(Y + delta, testingUnit.getY());
+        int delta = 7;
+        testingUnit.move(-delta, delta);
+        assertEquals(testingUnit.getX(), X - delta);
+        assertEquals(testingUnit.getY(), Y + delta);
     }
 
     @Test

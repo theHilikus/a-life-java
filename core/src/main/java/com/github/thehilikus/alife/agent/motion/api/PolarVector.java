@@ -36,4 +36,12 @@ public class PolarVector {
     public double getMagnitude() {
         return magnitude;
     }
+
+    public CartesianVector toCartesian() {
+        double angleInRadians = Math.toRadians(angle);
+        double x = magnitude * Math.cos(angleInRadians);
+        double y = magnitude * Math.sin(angleInRadians);
+
+        return new CartesianVector(x, y);
+    }
 }

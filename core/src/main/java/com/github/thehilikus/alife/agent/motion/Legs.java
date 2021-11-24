@@ -4,6 +4,7 @@ import com.github.thehilikus.alife.agent.api.Agent;
 import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.api.RandomProvider;
 import com.github.thehilikus.alife.agent.genetics.Genome;
+import com.github.thehilikus.alife.agent.motion.api.CartesianVector;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 import com.github.thehilikus.alife.agent.motion.api.PolarVector;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
@@ -13,10 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.SortedSet;
+import java.util.*;
 
 /**
  * Motion that always moves forward until reaching the edge of the world
@@ -27,9 +25,11 @@ public class Legs implements Locomotion {
     private final int agentId;
 
     private final int worldHeight;
-    private final Position position;
     private final int worldWidth;
+    private final Position position;
     private int orientation;
+    private double velocityX;
+    private double velocityY;
 
     private final int topSpeed;
     @DecimalMin("-1.0")
@@ -45,34 +45,21 @@ public class Legs implements Locomotion {
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
         this.position = position;
-        this.orientation = orientation;
+        turn(orientation);
         this.topSpeed = genome.getGene(Locomotion.PARAMETER_PREFIX + "topSpeed");
         this.energyExpenditureFactor = genome.getGene(Locomotion.PARAMETER_PREFIX + "energyExpenditureFactor");
     }
 
     @Override
     public double move(double speedFactor, SortedSet<ScanResult> scanResults) {
-        Optional<ScanResult> edgeOptional = findEdgeInCurrentOrientation(scanResults);
-        double result = 0;
-        if (edgeOptional.isPresent()) {
-            double maxMovement = Math.ceil(topSpeed * speedFactor);
-            PolarVector maxMovementVector = new PolarVector(orientation, maxMovement);
-            Position.Immutable endPosition = position.calculateMove(maxMovementVector);
-            if (endPosition.getX() < 1 || endPosition.getX() > worldWidth - 2 || endPosition.getY() < 1 || endPosition.getY() > worldHeight - 2) {
-                //walk 1 by 1 since full movement goes outside
-                for (int accumulatedMovement = 0; accumulatedMovement < maxMovement; accumulatedMovement++) {
-                    if (position.getX() > 1 && position.getY() > 1 && position.getX() < worldWidth - 2 && position.getY() < worldHeight - 2) {
-                        result += moveForwards(speedFactor, 1);
-                    }
-                    if (position.getX() == 1 || position.getY() == 1 || position.getX() == worldWidth - 2 || position.getY() == worldHeight - 2) {
-                        turnAfterEdgeCollision();
-                        break;
-                    }
-                }
-            } else {
-                result = moveForwards(speedFactor, Integer.MAX_VALUE);
-            }
+        double maxMovement = Math.ceil(topSpeed * speedFactor);
+        double endX = position.getX() + velocityX * maxMovement;
+        double endY = position.getY() + velocityY * maxMovement;
 
+        double result;
+        if (endX < 1 || endX > worldWidth - 2 || endY < 1 || endY > worldHeight - 2) {
+            result = moveToEdge(scanResults, maxMovement);
+            turnAfterEdgeCollision();
         } else {
             result = moveForwards(speedFactor, Integer.MAX_VALUE);
         }
@@ -80,23 +67,29 @@ public class Legs implements Locomotion {
         return result;
     }
 
-    private Optional<ScanResult> findEdgeInCurrentOrientation(Iterable<ScanResult> scanResults) {
-        ScanResult smallestDirection = new ScanResult(1000, Turn.FULL, null);
-        for (ScanResult scanResult : scanResults) {
-            if (scanResult.getAgent() instanceof Edge) {
-                int positiveRelativeDirection = Math.abs(scanResult.getRelativeDirection());
-                int positiveSmallestFound = Math.abs(smallestDirection.getRelativeDirection());
-                if (positiveRelativeDirection < positiveSmallestFound && isFacing(scanResult.getAgent())) {
-                    smallestDirection = scanResult;
-                }
-            }
+    private double moveToEdge(Collection<ScanResult> scanResults, double maxMovement) {
+        if (scanResults.isEmpty()) {
+            return 0;
         }
 
-        Optional<ScanResult> result = Optional.empty();
-        if (smallestDirection.getAgent() != null) { //if we found at least one
-            result = Optional.of(smallestDirection);
+        double result = 0;
+        for (int extrapolationDistance = 0; extrapolationDistance < maxMovement; extrapolationDistance++) {
+            for (ScanResult scanResult : scanResults) {
+                if (scanResult.getDistanceSquared() > maxMovement * maxMovement) {
+                    //will never reach the remaining agents
+                    break;
+                }
+                if (scanResult.getAgent() instanceof Edge) {
+                    if (position.toImmutable().isNextTo(scanResult.getAgent().getPosition()) && isFacing(scanResult.getAgent())) {
+                        return result;
+                    }
+                }
+            }
+            final int irrelevant = 1;
+            result += moveForwards(irrelevant, 1);
         }
-        return result;
+
+        throw new IllegalStateException("Never reached edge");
     }
 
     private boolean isFacing(Agent edge) {
@@ -119,51 +112,29 @@ public class Legs implements Locomotion {
     }
 
     private void turnAfterEdgeCollision() {
-        LOG.debug("Bouncing off edge");
-        int positiveOrientation = orientation;
-        if (orientation < 0) {
-            positiveOrientation = Turn.FULL + orientation;
-        }
+        CartesianVector wallNormal;
         if (position.getX() == 1) {
             //west wall
-            if (positiveOrientation < Turn.HALF) {
-                turn(Turn.LEFT);
-            } else if (positiveOrientation > Turn.HALF) {
-                turn(Turn.RIGHT);
-            } else {
-                turn(Turn.HALF);
-            }
+            wallNormal = new CartesianVector(1, 0);
         } else if (position.getY() == 1) {
             //north wall
-            if (positiveOrientation < Orientation.NORTH) {
-                turn(Turn.LEFT);
-            } else if (positiveOrientation > Orientation.NORTH) {
-                turn(Turn.RIGHT);
-            } else {
-                turn(Turn.HALF);
-            }
+            wallNormal = new CartesianVector(0, 1);
         } else if (position.getX() == worldWidth - 2) {
             //east wall
-            if (positiveOrientation < Turn.HALF) {
-                turn(Turn.RIGHT);
-            } else if (positiveOrientation > Turn.HALF) {
-                turn(Turn.LEFT);
-            } else {
-                turn(Turn.HALF);
-            }
+            wallNormal = new CartesianVector(-1, 0);
         } else if (position.getY() == worldHeight - 2) {
             //south wall
-            if (positiveOrientation < Turn.HALF / 2) {
-                turn(Turn.LEFT);
-            } else if (positiveOrientation > Turn.HALF / 2) {
-                turn(Turn.RIGHT);
-            } else {
-                turn(Turn.HALF);
-            }
+            wallNormal = new CartesianVector(0, -1);
         } else {
-            //corners
-            turn(Turn.HALF);
+            throw new IllegalStateException("Did not hit a wall");
         }
+
+        CartesianVector current = new PolarVector(orientation, 1).toCartesian();
+        CartesianVector reflection = current.plus(wallNormal.multiply(-2 * current.dot(wallNormal)));
+        double reflectionAngleInRadians = Math.atan2(reflection.getY(), reflection.getX());
+        int reflectionAngle = (int) (Math.round(Math.toDegrees(reflectionAngleInRadians)) - orientation);
+        LOG.debug("Bouncing off edge");
+        turn(reflectionAngle);
     }
 
     @Override
@@ -184,12 +155,12 @@ public class Legs implements Locomotion {
 
         double movementEnergy = 0;
         if (Math.abs(vector.getAngle()) < MOVE_AND_ROTATE_MAX) {
-            adjustAngle(vector.getAngle());
+            turn(vector.getAngle());
             movementEnergy = moveForwards(speedFactor, vector.getMagnitude());
         } else {
             //only rotate
             LOG.debug("Only adjusting angle to target by {}", vector.getAngle());
-            adjustAngle(vector.getAngle());
+            turn(vector.getAngle());
         }
 
         return movementEnergy;
@@ -211,10 +182,6 @@ public class Legs implements Locomotion {
         return result;
     }
 
-    private void adjustAngle(int orientationOffset) {
-        orientation = Math.floorMod(orientation + orientationOffset, Turn.FULL);
-    }
-
     private double moveForwards(double speedFactor, double maxMovement) {
         double movementDelta = Math.ceil(topSpeed * speedFactor);
         movementDelta = Math.min(movementDelta, maxMovement);
@@ -223,7 +190,7 @@ public class Legs implements Locomotion {
         } else {
             LOG.info("Walking only {} spaces in direction {}° because it is close to the target", movementDelta, orientation);
         }
-        position.move(new PolarVector(orientation, movementDelta));
+        position.move(velocityX * movementDelta, velocityY * movementDelta);
 
         return movementDelta * energyExpenditureFactor;
     }
@@ -254,6 +221,11 @@ public class Legs implements Locomotion {
 
     @Override
     public void turn(int degrees) {
+        int originalOrientation = orientation;
         orientation = Math.floorMod(orientation + degrees, Turn.FULL);
+        velocityX = Math.cos(Math.toRadians(orientation));
+        velocityY = Math.sin(Math.toRadians(orientation));
+
+        LOG.info("Turned from {}° to {}°", originalOrientation, orientation);
     }
 }

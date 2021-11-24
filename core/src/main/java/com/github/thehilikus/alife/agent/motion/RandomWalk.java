@@ -4,8 +4,6 @@ import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.api.RandomProvider;
 import com.github.thehilikus.alife.agent.genetics.Genome;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.DecimalMax;
 import java.util.Map;
@@ -15,7 +13,6 @@ import java.util.SortedSet;
  * Motion that moves always in the direction being faced and random turns
  */
 public class RandomWalk extends Legs {
-    private static final Logger LOG = LoggerFactory.getLogger(RandomWalk.class.getSimpleName());
     @DecimalMax("1.0")
     private final double turningProbability;
 
@@ -28,9 +25,7 @@ public class RandomWalk extends Legs {
     @Override
     public double move(double speedFactor, SortedSet<ScanResult> scanResults) {
         if (shouldTurn()) {
-            int originalOrientation = getOrientation();
             turn(Turn.LEFT);
-            LOG.info("Turned from {}° to {}°", originalOrientation, getOrientation());
         } else {
             return super.move(speedFactor, scanResults);
         }

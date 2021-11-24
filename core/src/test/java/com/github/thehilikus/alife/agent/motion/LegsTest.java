@@ -67,9 +67,9 @@ public class LegsTest {
     @Test
     void testMoveWithEdgeInSightAndReached() {
         SortedSet<ScanResult> scanResults = new TreeSet<>();
-        Edge edge = new Edge(new Position(ORIGINAL_COORD, WORLD_SIZE + 1).toImmutable());
+        Edge edge = new Edge(new Position(ORIGINAL_COORD, WORLD_SIZE - 1).toImmutable());
         scanResults.add(new ScanResult((int) Math.pow(WORLD_SIZE - ORIGINAL_COORD, 2), 0, edge));
-        Edge edge2 = new Edge(new Position(ORIGINAL_COORD - 1, WORLD_SIZE + 1).toImmutable());
+        Edge edge2 = new Edge(new Position(ORIGINAL_COORD - 1, WORLD_SIZE - 1).toImmutable());
         scanResults.add(new ScanResult((int) Math.pow(WORLD_SIZE - ORIGINAL_COORD, 2), 1, edge2));
 
         double distance = testingUnit.move(2, scanResults);
@@ -120,7 +120,7 @@ public class LegsTest {
         Legs legs = moveTowardsWall(150, 200, orientation);
 
         assertEquals(legs.getPosition().getY(), 200);
-        assertEquals(legs.getOrientation(), Locomotion.Turn.FULL - 86);
+        assertEquals(legs.getOrientation(), Locomotion.Turn.FULL - orientation);
     }
 
     @Test
@@ -141,7 +141,7 @@ public class LegsTest {
         Legs legs = moveTowardsWall(5, 100, orientation);
 
         assertEquals(legs.getPosition().getX(), 1, "New position not next to edge");
-        assertEquals(legs.getOrientation(), orientation + Locomotion.Turn.LEFT);
+        assertEquals(legs.getOrientation(), 45);
     }
 
     @Test
@@ -151,7 +151,7 @@ public class LegsTest {
         Legs legs = moveTowardsWall(5, 100, orientation);
 
         assertEquals(legs.getPosition().getX(), 1, "New position not next to edge");
-        assertEquals(legs.getOrientation(), orientation + Locomotion.Turn.RIGHT);
+        assertEquals(legs.getOrientation(), 310);
     }
 
     @Test
@@ -161,7 +161,7 @@ public class LegsTest {
         Legs legs = moveTowardsWall(100, 5, orientation);
 
         assertEquals(legs.getPosition().getY(), 1, "New position not next to edge");
-        assertEquals(legs.getOrientation(), orientation + Locomotion.Turn.LEFT);
+        assertEquals(legs.getOrientation(), 130);
     }
 
     @Test
@@ -171,7 +171,7 @@ public class LegsTest {
         Legs legs = moveTowardsWall(100, 5, orientation);
 
         assertEquals(legs.getPosition().getY(), 1, "New position not next to edge");
-        assertEquals(legs.getOrientation(), (orientation + Locomotion.Turn.RIGHT) % Locomotion.Turn.FULL);
+        assertEquals(legs.getOrientation(), 10);
     }
 
     @Test
@@ -181,7 +181,7 @@ public class LegsTest {
         Legs legs = moveTowardsWall(195, 100, orientation);
 
         assertEquals(legs.getPosition().getX(), 200, "New position not next to edge");
-        assertEquals(legs.getOrientation(), orientation + Locomotion.Turn.LEFT);
+        assertEquals(legs.getOrientation(), 260);
     }
 
     @Test
@@ -191,7 +191,7 @@ public class LegsTest {
         Legs legs = moveTowardsWall(195, 100, orientation);
 
         assertEquals(legs.getPosition().getX(), 200, "New position not next to edge");
-        assertEquals(legs.getOrientation(), orientation + Locomotion.Turn.RIGHT);
+        assertEquals(legs.getOrientation(), 100);
     }
 
     @Test
@@ -201,7 +201,7 @@ public class LegsTest {
         Legs legs = moveTowardsWall(100, 195, orientation);
 
         assertEquals(legs.getPosition().getY(), 200, "New position not next to edge");
-        assertEquals(legs.getOrientation(), Locomotion.Turn.FULL + orientation + Locomotion.Turn.LEFT);
+        assertEquals(legs.getOrientation(), 350);
     }
 
     @Test
@@ -211,13 +211,31 @@ public class LegsTest {
         Legs legs = moveTowardsWall(100, 195, orientation);
 
         assertEquals(legs.getPosition().getY(), 200, "New position not next to edge");
-        assertEquals(legs.getOrientation(), orientation + Locomotion.Turn.RIGHT);
+        assertEquals(legs.getOrientation(), 190);
+    }
+
+    @Test
+    void testBouncingTwiceCloseToCorner() {
+        int orientation = 303;
+
+        int agentId = 1;
+        Legs legs = createDummyLegs(agentId, 196, 2, orientation);
+        World dummyWorld = new World(WORLD_SIZE - 2, WORLD_SIZE - 2);
+        dummyWorld.addAgent(new DummyAgent(legs));
+        Shape viewRectangle = new Rectangle(-100, -100, 200, 200);
+        SortedSet<ScanResult> edges = dummyWorld.getAgentsInAreaRelativeTo(agentId, viewRectangle, Edge.class::isInstance);
+
+        legs.move(1, edges);
+        legs.move(1, edges);
+
+        assertEquals(legs.getPosition().getX(), 200, "New position not next to edge");
+        assertEquals(legs.getOrientation(), 123);
     }
 
     private Legs moveTowardsWall(int x, int y, int orientation) {
         int agentId = 1;
         Legs legs = createDummyLegs(agentId, x, y, orientation);
-        World dummyWorld = new World(WORLD_SIZE, WORLD_SIZE);
+        World dummyWorld = new World(WORLD_SIZE - 2, WORLD_SIZE - 2);
         dummyWorld.addAgent(new DummyAgent(legs));
         Shape viewRectangle = new Rectangle(-100, -100, 200, 200);
         SortedSet<ScanResult> edges = dummyWorld.getAgentsInAreaRelativeTo(agentId, viewRectangle, Edge.class::isInstance);
