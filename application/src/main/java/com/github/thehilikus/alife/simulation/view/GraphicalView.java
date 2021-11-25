@@ -26,6 +26,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class GraphicalView extends JPanel implements ActionListener {
     private static final Logger LOG = LoggerFactory.getLogger(GraphicalView.class.getSimpleName());
+    private static final int edgePadding = 20;
 
     private final World world;
     private final AgentView agentsView = new AgentsViewDelegator();
@@ -42,9 +43,7 @@ public class GraphicalView extends JPanel implements ActionListener {
         this.world = world;
         this.infoPanel = infoPanel;
         this.animation = animation;
-        final int edgePadding = 20;
         setPreferredSize(new Dimension(world.getWidth() + edgePadding, world.getHeight() + edgePadding));
-        setBorder(BorderFactory.createLineBorder(Color.BLACK));
         setBackground(Color.WHITE);
     }
 
@@ -69,6 +68,11 @@ public class GraphicalView extends JPanel implements ActionListener {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
+        g2d.translate(edgePadding / 2, edgePadding / 2);
+
+        Shape edge = new Rectangle(world.getWidth(), world.getHeight());
+        g2d.draw(edge);
+
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         if (lastKeyframe == null || nextKeyframe == null) {
@@ -137,6 +141,7 @@ public class GraphicalView extends JPanel implements ActionListener {
 
     public void selectAgentIn(Point clickPoint) {
         double shortestDistance = Double.MAX_VALUE;
+        clickPoint.translate(-edgePadding / 2, -edgePadding / 2);
         int result = -1;
         for (Map.Entry<Shape, Integer> agentShape : agentsShapes.entrySet()) {
             if (agentShape.getKey().getBounds2D().contains(clickPoint)) {
