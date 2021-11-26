@@ -36,7 +36,7 @@ public class Legs implements Locomotion {
     @DecimalMax("0.0")
     private final double energyExpenditureFactor;
 
-    protected Legs(int worldWidth, int worldHeight, int agentId, Position position, Genome genome) {
+    public Legs(int worldWidth, int worldHeight, int agentId, Position position, Genome genome) {
         this(worldWidth, worldHeight, agentId, position, RandomProvider.nextInt(Turn.FULL), genome);
     }
 
@@ -148,7 +148,7 @@ public class Legs implements Locomotion {
         return movementEnergy;
     }
 
-    private double moveTo(double speedFactor, PolarVector vector) {
+    protected double moveTo(double speedFactor, PolarVector vector) {
         if (Math.abs(vector.getAngle()) > Turn.HALF) {
             throw new IllegalArgumentException("Orientation offset must be reduced to its smallest representation: e.g. 359 -> -1");
         }

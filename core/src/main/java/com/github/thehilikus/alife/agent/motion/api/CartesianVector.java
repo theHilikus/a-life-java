@@ -24,6 +24,10 @@ public class CartesianVector {
         return new CartesianVector(x + other.x, y + other.y);
     }
 
+    public CartesianVector subtract(CartesianVector other) {
+        return new CartesianVector(x - other.x, y - other.y);
+    }
+
     public double getX() {
         return x;
     }
@@ -34,7 +38,28 @@ public class CartesianVector {
 
     public PolarVector toPolar() {
         double angle = Math.atan2(y, x);
-        double magnitude = Math.sqrt(x * x + y * y);
+        double magnitude = getMagnitude();
         return new PolarVector((int) Math.round(Math.toDegrees(angle)), magnitude);
+    }
+
+    public CartesianVector normalize() {
+        double magnitude = getMagnitude();
+
+        double x = this.x;
+        double y = this.y;
+        if (magnitude != 0) {
+            x /= magnitude;
+            y /= magnitude;
+        }
+
+        return new CartesianVector(x, y);
+    }
+
+    public double getMagnitude() {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    public CartesianVector divide(double divisor) {
+        return new CartesianVector(x / divisor, y / divisor);
     }
 }

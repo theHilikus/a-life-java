@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.agent.social;
 
-import com.github.thehilikus.alife.agent.api.internal.Message;
 import com.github.thehilikus.alife.agent.api.Position;
+import com.github.thehilikus.alife.agent.api.internal.Message;
 import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.controllers.SocialController;
 import com.github.thehilikus.alife.agent.controllers.VitalsController;
@@ -17,60 +17,23 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * A living agent that eats {@link com.github.thehilikus.alife.agent.plants.Plant}
- */
-public class Herbivore implements SocialAgent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Herbivore.class.getSimpleName());
+public class Boid implements SocialAgent {
+    private static final Logger LOG = LoggerFactory.getLogger(Boid.class.getSimpleName());
+    private final int id;
     private final Vision vision;
     private final Locomotion locomotion;
     private final Genome genome;
-    private final int id;
     private Mood mood;
-    private final SocialController social;
+//    private final SocialController social;
     private final VitalsController vitals;
 
-    public Herbivore(int id, AgentModules dependencies, Mood startingMood, VitalsController vitals, SocialController social) {
+    public Boid(int id, AgentModules dependencies, Mood startingMood, VitalsController vitals) {
         this.id = id;
         this.vision = dependencies.getVision();
         this.locomotion = dependencies.getLocomotion();
         this.genome = dependencies.getGenome();
         this.vitals = vitals;
         mood = startingMood;
-        this.social = social;
-    }
-
-    @Override
-    public VitalSign tick() {
-        LOG.debug("#### Updating state of {} ####", this);
-        Mood newMood = mood.tick(this);
-        vitals.updateTrackers(mood);
-
-        Mood vitalMood = vitals.nextMood(newMood);
-        if (vitalMood.getPriority() > newMood.getPriority()) {
-            LOG.info("Overwriting next mood {} with {} due to vital needs", newMood, vitalMood);
-            newMood = vitalMood;
-        }
-        boolean alive = vitals.isAlive();
-
-        Mood socialMood = social.nextMood(newMood);
-        if (socialMood.getPriority() > newMood.getPriority()) {
-            LOG.info("Overwriting next mood {} with {} due to social interaction", newMood, socialMood);
-            newMood = socialMood;
-        }
-
-        if (alive && newMood != mood) {
-            LOG.info("Transitioning from {} to {}", mood, newMood);
-        }
-        mood = newMood;
-
-        return alive ? null : vitals.getCauseOfDeath();
-    }
-
-    @Override
-    public void communicate(Message message) {
-        social.receiveMessage(message);
     }
 
     @Override
@@ -95,12 +58,40 @@ public class Herbivore implements SocialAgent {
     }
 
     @Override
-    public String toString() {
-        return "Herbivore{" +
-                "id=" + id +
-                ", position=" + getPosition() +
-                ", mood=" + mood +
-                '}';
+    public Position.Immutable getPosition() {
+        return locomotion.getPosition();
+    }
+
+    @Override
+    public VitalSign tick() {
+        LOG.debug("#### Updating state of {} ####", this);
+        Mood newMood = mood.tick(this);
+        vitals.updateTrackers(mood);
+
+        Mood vitalMood = vitals.nextMood(newMood);
+        if (vitalMood.getPriority() > newMood.getPriority()) {
+            LOG.info("Overwriting next mood {} with {} due to vital needs", newMood, vitalMood);
+            newMood = vitalMood;
+        }
+        boolean alive = vitals.isAlive();
+
+//        Mood socialMood = social.nextMood(newMood);
+//        if (socialMood.getPriority() > newMood.getPriority()) {
+//            LOG.info("Overwriting next mood {} with {} due to social interaction", newMood, socialMood);
+//            newMood = socialMood;
+//        }
+
+        if (alive && newMood != mood) {
+            LOG.info("Transitioning from {} to {}", mood, newMood);
+        }
+        mood = newMood;
+
+        return alive ? null : vitals.getCauseOfDeath();
+    }
+
+    @Override
+    public Mood getMood() {
+        return mood;
     }
 
     @Override
@@ -109,17 +100,16 @@ public class Herbivore implements SocialAgent {
     }
 
     @Override
-    public Position.Immutable getPosition() {
-        return locomotion.getPosition();
+    public void communicate(Message message) {
+
     }
 
     @Override
-    public int getOrientation() {
-        return locomotion.getOrientation();
-    }
-
-    @Override
-    public Mood getMood() {
-        return mood;
+    public String toString() {
+        return "Boid{" +
+                "id=" + id +
+                ", position=" + getPosition() +
+                ", mood=" + mood +
+                '}';
     }
 }

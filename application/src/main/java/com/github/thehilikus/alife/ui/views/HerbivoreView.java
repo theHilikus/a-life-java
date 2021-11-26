@@ -148,14 +148,14 @@ public class HerbivoreView implements AgentView {
     private Shape createHerbivoreShape(AgentKeyframe frame) {
         int size = frame.getAgentDetail("size");
 
-        Path2D triangle = new Path2D.Double();
+        Path2D shape = new Path2D.Double();
         double xOffset = size / 6.0;
-        triangle.moveTo(size / -2.0 + xOffset, size / -2.0);
-        triangle.lineTo(xOffset, size / -2.0);
-        triangle.curveTo(size / 2.0 + xOffset, 0, size / 2.0 + xOffset, 0, xOffset, size / 2.0);
-        triangle.lineTo(size / -2.0 + xOffset, size / 2.0);
+        shape.moveTo(size / -2.0 + xOffset, size / -2.0);
+        shape.lineTo(xOffset, size / -2.0);
+        shape.curveTo(size / 2.0 + xOffset, 0, size / 2.0 + xOffset, 0, xOffset, size / 2.0);
+        shape.lineTo(size / -2.0 + xOffset, size / 2.0);
 
-        triangle.closePath();
+        shape.closePath();
 
         AffineTransform transform = new AffineTransform();
 
@@ -166,9 +166,9 @@ public class HerbivoreView implements AgentView {
         double orientationInRadians = Math.toRadians(orientation);
         transform.rotate(orientationInRadians);
 
-        triangle.transform(transform);
+        shape.transform(transform);
 
-        return triangle;
+        return shape;
     }
 
     private Color computeAgentColor(Map<String, Object> details) {

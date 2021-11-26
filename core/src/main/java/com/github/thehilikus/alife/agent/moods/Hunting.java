@@ -6,6 +6,7 @@ import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
+import com.github.thehilikus.alife.agent.motion.api.PolarVector;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
 import com.github.thehilikus.alife.agent.vision.api.Vision;
 import com.github.thehilikus.alife.agent.vitals.AgentModules;
