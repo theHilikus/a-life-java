@@ -149,9 +149,12 @@ public class HerbivoreView implements AgentView {
         int size = frame.getAgentDetail("size");
 
         Path2D triangle = new Path2D.Double();
-        triangle.moveTo(size / -2.4, -size / 2.0);
-        triangle.lineTo(size / -2.4, size / 2.0);
-        triangle.lineTo(size / 1.2, 0);
+        double xOffset = size / 6.0;
+        triangle.moveTo(size / -2.0 + xOffset, size / -2.0);
+        triangle.lineTo(xOffset, size / -2.0);
+        triangle.curveTo(size / 2.0 + xOffset, 0, size / 2.0 + xOffset, 0, xOffset, size / 2.0);
+        triangle.lineTo(size / -2.0 + xOffset, size / 2.0);
+
         triangle.closePath();
 
         AffineTransform transform = new AffineTransform();
