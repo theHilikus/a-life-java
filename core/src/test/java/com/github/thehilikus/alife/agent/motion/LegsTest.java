@@ -226,8 +226,10 @@ public class LegsTest {
         SortedSet<ScanResult> edges = dummyWorld.getAgentsInAreaRelativeTo(agentId, viewRectangle, Edge.class::isInstance);
 
         legs.move(1, edges);
-        legs.move(1, edges);
+        assertEquals(legs.getPosition().getY(), 1, "New position not next to edge");
+        assertEquals(legs.getOrientation(), 57);
 
+        legs.move(1, edges);
         assertEquals(legs.getPosition().getX(), 200, "New position not next to edge");
         assertEquals(legs.getOrientation(), 123);
     }
