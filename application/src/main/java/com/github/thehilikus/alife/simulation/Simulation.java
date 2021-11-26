@@ -7,6 +7,7 @@ import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.spi.AppenderAttachable;
 import com.github.thehilikus.alife.agent.api.LivingAgentFactory;
 import com.github.thehilikus.alife.agent.api.RandomProvider;
+import com.github.thehilikus.alife.agent.factories.BoidFactory;
 import com.github.thehilikus.alife.agent.factories.HerbivoreFactory;
 import com.github.thehilikus.alife.agent.factories.PlantFactory;
 import com.github.thehilikus.alife.simulation.view.ConsoleView;
@@ -106,6 +107,7 @@ public class Simulation {
         world = new World(options.getWorldWidth(), options.getWorldHeight());
         LivingAgentFactory.setWorld(world);
         new HerbivoreFactory().createAgents(options.getHerbivoresCount());
+        new BoidFactory().createAgents(options.getBoidsCount());
         new PlantFactory().createAgents(options.getPlantsCount());
         control = new Control(world);
 

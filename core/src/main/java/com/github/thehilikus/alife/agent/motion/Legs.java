@@ -36,7 +36,7 @@ public class Legs implements Locomotion {
     @DecimalMax("0.0")
     private final double energyExpenditureFactor;
 
-    protected Legs(int worldWidth, int worldHeight, int agentId, Position position, Genome genome) {
+    public Legs(int worldWidth, int worldHeight, int agentId, Position position, Genome genome) {
         this(worldWidth, worldHeight, agentId, position, RandomProvider.nextInt(Turn.FULL), genome);
     }
 
@@ -111,7 +111,7 @@ public class Legs implements Locomotion {
                 || deltaX == 0 && deltaY > 0 && facingSouth;
     }
 
-    private void turnAfterEdgeCollision() {
+    protected void turnAfterEdgeCollision() {
         CartesianVector wallNormal;
         if (position.getX() == 1) {
             //west wall
@@ -126,7 +126,7 @@ public class Legs implements Locomotion {
             //south wall
             wallNormal = new CartesianVector(0, -1);
         } else {
-            throw new IllegalStateException("Did not hit a wall");
+            throw new IllegalStateException("Did not hit a wall. " + position);
         }
 
         CartesianVector current = new PolarVector(orientation, 1).toCartesian();
@@ -148,7 +148,7 @@ public class Legs implements Locomotion {
         return movementEnergy;
     }
 
-    private double moveTo(double speedFactor, PolarVector vector) {
+    protected double moveTo(double speedFactor, PolarVector vector) {
         if (Math.abs(vector.getAngle()) > Turn.HALF) {
             throw new IllegalArgumentException("Orientation offset must be reduced to its smallest representation: e.g. 359 -> -1");
         }
@@ -227,5 +227,13 @@ public class Legs implements Locomotion {
         velocityY = Math.sin(Math.toRadians(orientation));
 
         LOG.info("Turned from {}° to {}°", originalOrientation, orientation);
+    }
+
+    protected int getWorldHeight() {
+        return worldHeight;
+    }
+
+    protected int getWorldWidth() {
+        return worldWidth;
     }
 }

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * Builds {@link Plant}
  */
 public class PlantFactory extends LivingAgentFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(PlantFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PlantFactory.class.getSimpleName());
 
     @Override
     protected LivingAgent createAgent() {

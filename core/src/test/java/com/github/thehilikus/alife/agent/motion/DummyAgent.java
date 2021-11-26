@@ -2,6 +2,7 @@ package com.github.thehilikus.alife.agent.motion;
 
 import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.api.Position;
+import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 
@@ -35,6 +36,11 @@ public class DummyAgent implements LivingAgent {
     @Override
     public int getOrientation() {
         return legs.getOrientation();
+    }
+
+    @Override
+    public Mood getMood() {
+        return null;
     }
 
     @Override

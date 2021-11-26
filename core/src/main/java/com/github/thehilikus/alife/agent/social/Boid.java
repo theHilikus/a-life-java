@@ -7,13 +7,10 @@ import com.github.thehilikus.alife.agent.vitals.AgentModules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A living agent that eats {@link com.github.thehilikus.alife.agent.plants.Plant}
- */
-public class Herbivore extends BasicSocialAgent {
-    private static final Logger LOG = LoggerFactory.getLogger(Herbivore.class.getSimpleName());
+public class Boid extends BasicSocialAgent {
+    private static final Logger LOG = LoggerFactory.getLogger(Boid.class.getSimpleName());
 
-    public Herbivore(int id, AgentModules dependencies, Mood startingMood, VitalsController vitals, SocialController social) {
+    public Boid(int id, AgentModules dependencies, Mood startingMood, VitalsController vitals, SocialController social) {
         super(id, dependencies, startingMood, vitals, social);
     }
 
@@ -24,7 +21,7 @@ public class Herbivore extends BasicSocialAgent {
 
     @Override
     public String toString() {
-        return "Herbivore{" +
+        return "Boid{" +
                 "id=" + getId() +
                 ", position=" + getPosition() +
                 ", mood=" + getMood() +

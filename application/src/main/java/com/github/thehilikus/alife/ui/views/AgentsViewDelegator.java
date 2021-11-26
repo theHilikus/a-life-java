@@ -14,7 +14,8 @@ public class AgentsViewDelegator implements AgentView {
     private final Map<String, AgentView> agentsViews = Map.of(
             "Edge", new EdgeView(),
             "Plant", new PlantView(),
-            "Herbivore", new HerbivoreView()
+            "Herbivore", new HerbivoreView(),
+            "Boid", new BoidView()
     );
 
     @Override

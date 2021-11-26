@@ -33,6 +33,9 @@ public class ScanResult implements Comparable<ScanResult> {
         if (result == 0) {
             result = direction - other.direction;
         }
+        if (result == 0) {
+            result = agent.getId() - other.agent.getId();
+        }
         return result;
     }
 

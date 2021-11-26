@@ -21,6 +21,8 @@ public class CliOptions {
     private int plantsCount = 50;
     @Option(name = "--herbivores", usage = "The number of herbivores to add to the world")
     private int herbivoresCount = 20;
+    @Option(name = "--boids", usage = "The number of birds to add to the world")
+    private int boidsCount = 20;
     @Option(name = "--world-width", usage = "The number of horizontal positions")
     private int worldWidth = 100;
     @Option(name = "--world-height", usage = "The number of vertical positions")
@@ -54,6 +56,10 @@ public class CliOptions {
 
     public int getHerbivoresCount() {
         return herbivoresCount;
+    }
+
+    public int getBoidsCount() {
+        return boidsCount;
     }
 
     public int getWorldWidth() {

@@ -174,8 +174,8 @@ public class World {
         for (Agent found : agentsFound) {
             int xDelta = found.getPosition().getX() - centerAgent.getPosition().getX();
             int yDelta = found.getPosition().getY() - centerAgent.getPosition().getY();
-            double agentAngleInRadians = Math.atan2(yDelta, xDelta);
-            int direction = (int) Math.round(Math.toDegrees(agentAngleInRadians) - centerAgent.getOrientation()) % Locomotion.Turn.FULL;
+            double angleToAgentInRadians = Math.atan2(yDelta, xDelta);
+            int direction = (int) Math.round(Math.toDegrees(angleToAgentInRadians) - centerAgent.getOrientation()) % Locomotion.Turn.FULL;
             if (direction < -Locomotion.Turn.HALF) {
                 //represent it in the other direction to make it smaller than 180
                 direction = (direction + Locomotion.Turn.FULL) % Locomotion.Turn.FULL;
