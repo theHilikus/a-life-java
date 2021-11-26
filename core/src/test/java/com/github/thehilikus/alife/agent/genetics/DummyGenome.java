@@ -12,12 +12,12 @@ public class DummyGenome extends Genome {
     }
 
     @Override
-    public Genome crossover(Genome maternalGenome) {
-        throw new UnsupportedOperationException("Not implemented");
+    protected Genome create(Map<String, Object> genes) {
+        return null;
     }
 
     @Override
-    public void mutate() {
-        throw new UnsupportedOperationException("Not implemented");
+    protected Map<String, Object> createGenes() {
+        return null;
     }
 }
