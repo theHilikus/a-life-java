@@ -44,4 +44,12 @@ public class PolarVector {
 
         return new CartesianVector(x, y);
     }
+
+    @Override
+    public String toString() {
+        return "PolarVector{" +
+                "angle=" + angle +
+                ", magnitude=" + magnitude +
+                '}';
+    }
 }
