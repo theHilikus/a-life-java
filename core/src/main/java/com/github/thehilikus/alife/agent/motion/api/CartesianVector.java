@@ -22,4 +22,12 @@ public record CartesianVector(double x, double y) {
         double magnitude = Math.sqrt(x * x + y * y);
         return new PolarVector((int) Math.round(Math.toDegrees(angle)), magnitude);
     }
+
+    @Override
+    public String toString() {
+        return "CartesianVector{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }
