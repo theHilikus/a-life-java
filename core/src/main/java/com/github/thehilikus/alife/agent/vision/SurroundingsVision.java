@@ -45,7 +45,7 @@ public class SurroundingsVision implements Vision {
     @Override
     public SortedSet<ScanResult> scan(Predicate<Agent> test) {
         LOG.debug("Scanning around agent {} with distance = {}", agentId, distance);
-        Shape viewingArea = new Rectangle(-distance / 2, -distance / 2, distance, distance);
+        Shape viewingArea = new Rectangle(-distance, -distance, distance * 2, distance * 2);
         SortedSet<ScanResult> result = world.getAgentsInAreaRelativeTo(agentId, viewingArea, test);
 
         LOG.trace("Found {} agents", result.size());
