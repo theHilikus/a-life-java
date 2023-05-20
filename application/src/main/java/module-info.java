@@ -2,8 +2,8 @@ module a.life.application {
     requires args4j;
     requires org.slf4j;
     requires java.desktop;
-    requires logback.classic;
-    requires logback.core;
+    requires ch.qos.logback.classic;
+    requires ch.qos.logback.core;
     requires a.life.core;
     requires l2fprod.properties.editor;
     requires JCDP;
