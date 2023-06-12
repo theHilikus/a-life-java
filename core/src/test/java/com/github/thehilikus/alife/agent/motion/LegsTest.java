@@ -4,13 +4,14 @@ import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.genetics.DummyGenome;
 import com.github.thehilikus.alife.agent.genetics.Genome;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
+import com.github.thehilikus.alife.agent.vision.Rectangle;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
+import com.github.thehilikus.alife.agent.vision.api.Shape;
 import com.github.thehilikus.alife.world.Edge;
 import com.github.thehilikus.alife.world.World;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.awt.*;
 import java.util.Collections;
 import java.util.Map;
 import java.util.SortedSet;

@@ -3,13 +3,13 @@ package com.github.thehilikus.alife.agent.vision;
 import com.github.thehilikus.alife.agent.api.Agent;
 import com.github.thehilikus.alife.agent.genetics.Genome;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
+import com.github.thehilikus.alife.agent.vision.api.Shape;
 import com.github.thehilikus.alife.agent.vision.api.Vision;
 import com.github.thehilikus.alife.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.Positive;
-import java.awt.*;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.function.Predicate;

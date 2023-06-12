@@ -8,11 +8,11 @@ import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 import com.github.thehilikus.alife.agent.vision.api.ScanResult;
+import com.github.thehilikus.alife.agent.vision.api.Shape;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
