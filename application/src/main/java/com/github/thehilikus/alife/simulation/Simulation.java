@@ -9,13 +9,6 @@ import com.github.thehilikus.alife.agent.api.LivingAgentFactory;
 import com.github.thehilikus.alife.agent.api.RandomProvider;
 import com.github.thehilikus.alife.agent.factories.HerbivoreFactory;
 import com.github.thehilikus.alife.agent.factories.PlantFactory;
-import com.github.thehilikus.alife.simulation.view.ConsoleView;
-import com.github.thehilikus.alife.simulation.view.GraphicalView;
-import com.github.thehilikus.alife.ui.Animation;
-import com.github.thehilikus.alife.ui.SimulationConsoleController;
-import com.github.thehilikus.alife.ui.SimulationGraphicalController;
-import com.github.thehilikus.alife.ui.SimulationGraphicalView;
-import com.github.thehilikus.alife.ui.swing.InfoPanel;
 import com.github.thehilikus.alife.world.World;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -23,7 +16,6 @@ import org.kohsuke.args4j.ParserProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -38,8 +30,8 @@ public class Simulation {
     private final CliOptions options;
     private static final int FIXED_SEED = 311;
     private final Control control;
-    private SimulationConsoleController consoleController;
-    private SimulationGraphicalView simulationView;
+//    private SimulationConsoleController consoleController;
+//    private SimulationGraphicalView simulationView;
 
     public static void main(String[] args) {
         CliOptions options = parseArguments(args);
@@ -109,46 +101,44 @@ public class Simulation {
         new PlantFactory().createAgents(options.getPlantsCount());
         control = new Control(world);
 
-        if (options.isGraphical()) {
-            initGui();
-            control.start();
-        } else {
-            initConsole();
-        }
+//        if (options.isGraphical()) {
+//            initGui();
+//            control.start();
+//        } else {
+//            initConsole();
+//        }
     }
 
-    private void initConsole() {
-        ConsoleView consoleView = new ConsoleView(world);
-        consoleController = new SimulationConsoleController(consoleView, control);
-        world.setWorldListener(consoleController);
-        consoleView.refreshNonBlocking();
-    }
-
-    private void initGui() {
-        LOG.info("Initializing GUI");
-
-        InfoPanel infoPanel = new InfoPanel();
-        Animation animation = new Animation();
-        GraphicalView worldView = new GraphicalView(world, infoPanel, animation);
-        simulationView = new SimulationGraphicalView(worldView, infoPanel);
-        SimulationGraphicalController graphicalController = new SimulationGraphicalController(worldView, animation, simulationView.getToolbar());
-        simulationView.addActionListener(graphicalController);
-        worldView.addMouseListener(graphicalController);
-        animation.addActionListener(graphicalController);
-        world.setWorldListener(graphicalController);
-        try {
-            worldView.createNextKeyframe();
-        } catch (InterruptedException e) {
-            throw new AssertionError("Should never happen since there are no interrupts at this stage");
-        }
-    }
+//    private void initConsole() {
+//        ConsoleView consoleView = new ConsoleView(world);
+//        consoleController = new SimulationConsoleController(consoleView, control);
+//        world.setWorldListener(consoleController);
+//        consoleView.refreshNonBlocking();
+//    }
+//
+//    private void initGui() {
+//        LOG.info("Initializing GUI");
+//
+//        InfoPanel infoPanel = new InfoPanel();
+//        Animation animation = new Animation();
+//        GraphicalView worldView = new GraphicalView(world, infoPanel, animation);
+//        simulationView = new SimulationGraphicalView(worldView, infoPanel);
+//        SimulationGraphicalController graphicalController = new SimulationGraphicalController(worldView, animation, simulationView.getToolbar());
+//        simulationView.addActionListener(graphicalController);
+//        worldView.addMouseListener(graphicalController);
+//        animation.addActionListener(graphicalController);
+//        world.setWorldListener(graphicalController);
+//        try {
+//            worldView.createNextKeyframe();
+//        } catch (InterruptedException e) {
+//            throw new AssertionError("Should never happen since there are no interrupts at this stage");
+//        }
+//    }
 
     private void start() {
-        if (options.isGraphical()) {
-            SwingUtilities.invokeLater(() -> simulationView.setVisible(true));
-        } else {
-            consoleController.start(options.getAutomatic());
-        }
+        control.step();
+        control.step();
+        control.stop();
     }
 
     public static class Control {
@@ -191,6 +181,11 @@ public class Simulation {
         public void step() {
             LOG.info("Advancing a single step");
             executor.execute(world::tick);
+        }
+
+        public void stop() {
+            LOG.info("Stopping");
+            executor.shutdown();
         }
 
         public boolean isRunning() {
