@@ -25,7 +25,7 @@ import java.util.SortedSet;
  */
 public class Mating implements Mood {
     private static final int PRIORITY = 65;
-    private static final Logger LOG = LoggerFactory.getLogger(Mating.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(Mating.class);
     private static final double MATE_ENERGY_FACTOR = 1.25;
     private final Genome genome;
     private final ReproductionTracker reproductionTracker;

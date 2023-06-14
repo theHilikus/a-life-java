@@ -18,7 +18,7 @@ import java.util.Map;
  * Aggregates the information of all the agent vitals
  */
 public class VitalsController implements Component {
-    private static final Logger LOG = LoggerFactory.getLogger(VitalsController.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(VitalsController.class);
     private final HungerTracker hungerTracker;
     private final EnergyTracker energyTracker;
     private final AgeTracker ageTracker;

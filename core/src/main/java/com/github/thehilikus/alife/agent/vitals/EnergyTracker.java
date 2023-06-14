@@ -17,7 +17,7 @@ public class EnergyTracker implements VitalSign {
      * The number of energy points to lose per round
      */
     public static final int ENERGY_DERIVATIVE = -1;
-    private static final Logger LOG = LoggerFactory.getLogger(EnergyTracker.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(EnergyTracker.class);
     private static final int STARTING_ENERGY = 100;
     private final int agentId;
 

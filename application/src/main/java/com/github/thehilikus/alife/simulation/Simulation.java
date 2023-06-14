@@ -33,7 +33,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * The driver of the world
  */
 public class Simulation {
-    private static final Logger LOG = LoggerFactory.getLogger(Simulation.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(Simulation.class);
     private final World world;
     private final CliOptions options;
     private static final int FIXED_SEED = 311;
@@ -152,7 +152,7 @@ public class Simulation {
     }
 
     public static class Control {
-        private static final Logger LOG = LoggerFactory.getLogger(Control.class.getSimpleName());
+        private static final Logger LOG = LoggerFactory.getLogger(Control.class);
 
         private final World world;
         private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "com/github/thehilikus/alife/simulation"));

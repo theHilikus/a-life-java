@@ -25,7 +25,7 @@ import java.util.concurrent.BlockingQueue;
  * Prints a representation of the simulation in a Swing JPanel
  */
 public class GraphicalView extends JPanel implements ActionListener {
-    private static final Logger LOG = LoggerFactory.getLogger(GraphicalView.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(GraphicalView.class);
     private static final int edgePadding = 20;
 
     private final World world;

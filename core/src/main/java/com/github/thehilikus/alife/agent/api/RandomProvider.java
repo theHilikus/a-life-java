@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public class RandomProvider {
     private static final Random random = new Random();
-    private static final Logger LOG = LoggerFactory.getLogger(RandomProvider.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(RandomProvider.class);
 
     public static void setSeed(long seed) {
         LOG.info("Starting simulation with RNG seed = {}", seed);

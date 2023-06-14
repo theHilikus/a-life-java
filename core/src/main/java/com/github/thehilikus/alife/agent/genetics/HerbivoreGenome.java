@@ -17,7 +17,7 @@ import java.util.Map;
  * Genetic material for an {@link com.github.thehilikus.alife.agent.social.Herbivore}
  */
 public class HerbivoreGenome extends Genome {
-    private static final Logger LOG = LoggerFactory.getLogger(HerbivoreGenome.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(HerbivoreGenome.class);
     private static final double CROSSOVER_PROBABILITY = 0.7;
     private static final double MUTATION_PROBABILITY = 0.05;
 

@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
  * Helper to run animations
  */
 public class Animation implements ActionListener {
-    private static final Logger LOG = LoggerFactory.getLogger(Animation.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(Animation.class);
     private static final int FRAME_RATE = 30; //FPS
     private final Timer animationClock = new Timer(1000 / FRAME_RATE, null);
     private int currentFrame = 0;

@@ -18,7 +18,7 @@ import java.util.Map;
  * An inanimate agent that gets eaten
  */
 public class Plant implements EatableAgent {
-    private static final Logger LOG = LoggerFactory.getLogger(Plant.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(Plant.class);
     private final int id;
     private final Position position;
     private final int size;

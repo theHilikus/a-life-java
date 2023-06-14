@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  * The environment where the agents live
  */
 public class World {
-    private static final Logger LOG = LoggerFactory.getLogger(World.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(World.class);
     private final Collection<LivingAgent> livingAgents = new CopyOnWriteArrayList<>();
     private final Collection<Agent> edges = new ArrayList<>();
     private final Map<Integer, LivingAgent> cemetery = new HashMap<>();

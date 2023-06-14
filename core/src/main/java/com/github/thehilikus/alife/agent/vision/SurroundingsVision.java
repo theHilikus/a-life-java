@@ -18,7 +18,7 @@ import java.util.function.Predicate;
  * Vision that can see in a square around the agent
  */
 public class SurroundingsVision implements Vision {
-    private static final Logger LOG = LoggerFactory.getLogger(SurroundingsVision.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(SurroundingsVision.class);
 
     private final int agentId;
 

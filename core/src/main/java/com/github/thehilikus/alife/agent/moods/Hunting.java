@@ -22,7 +22,7 @@ import java.util.SortedSet;
  */
 public class Hunting implements Mood {
     private static final int PRIORITY = 82;
-    private static final Logger LOG = LoggerFactory.getLogger(Hunting.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(Hunting.class);
     private final Vision vision;
     private final Locomotion locomotion;
     private final double speedFactor;

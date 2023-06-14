@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class Herbivore implements SocialAgent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Herbivore.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(Herbivore.class);
     private final Vision vision;
     private final Locomotion locomotion;
     private final Genome genome;

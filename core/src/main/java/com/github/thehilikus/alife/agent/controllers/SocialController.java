@@ -19,7 +19,7 @@ import java.util.Objects;
  * In charge of social interactions with other agents
  */
 public class SocialController implements Component {
-    private static final Logger LOG = LoggerFactory.getLogger(SocialController.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(SocialController.class);
     private final int agentId;
     private final AgentModules dependencies;
     private Mood socialMood;

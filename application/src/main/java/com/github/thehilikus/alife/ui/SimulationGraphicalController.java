@@ -18,7 +18,7 @@ import java.awt.event.MouseListener;
  * Receives events from the simulation
  */
 public class SimulationGraphicalController implements MouseListener, World.WorldListener, ActionListener, ChangeListener {
-    private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class);
     private final GraphicalView worldView;
     private final Animation animation;
     private final MainToolbar toolbar;
