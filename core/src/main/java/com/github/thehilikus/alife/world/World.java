@@ -31,7 +31,7 @@ public class World {
     private final int height;
     private int hour;
     private WorldListener worldListener;
-    private final WorldStats stats = new WorldStats();
+    private final WorldStatistics stats = new WorldStatistics();
 
     public World(int width, int height) {
         LOG.info("Creating world of {}x{}", width, height);

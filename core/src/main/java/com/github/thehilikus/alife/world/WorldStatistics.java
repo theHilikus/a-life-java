@@ -13,14 +13,14 @@ import java.util.stream.Stream;
 /**
  * Gathers stats about the world
  */
-public class WorldStats {
+public class WorldStatistics {
     private final Map<String, List<Integer>> histograms = new HashMap<>();
     private final List<Class<? extends Mood>> moodList;
     private final List<Class<? extends LivingAgent>> typeList;
     private final Collection<String> deathCauses = new HashSet<>();
     private final List<Class<? extends Mood>> plantMoods;
 
-    public WorldStats() {
+    public WorldStatistics() {
         List<Class<? extends Mood>> herbivoreMoods = Arrays.asList(Eating.class, Existing.class, Hunting.class, InHeat.class, InHeatChasing.class, Mating.class, Scouting.class, Sleeping.class);
         plantMoods = Arrays.asList(BeingEaten.class, Growing.class);
         moodList = Stream.concat(herbivoreMoods.stream(), plantMoods.stream()).collect(Collectors.toList());
