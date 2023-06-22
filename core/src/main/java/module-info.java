@@ -9,4 +9,5 @@ module a.life.core {
     exports com.github.thehilikus.alife.agent.vitals.api;
     exports com.github.thehilikus.alife.agent.moods.api;
     exports com.github.thehilikus.alife.agent.factories;
+    exports com.github.thehilikus.alife.simulator;
 }

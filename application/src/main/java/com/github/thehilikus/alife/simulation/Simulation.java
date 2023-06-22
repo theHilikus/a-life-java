@@ -11,6 +11,7 @@ import com.github.thehilikus.alife.agent.factories.HerbivoreFactory;
 import com.github.thehilikus.alife.agent.factories.PlantFactory;
 import com.github.thehilikus.alife.simulation.view.ConsoleView;
 import com.github.thehilikus.alife.simulation.view.GraphicalView;
+import com.github.thehilikus.alife.simulator.Control;
 import com.github.thehilikus.alife.ui.Animation;
 import com.github.thehilikus.alife.ui.SimulationConsoleController;
 import com.github.thehilikus.alife.ui.SimulationGraphicalController;
@@ -25,9 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * The driver of the world
@@ -151,50 +149,4 @@ public class Simulation {
         }
     }
 
-    public static class Control {
-        private static final Logger LOG = LoggerFactory.getLogger(Control.class);
-
-        private final World world;
-        private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "com/github/thehilikus/alife/simulation"));
-        private Future<?> future;
-
-        private Control(World world) {
-            this.world = world;
-        }
-
-        public void start() {
-            LOG.info("Starting continuous simulation");
-            Runnable tick = () -> {
-                boolean alive = true;
-                while (alive) {
-                    alive = world.tick();
-                }
-                pause();
-            };
-            future = executor.submit(tick);
-        }
-
-        public void pause() {
-            LOG.info("Pausing simulation");
-            future.cancel(true);
-            future = null;
-        }
-
-        public void reset() {
-            LOG.info("Resetting simulation");
-            if (isRunning()) {
-                pause();
-            }
-            throw new UnsupportedOperationException("Not implemented yet"); //TODO: implement
-        }
-
-        public void step() {
-            LOG.info("Advancing a single step");
-            executor.execute(world::tick);
-        }
-
-        public boolean isRunning() {
-            return future != null;
-        }
-    }
 }
