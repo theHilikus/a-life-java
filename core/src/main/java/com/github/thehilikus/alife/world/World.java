@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 /**
  * The environment where the agents live
  */
-public class World {
+public class World implements WorldListener.WorldStatus {
     private static final Logger LOG = LoggerFactory.getLogger(World.class);
     private final Collection<LivingAgent> livingAgents = new CopyOnWriteArrayList<>();
     private final Collection<Agent> edges = new ArrayList<>();
@@ -63,10 +63,12 @@ public class World {
         }
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
@@ -101,7 +103,7 @@ public class World {
 
             boolean shouldContinue = true;
             if (worldListener != null) {
-                shouldContinue = worldListener.ticked(hour);
+                shouldContinue = worldListener.ticked(this);
             }
 
             boolean socialAgentsAlive = livingAgents.stream().anyMatch(agent -> agent instanceof SocialAgent);
@@ -144,6 +146,7 @@ public class World {
         return new Position(x, y);
     }
 
+    @Override
     public Map<String, Object> getAgentDetails(int agentId) {
         Map<String, Object> result;
         Optional<LivingAgent> agentOptional = getLivingAgent(agentId).or(() -> Optional.ofNullable(cemetery.get(agentId)));
@@ -152,6 +155,7 @@ public class World {
         return result;
     }
 
+    @Override
     public int getAge() {
         return hour;
     }
@@ -187,17 +191,14 @@ public class World {
         return result;
     }
 
+    @Override
     public Collection<? extends Agent> getLivingAgents() {
         return livingAgents;
     }
 
-    public Collection<Agent> getEdges() {
+    @Override
+    public Collection<? extends Agent> getEdges() {
         return edges;
     }
 
-    public interface WorldListener {
-        boolean ticked(int hour);
-
-        void ended(int hour);
-    }
 }

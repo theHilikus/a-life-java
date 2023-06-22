@@ -8,7 +8,7 @@ import com.github.thehilikus.alife.ui.Keyframe;
 import com.github.thehilikus.alife.ui.swing.InfoPanel;
 import com.github.thehilikus.alife.ui.views.AgentView;
 import com.github.thehilikus.alife.ui.views.AgentsViewDelegator;
-import com.github.thehilikus.alife.world.World;
+import com.github.thehilikus.alife.world.WorldListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class GraphicalView extends JPanel implements ActionListener {
     private static final Logger LOG = LoggerFactory.getLogger(GraphicalView.class);
     private static final int edgePadding = 20;
 
-    private final World world;
+    private WorldListener.WorldStatus latestStatus;
     private final AgentView agentsView = new AgentsViewDelegator();
     private final Map<Shape, Integer> agentsShapes = new HashMap<>();
     private int agentSelectedId = -1;
@@ -39,24 +39,25 @@ public class GraphicalView extends JPanel implements ActionListener {
 
     private final InfoPanel infoPanel;
 
-    public GraphicalView(World world, InfoPanel infoPanel, Animation animation) {
-        this.world = world;
+    public GraphicalView(WorldListener.WorldStatus latestStatus, InfoPanel infoPanel, Animation animation) {
         this.infoPanel = infoPanel;
         this.animation = animation;
-        setPreferredSize(new Dimension(world.getWidth() + edgePadding, world.getHeight() + edgePadding));
+        setPreferredSize(new Dimension(latestStatus.getWidth() + edgePadding, latestStatus.getHeight() + edgePadding));
         setBackground(Color.WHITE);
     }
 
-    public void createNextKeyframe() throws InterruptedException {
+    public void createNextKeyframe(WorldListener.WorldStatus latestStatus) throws InterruptedException {
         if (SwingUtilities.isEventDispatchThread()) {
             throw new IllegalStateException("Don't refresh from the EDT");
         }
 
-        Keyframe newFrame = new Keyframe(world.getAge());
-        for (Agent agent : world.getLivingAgents()) {
+        this.latestStatus = latestStatus;
+
+        Keyframe newFrame = new Keyframe(latestStatus.getAge());
+        for (Agent agent : latestStatus.getLivingAgents()) {
             newFrame.addAgentFrame(agentsView.createAgentFrame(agent));
         }
-        LOG.debug("Frame buffer size = {}/{}. Adding keyframe for hour {}. ", frameBuffer.size(), frameBuffer.size() + frameBuffer.remainingCapacity(), world.getAge());
+        LOG.debug("Frame buffer size = {}/{}. Adding keyframe for hour {}. ", frameBuffer.size(), frameBuffer.size() + frameBuffer.remainingCapacity(), latestStatus.getAge());
         frameBuffer.put(newFrame);
     }
 
@@ -70,7 +71,7 @@ public class GraphicalView extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
         g2d.translate(edgePadding / 2, edgePadding / 2);
 
-        Shape edge = new Rectangle(world.getWidth(), world.getHeight());
+        Shape edge = new Rectangle(latestStatus.getWidth(), latestStatus.getHeight());
         g2d.draw(edge);
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

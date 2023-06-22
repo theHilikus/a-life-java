@@ -2,14 +2,14 @@ package com.github.thehilikus.alife.ui;
 
 import com.github.thehilikus.alife.simulation.view.ConsoleView;
 import com.github.thehilikus.alife.simulator.Control;
-import com.github.thehilikus.alife.world.World;
+import com.github.thehilikus.alife.world.WorldListener;
 
 import java.util.Scanner;
 
 /**
  * Receives events from the simulation
  */
-public class SimulationConsoleController implements World.WorldListener {
+public class SimulationConsoleController implements WorldListener {
     private final ConsoleView consoleView;
     private final Control control;
     private boolean inManualMode = true;
@@ -20,14 +20,14 @@ public class SimulationConsoleController implements World.WorldListener {
     }
 
     @Override
-    public boolean ticked(int hour) {
+    public boolean ticked(WorldStatus latestStatus) {
         boolean result = true;
         if (inManualMode) {
-            consoleView.refreshNonBlocking();
+            consoleView.refreshNonBlocking(latestStatus);
             showCommandPrompt();
         } else {
             try {
-                consoleView.refresh();
+                consoleView.refresh(latestStatus);
             } catch (InterruptedException exc) {
                 result = false;
             }
