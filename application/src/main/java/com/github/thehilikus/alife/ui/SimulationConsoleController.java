@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.ui;
 
-import com.github.thehilikus.alife.simulation.Simulation;
 import com.github.thehilikus.alife.simulation.view.ConsoleView;
+import com.github.thehilikus.alife.simulator.Control;
 import com.github.thehilikus.alife.world.World;
 
 import java.util.Scanner;
@@ -11,10 +11,10 @@ import java.util.Scanner;
  */
 public class SimulationConsoleController implements World.WorldListener {
     private final ConsoleView consoleView;
-    private final Simulation.Control control;
+    private final Control control;
     private boolean inManualMode = true;
 
-    public SimulationConsoleController(ConsoleView consoleView, Simulation.Control control) {
+    public SimulationConsoleController(ConsoleView consoleView, Control control) {
         this.consoleView = consoleView;
         this.control = control;
     }
