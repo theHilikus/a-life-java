@@ -1,7 +1,6 @@
 package com.github.thehilikus.alife.ui.views;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agent.api.Agent;
 import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
@@ -48,17 +47,16 @@ public class HerbivoreView implements AgentView {
     private static final int Z_ORDER = 10;
 
     @Override
-    public void drawInConsole(StringBuilder builder, Agent agent) {
+    public void drawInConsole(StringBuilder builder, Map<String, Object> agentDetails) {
         Ansi.Attribute agentTypeStyle = Ansi.Attribute.BOLD;
 
-        Map<String, Object> details = agent.getDetails();
-        String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
+        String moodName = agentDetails.get(Mood.PARAMETER_PREFIX + "current").toString();
         Ansi.FColor moodColour = consoleMoodColours.get(moodName);
         Objects.requireNonNull(moodColour, "Console mood colour was empty for " + moodName);
         Ansi.BColor background = Ansi.BColor.NONE;
         String formatCode = Ansi.generateCode(agentTypeStyle, moodColour, background);
 
-        int id = agent.getId();
+        int id = Integer.parseInt(agentDetails.get("id").toString());
         String idString = Integer.toString(id);
         if (id < 10) {
             idString = ' ' + idString;
@@ -67,12 +65,12 @@ public class HerbivoreView implements AgentView {
     }
 
     @Override
-    public AgentKeyframe createAgentFrame(Agent agent) {
-        Map<String, Object> details = agent.getDetails();
-        AgentKeyframe result = new AgentKeyframe(agent.getId(), Z_ORDER, details);
-        result.addPropertyToInterpolate("position", details.get("position"));
-        result.addPropertyToInterpolate("orientation", details.get(Locomotion.PARAMETER_PREFIX + "orientation"));
-        Color agentColor = computeAgentColor(details);
+    public AgentKeyframe createAgentFrame(Map<String, Object> agentDetails) {
+        int agentId = Integer.parseInt(agentDetails.get("id").toString());
+        AgentKeyframe result = new AgentKeyframe(agentId, Z_ORDER, agentDetails);
+        result.addPropertyToInterpolate("position", agentDetails.get("position"));
+        result.addPropertyToInterpolate("orientation", agentDetails.get(Locomotion.PARAMETER_PREFIX + "orientation"));
+        Color agentColor = computeAgentColor(agentDetails);
         result.addPropertyToInterpolate("color", agentColor);
 
         return result;

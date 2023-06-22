@@ -192,13 +192,21 @@ public class World implements WorldListener.WorldStatus {
     }
 
     @Override
-    public Collection<? extends Agent> getLivingAgents() {
-        return livingAgents;
+    public Collection<Map<String, Object>> getLivingAgentsDetails() {
+        return convertToDetails(livingAgents);
     }
 
     @Override
-    public Collection<? extends Agent> getEdges() {
-        return edges;
+    public Collection<Map<String, Object>> getEdges() { //TODO: refactor too
+        return convertToDetails(edges);
     }
 
+    private Collection<Map<String, Object>> convertToDetails(Iterable<? extends Agent> agents) {
+        Collection<Map<String, Object>> result = new ArrayList<>();
+        for (Agent agent : agents) {
+            result.add(agent.getDetails());
+        }
+
+        return result;
+    }
 }

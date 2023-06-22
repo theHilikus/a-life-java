@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.simulation.view;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.ui.views.AgentView;
 import com.github.thehilikus.alife.ui.views.AgentsViewDelegator;
 import com.github.thehilikus.alife.world.WorldListener;
@@ -44,17 +44,23 @@ public class ConsoleView {
 
         String formatCode = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.NONE, Ansi.BColor.NONE);
         String emptySpace = Ansi.formatMessage("  ", formatCode);
-        Agent[][] grid = new Agent[latestStatus.getHeight()][latestStatus.getWidth()];
-        latestStatus.getLivingAgents().forEach(agent -> grid[agent.getPosition().getY()][agent.getPosition().getX()] = agent);
-        latestStatus.getEdges().forEach(agent -> grid[agent.getPosition().getY()][agent.getPosition().getX()] = agent);
+        Map<String, Object>[][] grid = new Map[latestStatus.getHeight()][latestStatus.getWidth()];
+        latestStatus.getLivingAgentsDetails().forEach(agentDetails -> {
+            Position.Immutable agentPosition = (Position.Immutable) agentDetails.get("position");
+            grid[agentPosition.getY()][agentPosition.getX()] = agentDetails;
+        });
+        latestStatus.getEdges().forEach(agentDetails -> {
+            Position.Immutable agentPosition = (Position.Immutable) agentDetails.get("position");
+            grid[agentPosition.getY()][agentPosition.getX()] = agentDetails;
+        });
 
         for (int y = 0; y < latestStatus.getHeight(); y++) {
             for (int x = 0; x < latestStatus.getWidth(); x++) {
-                Agent agent = grid[y][x];
-                if (agent == null) {
+                Map<String, Object> agentDetails = grid[y][x];
+                if (agentDetails == null) {
                     stringBuilder.append(emptySpace);
                 } else {
-                    agentsView.drawInConsole(stringBuilder, agent);
+                    agentsView.drawInConsole(stringBuilder, agentDetails);
                 }
             }
             stringBuilder.append(System.lineSeparator());

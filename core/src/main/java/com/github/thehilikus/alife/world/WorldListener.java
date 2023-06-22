@@ -1,7 +1,5 @@
 package com.github.thehilikus.alife.world;
 
-import com.github.thehilikus.alife.agent.api.Agent;
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -20,9 +18,9 @@ public interface WorldListener {
 
         int getAge();
 
-        Collection<? extends Agent> getLivingAgents();
+        Collection<Map<String, Object>> getLivingAgentsDetails();
 
-        Collection<? extends Agent> getEdges();
+        Collection<Map<String, Object>> getEdges();
 
         Map<String, Object> getAgentDetails(int agentId);
     }
