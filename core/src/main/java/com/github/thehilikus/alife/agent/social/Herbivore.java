@@ -14,6 +14,7 @@ import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -91,7 +92,7 @@ public class Herbivore implements SocialAgent {
         result.putAll(vision.getDetails());
         result.putAll(locomotion.getDetails());
 
-        return result;
+        return Collections.unmodifiableMap(result);
     }
 
     @Override

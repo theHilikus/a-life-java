@@ -3,6 +3,7 @@ package com.github.thehilikus.alife.world;
 import com.github.thehilikus.alife.agent.api.Agent;
 import com.github.thehilikus.alife.agent.api.Position;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class Edge implements Agent {
         result.put("type", getClass().getSimpleName());
         result.put("position", position);
 
-        return result;
+        return Collections.unmodifiableMap(result);
     }
 
     @Override
