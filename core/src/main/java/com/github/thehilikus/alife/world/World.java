@@ -1,9 +1,6 @@
 package com.github.thehilikus.alife.world;
 
-import com.github.thehilikus.alife.agent.api.Agent;
-import com.github.thehilikus.alife.agent.api.Position;
-import com.github.thehilikus.alife.agent.api.RandomProvider;
-import com.github.thehilikus.alife.agent.api.LivingAgent;
+import com.github.thehilikus.alife.agent.api.*;
 import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
@@ -90,7 +87,7 @@ public class World implements WorldListener.WorldStatus {
                             && newPosition.getX() <= width - 2
                             && newPosition.getY() <= height - 2 : "Agent " + agent.getId() + " moved out of the world: " + newPosition;
 
-                    stats.incrementSeries((String) agent.getDetails().get(Mood.PARAMETER_PREFIX + "current"), hour);
+                    stats.incrementSeries(agent.getDetails().getAttribute(Mood.PARAMETER_PREFIX + "current"), hour);
                     stats.incrementSeries(agent.getClass().getSimpleName(), hour);
                 } else {
                     LOG.debug("{} died. Cause of death={}", agent, causeOfDeath);
@@ -147,10 +144,10 @@ public class World implements WorldListener.WorldStatus {
     }
 
     @Override
-    public Map<String, Object> getAgentDetails(int agentId) {
-        Map<String, Object> result;
+    public Optional<AgentDetails.Immutable> getAgentDetails(int agentId) {
+        Optional<AgentDetails.Immutable> result;
         Optional<LivingAgent> agentOptional = getLivingAgent(agentId).or(() -> Optional.ofNullable(cemetery.get(agentId)));
-        result = agentOptional.map(Agent::getDetails).orElse(Collections.emptyMap());
+        result = agentOptional.map(Agent::getDetails);
 
         return result;
     }
@@ -192,17 +189,17 @@ public class World implements WorldListener.WorldStatus {
     }
 
     @Override
-    public Collection<Map<String, Object>> getLivingAgentsDetails() {
+    public Collection<AgentDetails.Immutable> getLivingAgentsDetails() {
         return convertToDetails(livingAgents);
     }
 
     @Override
-    public Collection<Map<String, Object>> getEdges() { //TODO: refactor too
+    public Collection<AgentDetails.Immutable> getEdges() { //TODO: refactor too
         return convertToDetails(edges);
     }
 
-    private Collection<Map<String, Object>> convertToDetails(Iterable<? extends Agent> agents) {
-        Collection<Map<String, Object>> result = new ArrayList<>();
+    private Collection<AgentDetails.Immutable> convertToDetails(Iterable<? extends Agent> agents) {
+        Collection<AgentDetails.Immutable> result = new ArrayList<>();
         for (Agent agent : agents) {
             result.add(agent.getDetails());
         }

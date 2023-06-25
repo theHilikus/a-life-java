@@ -1,12 +1,13 @@
 package com.github.thehilikus.alife.simulation.view;
 
 import com.diogonunes.jcdp.color.api.Ansi;
+import com.github.thehilikus.alife.agent.api.AgentDetails;
 import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.ui.views.AgentView;
 import com.github.thehilikus.alife.ui.views.AgentsViewDelegator;
 import com.github.thehilikus.alife.world.WorldListener;
 
-import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
@@ -44,19 +45,19 @@ public class ConsoleView {
 
         String formatCode = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.NONE, Ansi.BColor.NONE);
         String emptySpace = Ansi.formatMessage("  ", formatCode);
-        Map<String, Object>[][] grid = new Map[latestStatus.getHeight()][latestStatus.getWidth()];
+        AgentDetails.Immutable[][] grid = new AgentDetails.Immutable[latestStatus.getHeight()][latestStatus.getWidth()];
         latestStatus.getLivingAgentsDetails().forEach(agentDetails -> {
-            Position.Immutable agentPosition = (Position.Immutable) agentDetails.get("position");
+            Position.Immutable agentPosition = agentDetails.getPosition();
             grid[agentPosition.getY()][agentPosition.getX()] = agentDetails;
         });
         latestStatus.getEdges().forEach(agentDetails -> {
-            Position.Immutable agentPosition = (Position.Immutable) agentDetails.get("position");
+            Position.Immutable agentPosition = agentDetails.getPosition();
             grid[agentPosition.getY()][agentPosition.getX()] = agentDetails;
         });
 
         for (int y = 0; y < latestStatus.getHeight(); y++) {
             for (int x = 0; x < latestStatus.getWidth(); x++) {
-                Map<String, Object> agentDetails = grid[y][x];
+                AgentDetails.Immutable agentDetails = grid[y][x];
                 if (agentDetails == null) {
                     stringBuilder.append(emptySpace);
                 } else {
@@ -69,11 +70,12 @@ public class ConsoleView {
     }
 
     public void printAgentDetails(int agentId) {
-        Map<String, Object> agentDetails = latestStatus.getAgentDetails(agentId);
-        if (!agentDetails.isEmpty()) {
+        Optional<AgentDetails.Immutable> agentDetailsOptional = latestStatus.getAgentDetails(agentId);
+        if (agentDetailsOptional.isPresent()) {
             StringBuilder detailsBuffer = new StringBuilder();
             detailsBuffer.append("##### Details of agent ").append(agentId).append(" #####").append(System.lineSeparator());
-            agentDetails.forEach((key, value) -> detailsBuffer.append(key).append(": ").append(value).append(System.lineSeparator()));
+            AgentDetails.Immutable immutable = agentDetailsOptional.get();
+            immutable.forEach((key, value) -> detailsBuffer.append(key).append(": ").append(value).append(System.lineSeparator()));
             System.out.println(detailsBuffer);
         } else {
             System.out.println("No agent found with id " + agentId);

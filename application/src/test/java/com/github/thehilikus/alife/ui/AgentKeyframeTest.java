@@ -16,13 +16,13 @@ public class AgentKeyframeTest {
 
     @BeforeMethod
     public void setup() {
-        testingUnit = new AgentKeyframe(1, 1);
+        testingUnit = new AgentKeyframe(1, 1, null);
     }
 
     @Test
     void testAngleInterpolationFromNorth() {
         testingUnit.addPropertyToInterpolate(ORIENTATION, NORTH);
-        AgentKeyframe endFrame = new AgentKeyframe(1, 1);
+        AgentKeyframe endFrame = new AgentKeyframe(1, 1, null);
         endFrame.addPropertyToInterpolate(ORIENTATION, EAST);
         AgentKeyframe interpolated = testingUnit.interpolate(endFrame, MID_POINT);
         assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), 315);
@@ -39,7 +39,7 @@ public class AgentKeyframeTest {
     @Test
     void testAngleInterpolationFromEast() {
         testingUnit.addPropertyToInterpolate(ORIENTATION, EAST);
-        AgentKeyframe endFrame = new AgentKeyframe(1, 1);
+        AgentKeyframe endFrame = new AgentKeyframe(1, 1, null);
         endFrame.addPropertyToInterpolate(ORIENTATION, SOUTH);
         AgentKeyframe interpolated = testingUnit.interpolate(endFrame, MID_POINT);
         assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(EAST, SOUTH));
@@ -56,7 +56,7 @@ public class AgentKeyframeTest {
     @Test
     void testAngleInterpolationFromSouth() {
         testingUnit.addPropertyToInterpolate(ORIENTATION, SOUTH);
-        AgentKeyframe endFrame = new AgentKeyframe(1, 1);
+        AgentKeyframe endFrame = new AgentKeyframe(1, 1, null);
         endFrame.addPropertyToInterpolate(ORIENTATION, WEST);
         AgentKeyframe interpolated = testingUnit.interpolate(endFrame, MID_POINT);
         assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(SOUTH, WEST));
@@ -73,7 +73,7 @@ public class AgentKeyframeTest {
     @Test
     void testAngleInterpolationFromWest() {
         testingUnit.addPropertyToInterpolate(ORIENTATION, WEST);
-        AgentKeyframe endFrame = new AgentKeyframe(1, 1);
+        AgentKeyframe endFrame = new AgentKeyframe(1, 1, null);
         endFrame.addPropertyToInterpolate(ORIENTATION, NORTH);
         AgentKeyframe interpolated = testingUnit.interpolate(endFrame, MID_POINT);
         assertEquals((int) interpolated.getInterpolatedProperty(ORIENTATION), midAngle(WEST, NORTH));

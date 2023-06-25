@@ -1,7 +1,8 @@
 package com.github.thehilikus.alife.ui.swing;
 
+import com.github.thehilikus.alife.agent.api.AgentDetails;
+
 import javax.swing.*;
-import java.util.Map;
 
 /**
  * Displays information about the simulation
@@ -19,7 +20,7 @@ public class InfoPanel extends JPanel {
         add(agentDetailsPanel);
     }
 
-    public void showAgentDetails(Map<String, Object> details) {
+    public void showAgentDetails(AgentDetails.Immutable details) {
         agentDetailsPanel.updateDetails(details);
     }
 }

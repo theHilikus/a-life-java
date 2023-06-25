@@ -1,24 +1,24 @@
 package com.github.thehilikus.alife.ui.views;
 
 import com.diogonunes.jcdp.color.api.Ansi;
+import com.github.thehilikus.alife.agent.api.AgentDetails;
 import com.github.thehilikus.alife.ui.AgentKeyframe;
 import com.github.thehilikus.alife.world.Edge;
 
 import java.awt.*;
-import java.util.Map;
 
 /**
  * Representations for {@link Edge}
  */
 public class EdgeView implements AgentView {
     @Override
-    public void drawInConsole(StringBuilder builder, Map<String, Object> agentDetails) {
+    public void drawInConsole(StringBuilder builder, AgentDetails.Immutable agentDetails) {
         String formatCode = Ansi.generateCode(Ansi.Attribute.NONE, Ansi.FColor.WHITE, Ansi.BColor.WHITE);
         builder.append(Ansi.formatMessage("  ", formatCode));
     }
 
     @Override
-    public AgentKeyframe createAgentFrame(Map<String, Object> agentDetails) {
+    public AgentKeyframe createAgentFrame(AgentDetails.Immutable agentDetails) {
         throw new UnsupportedOperationException("Edge is not drawn in graphical view");
     }
 

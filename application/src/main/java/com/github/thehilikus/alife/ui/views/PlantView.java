@@ -1,6 +1,7 @@
 package com.github.thehilikus.alife.ui.views;
 
 import com.diogonunes.jcdp.color.api.Ansi;
+import com.github.thehilikus.alife.agent.api.AgentDetails;
 import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
@@ -31,18 +32,17 @@ public class PlantView implements AgentView {
     );
 
     @Override
-    public void drawInConsole(StringBuilder builder, Map<String, Object> agentDetails) {
+    public void drawInConsole(StringBuilder builder, AgentDetails.Immutable agentDetails) {
         Ansi.Attribute agentTypeStyle = Ansi.Attribute.NONE;
 
-        String moodName = agentDetails.get(Mood.PARAMETER_PREFIX + "current").toString();
+        String moodName = agentDetails.getAttribute(Mood.PARAMETER_PREFIX + "current").toString();
         Ansi.FColor moodColour = consoleMoodColours.get(moodName);
         Objects.requireNonNull(moodColour, "Console mood colour was empty for " + moodName);
         Ansi.BColor background = Ansi.BColor.GREEN;
         String formatCode = Ansi.generateCode(agentTypeStyle, moodColour, background);
 
-        int id = Integer.parseInt(agentDetails.get("id").toString());
-        String idString = Integer.toString(id);
-        if (id < 10) {
+        String idString = Integer.toString(agentDetails.getId());
+        if (agentDetails.getId() < 10) {
             idString = ' ' + idString;
         }
 
@@ -50,11 +50,10 @@ public class PlantView implements AgentView {
     }
 
     @Override
-    public AgentKeyframe createAgentFrame(Map<String, Object> agentDetails) {
-        int agentId = Integer.parseInt(agentDetails.get("id").toString());
-        AgentKeyframe result = new AgentKeyframe(agentId, Z_ORDER, agentDetails);
-        result.addPropertyToInterpolate("energy", agentDetails.get(VitalSign.PARAMETER_PREFIX + "energy"));
-        String moodName = agentDetails.get(Mood.PARAMETER_PREFIX + "current").toString();
+    public AgentKeyframe createAgentFrame(AgentDetails.Immutable agentDetails) {
+        AgentKeyframe result = new AgentKeyframe(agentDetails.getId(), Z_ORDER, agentDetails);
+        result.addPropertyToInterpolate("energy", agentDetails.getAttribute(VitalSign.PARAMETER_PREFIX + "energy"));
+        String moodName = agentDetails.getAttribute(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);
         Objects.requireNonNull(moodColor, "Mood color was empty for " + moodName);
         result.addPropertyToInterpolate("color", moodColor);

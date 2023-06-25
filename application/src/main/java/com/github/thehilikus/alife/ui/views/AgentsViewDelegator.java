@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.ui.views;
 
+import com.github.thehilikus.alife.agent.api.AgentDetails;
 import com.github.thehilikus.alife.ui.AgentKeyframe;
 
 import java.awt.*;
@@ -17,8 +18,8 @@ public class AgentsViewDelegator implements AgentView {
     );
 
     @Override
-    public void drawInConsole(StringBuilder stringBuilder, Map<String, Object> agentDetails) {
-        String agentType = agentDetails.get("type").toString();
+    public void drawInConsole(StringBuilder stringBuilder, AgentDetails.Immutable agentDetails) {
+        String agentType = agentDetails.getType();
         AgentView view = agentsViews.get(agentType);
         Objects.requireNonNull(view, "No view found that can draw " + agentType);
         view.drawInConsole(stringBuilder, agentDetails);
@@ -49,8 +50,8 @@ public class AgentsViewDelegator implements AgentView {
     }
 
     @Override
-    public AgentKeyframe createAgentFrame(Map<String, Object> agentDetails) {
-        AgentView view = agentsViews.get(agentDetails.get("type"));
+    public AgentKeyframe createAgentFrame(AgentDetails.Immutable agentDetails) {
+        AgentView view = agentsViews.get(agentDetails.getType());
         Objects.requireNonNull(view, "No view found that can draw " + agentDetails);
 
         return view.createAgentFrame(agentDetails);

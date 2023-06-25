@@ -1,11 +1,8 @@
 package com.github.thehilikus.alife.world;
 
 import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.AgentDetails;
 import com.github.thehilikus.alife.agent.api.Position;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * An agent that represents a side limit of the world
@@ -23,12 +20,10 @@ public class Edge implements Agent {
     }
 
     @Override
-    public Map<String, Object> getDetails() {
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("type", getClass().getSimpleName());
-        result.put("position", position);
+    public AgentDetails.Immutable getDetails() {
+        AgentDetails details = new AgentDetails(getId(), getClass().getSimpleName(), position);
 
-        return Collections.unmodifiableMap(result);
+        return details.toImmutable();
     }
 
     @Override

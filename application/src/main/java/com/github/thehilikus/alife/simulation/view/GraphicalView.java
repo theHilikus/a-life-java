@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.simulation.view;
 
+import com.github.thehilikus.alife.agent.api.AgentDetails;
 import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.ui.AgentKeyframe;
 import com.github.thehilikus.alife.ui.Animation;
@@ -53,7 +54,7 @@ public class GraphicalView extends JPanel implements ActionListener {
         this.latestStatus = latestStatus;
 
         Keyframe newFrame = new Keyframe(latestStatus.getAge());
-        for (Map<String, Object> agentDetails : latestStatus.getLivingAgentsDetails()) {
+        for (AgentDetails.Immutable agentDetails : latestStatus.getLivingAgentsDetails()) {
             newFrame.addAgentFrame(agentsView.createAgentFrame(agentDetails));
         }
         LOG.debug("Frame buffer size = {}/{}. Adding keyframe for hour {}. ", frameBuffer.size(), frameBuffer.size() + frameBuffer.remainingCapacity(), latestStatus.getAge());

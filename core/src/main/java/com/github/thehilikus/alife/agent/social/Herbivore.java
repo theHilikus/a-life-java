@@ -1,7 +1,8 @@
 package com.github.thehilikus.alife.agent.social;
 
-import com.github.thehilikus.alife.agent.api.internal.Message;
+import com.github.thehilikus.alife.agent.api.AgentDetails;
 import com.github.thehilikus.alife.agent.api.Position;
+import com.github.thehilikus.alife.agent.api.internal.Message;
 import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.controllers.SocialController;
 import com.github.thehilikus.alife.agent.controllers.VitalsController;
@@ -13,10 +14,6 @@ import com.github.thehilikus.alife.agent.vitals.AgentModules;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * A living agent that eats {@link com.github.thehilikus.alife.agent.plants.Plant}
@@ -80,19 +77,16 @@ public class Herbivore implements SocialAgent {
     }
 
     @Override
-    public Map<String, Object> getDetails() {
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("id", id);
-        result.put("type", getClass().getSimpleName());
-        result.put("position", getPosition());
-        result.put(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
+    public AgentDetails.Immutable getDetails() {
+        AgentDetails details = new AgentDetails(id, getClass().getSimpleName(), getPosition());
+        details.addAttribute(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
 
-        result.putAll(vitals.getDetails());
-        result.putAll(mood.getDetails());
-        result.putAll(vision.getDetails());
-        result.putAll(locomotion.getDetails());
+        details.addAllDetails(vitals.getDetails());
+        details.addAllDetails(mood.getDetails());
+        details.addAllDetails(vision.getDetails());
+        details.addAllDetails(locomotion.getDetails());
 
-        return Collections.unmodifiableMap(result);
+        return details.toImmutable();
     }
 
     @Override

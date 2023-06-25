@@ -1,7 +1,9 @@
 package com.github.thehilikus.alife.world;
 
+import com.github.thehilikus.alife.agent.api.AgentDetails;
+
 import java.util.Collection;
-import java.util.Map;
+import java.util.Optional;
 
 /**
  * Callback to notify of world events
@@ -18,10 +20,10 @@ public interface WorldListener {
 
         int getAge();
 
-        Collection<Map<String, Object>> getLivingAgentsDetails();
+        Collection<AgentDetails.Immutable> getLivingAgentsDetails();
 
-        Collection<Map<String, Object>> getEdges();
+        Collection<AgentDetails.Immutable> getEdges();
 
-        Map<String, Object> getAgentDetails(int agentId);
+        Optional<AgentDetails.Immutable> getAgentDetails(int agentId);
     }
 }

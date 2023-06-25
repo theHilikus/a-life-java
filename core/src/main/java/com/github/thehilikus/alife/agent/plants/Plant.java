@@ -1,19 +1,16 @@
 package com.github.thehilikus.alife.agent.plants;
 
+import com.github.thehilikus.alife.agent.api.AgentDetails;
+import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.api.RandomProvider;
 import com.github.thehilikus.alife.agent.api.internal.EatableAgent;
-import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.BeingEaten;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.EnergyTracker;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * An inanimate agent that gets eaten
@@ -56,18 +53,15 @@ public class Plant implements EatableAgent {
     }
 
     @Override
-    public Map<String, Object> getDetails() {
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("id", id);
-        result.put("type", getClass().getSimpleName());
-        result.put("size", size);
-        result.put("position", position.toImmutable());
-        result.put(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
+    public AgentDetails.Immutable getDetails() {
+        AgentDetails details = new AgentDetails(id, getClass().getSimpleName(), getPosition());
+        details.addAttribute("size", size);
+        details.addAttribute(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
 
-        result.putAll(mood.getDetails());
-        result.putAll(energyTracker.getDetails());
+        details.addAllDetails(mood.getDetails());
+        details.addAllDetails(energyTracker.getDetails());
 
-        return Collections.unmodifiableMap(result);
+        return details.toImmutable();
     }
 
     @Override
