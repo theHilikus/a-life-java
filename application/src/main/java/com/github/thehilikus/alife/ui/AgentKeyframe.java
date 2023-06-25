@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.ui;
 
+import com.github.thehilikus.alife.agent.api.AgentDetails;
 import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
 
@@ -13,20 +14,17 @@ import java.util.Objects;
  */
 public class AgentKeyframe implements Comparable<AgentKeyframe> {
     private final Map<String, Object> propertiesToInterpolate = new HashMap<>();
-    private final Map<String, Object> agentDetails;
+    private final AgentDetails.Immutable agentDetails;
     private final Map<String, Object> fixedProperties;
     private final int agentId;
     private final int zOrder;
 
-    public AgentKeyframe(int agentId, int zOrder) {
-        this(agentId, zOrder, new HashMap<>(), new HashMap<>());
-    }
 
-    public AgentKeyframe(int agentId, int zOrder, Map<String, Object> agentDetails) {
+    public AgentKeyframe(int agentId, int zOrder, AgentDetails.Immutable agentDetails) {
         this(agentId, zOrder, agentDetails, new HashMap<>());
     }
 
-    private AgentKeyframe(int agentId, int zOrder, Map<String, Object> agentDetails, Map<String, Object> fixedProperties) {
+    private AgentKeyframe(int agentId, int zOrder, AgentDetails.Immutable agentDetails, Map<String, Object> fixedProperties) {
         this.agentId = agentId;
         this.zOrder = zOrder;
         this.agentDetails = agentDetails;
@@ -42,12 +40,11 @@ public class AgentKeyframe implements Comparable<AgentKeyframe> {
         return (T) propertiesToInterpolate.get(name);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T getAgentDetail(String name) {
-        return (T) agentDetails.get(name);
+        return agentDetails.getAttribute(name);
     }
 
-    public Map<String, Object> getAgentDetails() {
+    public AgentDetails.Immutable getAgentDetails() {
         return agentDetails;
     }
 
@@ -59,16 +56,13 @@ public class AgentKeyframe implements Comparable<AgentKeyframe> {
                 int startAngle = (int) property.getValue();
                 int endAngle = endFrame.getInterpolatedProperty(propertyKey);
                 result.addPropertyToInterpolate(propertyKey, interpolateAngle(startAngle, endAngle, percentToKeyFrame));
-            } else if (property.getValue() instanceof Number) {
-                Number startNumber = (Number) property.getValue();
+            } else if (property.getValue() instanceof Number startNumber) {
                 Number endNumber = endFrame.getInterpolatedProperty(propertyKey);
                 result.addPropertyToInterpolate(propertyKey, interpolateNumber(startNumber, endNumber, percentToKeyFrame));
-            } else if (property.getValue() instanceof Position.Immutable) {
-                Position.Immutable startPosition = (Position.Immutable) property.getValue();
+            } else if (property.getValue() instanceof Position.Immutable startPosition) {
                 Position.Immutable endPosition = endFrame.getInterpolatedProperty(propertyKey);
                 result.addPropertyToInterpolate(propertyKey, interpolatePosition(startPosition, endPosition, percentToKeyFrame));
-            } else if (property.getValue() instanceof Color) {
-                Color startColor = (Color) property.getValue();
+            } else if (property.getValue() instanceof Color startColor) {
                 Color endColor = endFrame.getInterpolatedProperty(propertyKey);
                 result.addPropertyToInterpolate(propertyKey, interpolateColor(startColor, endColor, percentToKeyFrame));
             } else {

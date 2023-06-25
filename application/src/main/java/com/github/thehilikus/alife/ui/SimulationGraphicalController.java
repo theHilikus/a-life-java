@@ -2,7 +2,7 @@ package com.github.thehilikus.alife.ui;
 
 import com.github.thehilikus.alife.simulation.view.GraphicalView;
 import com.github.thehilikus.alife.ui.swing.MainToolbar;
-import com.github.thehilikus.alife.world.World;
+import com.github.thehilikus.alife.world.WorldListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ import java.awt.event.MouseListener;
 /**
  * Receives events from the simulation
  */
-public class SimulationGraphicalController implements MouseListener, World.WorldListener, ActionListener, ChangeListener {
+public class SimulationGraphicalController implements MouseListener, WorldListener, ActionListener, ChangeListener {
     private static final Logger LOG = LoggerFactory.getLogger(SimulationGraphicalController.class);
     private final GraphicalView worldView;
     private final Animation animation;
@@ -54,12 +54,12 @@ public class SimulationGraphicalController implements MouseListener, World.World
     }
 
     @Override
-    public boolean ticked(int hour) {
+    public boolean ticked(WorldStatus latestStatus) {
         boolean result = true;
         try {
-            LOG.trace("World ticked after hour = {}", hour);
+            LOG.trace("World ticked after hour = {}", latestStatus.getAge());
             try {
-                worldView.createNextKeyframe();
+                worldView.createNextKeyframe(latestStatus);
             } catch (InterruptedException exc) {
                 result = false;
             }

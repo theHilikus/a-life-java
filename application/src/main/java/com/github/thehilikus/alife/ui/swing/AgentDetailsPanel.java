@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.ui.swing;
 
+import com.github.thehilikus.alife.agent.api.AgentDetails;
 import com.l2fprod.common.propertysheet.DefaultProperty;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
 import com.l2fprod.common.propertysheet.PropertySheetTable;
@@ -21,7 +22,7 @@ public class AgentDetailsPanel extends PropertySheetPanel {
         setRestoreToggleStates(true);
     }
 
-    public void updateDetails(Map<String, Object> agentDetails) {
+    public void updateDetails(AgentDetails.Immutable agentDetails) {
         if (!SwingUtilities.isEventDispatchThread()) {
             throw new IllegalStateException("Don't draw outside the EDT");
         }

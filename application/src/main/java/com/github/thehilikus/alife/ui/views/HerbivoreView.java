@@ -1,7 +1,7 @@
 package com.github.thehilikus.alife.ui.views;
 
 import com.diogonunes.jcdp.color.api.Ansi;
-import com.github.thehilikus.alife.agent.api.Agent;
+import com.github.thehilikus.alife.agent.api.AgentDetails;
 import com.github.thehilikus.alife.agent.api.Position;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
@@ -48,31 +48,28 @@ public class HerbivoreView implements AgentView {
     private static final int Z_ORDER = 10;
 
     @Override
-    public void drawInConsole(StringBuilder builder, Agent agent) {
+    public void drawInConsole(StringBuilder builder, AgentDetails.Immutable agentDetails) {
         Ansi.Attribute agentTypeStyle = Ansi.Attribute.BOLD;
 
-        Map<String, Object> details = agent.getDetails();
-        String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
+        String moodName = agentDetails.getAttribute(Mood.PARAMETER_PREFIX + "current").toString();
         Ansi.FColor moodColour = consoleMoodColours.get(moodName);
         Objects.requireNonNull(moodColour, "Console mood colour was empty for " + moodName);
         Ansi.BColor background = Ansi.BColor.NONE;
         String formatCode = Ansi.generateCode(agentTypeStyle, moodColour, background);
 
-        int id = agent.getId();
-        String idString = Integer.toString(id);
-        if (id < 10) {
+        String idString = Integer.toString(agentDetails.getId());
+        if (agentDetails.getId() < 10) {
             idString = ' ' + idString;
         }
         builder.append(Ansi.formatMessage(idString, formatCode));
     }
 
     @Override
-    public AgentKeyframe createAgentFrame(Agent agent) {
-        Map<String, Object> details = agent.getDetails();
-        AgentKeyframe result = new AgentKeyframe(agent.getId(), Z_ORDER, details);
-        result.addPropertyToInterpolate("position", details.get("position"));
-        result.addPropertyToInterpolate("orientation", details.get(Locomotion.PARAMETER_PREFIX + "orientation"));
-        Color agentColor = computeAgentColor(details);
+    public AgentKeyframe createAgentFrame(AgentDetails.Immutable agentDetails) {
+        AgentKeyframe result = new AgentKeyframe(agentDetails.getId(), Z_ORDER, agentDetails);
+        result.addPropertyToInterpolate("position", agentDetails.getPosition());
+        result.addPropertyToInterpolate("orientation", agentDetails.getAttribute(Locomotion.PARAMETER_PREFIX + "orientation"));
+        Color agentColor = computeAgentColor(agentDetails);
         result.addPropertyToInterpolate("color", agentColor);
 
         return result;
@@ -168,8 +165,8 @@ public class HerbivoreView implements AgentView {
         return triangle;
     }
 
-    private Color computeAgentColor(Map<String, Object> details) {
-        String moodName = details.get(Mood.PARAMETER_PREFIX + "current").toString();
+    private Color computeAgentColor(AgentDetails.Immutable details) {
+        String moodName = details.getAttribute(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);
         Objects.requireNonNull(moodColor, "Mood color was empty for " + moodName);
         float[] rgbColorComponents = moodColor.getRGBColorComponents(null);
@@ -179,16 +176,16 @@ public class HerbivoreView implements AgentView {
         return new Color(rgbColorComponents[0], rgbColorComponents[1], rgbColorComponents[2], Math.max(vitality, minimumTransparency));
     }
 
-    private float calculateVitality(Map<String, Object> details) {
-        float energy = (int) details.get(VitalSign.PARAMETER_PREFIX + "energy") / (float) VitalSign.MAX_ENERGY;
-        float hunger = (int) details.get(VitalSign.PARAMETER_PREFIX + "hunger") / (float) VitalSign.FULL_THRESHOLD;
+    private float calculateVitality(AgentDetails.Immutable details) {
+        float energy = (int) details.getAttribute(VitalSign.PARAMETER_PREFIX + "energy") / (float) VitalSign.MAX_ENERGY;
+        float hunger = (int) details.getAttribute(VitalSign.PARAMETER_PREFIX + "hunger") / (float) VitalSign.FULL_THRESHOLD;
 
         return Math.min(energy, hunger);
     }
 
-    private Color computeBorderColor(Map<String, Object> details) {
-        int lifeExpectancy = (int) details.get(VitalSign.PARAMETER_PREFIX + "lifeExpectancy");
-        double lifeLeftProportion = (lifeExpectancy - (int) details.get(VitalSign.PARAMETER_PREFIX + "age")) / (double) lifeExpectancy;
+    private Color computeBorderColor(AgentDetails.Immutable details) {
+        int lifeExpectancy = details.getAttribute(VitalSign.PARAMETER_PREFIX + "lifeExpectancy");
+        double lifeLeftProportion = (lifeExpectancy - (int) details.getAttribute(VitalSign.PARAMETER_PREFIX + "age")) / (double) lifeExpectancy;
         if (lifeLeftProportion < OLD_AGE_PROPORTION) {
             return Color.LIGHT_GRAY;
         } else {

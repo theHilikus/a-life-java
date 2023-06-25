@@ -1,9 +1,6 @@
 package com.github.thehilikus.alife.world;
 
-import com.github.thehilikus.alife.agent.api.Agent;
-import com.github.thehilikus.alife.agent.api.Position;
-import com.github.thehilikus.alife.agent.api.RandomProvider;
-import com.github.thehilikus.alife.agent.api.LivingAgent;
+import com.github.thehilikus.alife.agent.api.*;
 import com.github.thehilikus.alife.agent.api.internal.SocialAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.motion.api.Locomotion;
@@ -22,7 +19,7 @@ import java.util.stream.Stream;
 /**
  * The environment where the agents live
  */
-public class World {
+public class World implements WorldListener.WorldStatus {
     private static final Logger LOG = LoggerFactory.getLogger(World.class);
     private final Collection<LivingAgent> livingAgents = new CopyOnWriteArrayList<>();
     private final Collection<Agent> edges = new ArrayList<>();
@@ -31,7 +28,7 @@ public class World {
     private final int height;
     private int hour;
     private WorldListener worldListener;
-    private final WorldStats stats = new WorldStats();
+    private final WorldStatistics stats = new WorldStatistics();
 
     public World(int width, int height) {
         LOG.info("Creating world of {}x{}", width, height);
@@ -63,10 +60,12 @@ public class World {
         }
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
@@ -88,7 +87,7 @@ public class World {
                             && newPosition.getX() <= width - 2
                             && newPosition.getY() <= height - 2 : "Agent " + agent.getId() + " moved out of the world: " + newPosition;
 
-                    stats.incrementSeries((String) agent.getDetails().get(Mood.PARAMETER_PREFIX + "current"), hour);
+                    stats.incrementSeries(agent.getDetails().getAttribute(Mood.PARAMETER_PREFIX + "current"), hour);
                     stats.incrementSeries(agent.getClass().getSimpleName(), hour);
                 } else {
                     LOG.debug("{} died. Cause of death={}", agent, causeOfDeath);
@@ -101,7 +100,7 @@ public class World {
 
             boolean shouldContinue = true;
             if (worldListener != null) {
-                shouldContinue = worldListener.ticked(hour);
+                shouldContinue = worldListener.ticked(this);
             }
 
             boolean socialAgentsAlive = livingAgents.stream().anyMatch(agent -> agent instanceof SocialAgent);
@@ -144,14 +143,16 @@ public class World {
         return new Position(x, y);
     }
 
-    public Map<String, Object> getAgentDetails(int agentId) {
-        Map<String, Object> result;
+    @Override
+    public Optional<AgentDetails.Immutable> getAgentDetails(int agentId) {
+        Optional<AgentDetails.Immutable> result;
         Optional<LivingAgent> agentOptional = getLivingAgent(agentId).or(() -> Optional.ofNullable(cemetery.get(agentId)));
-        result = agentOptional.map(Agent::getDetails).orElse(Collections.emptyMap());
+        result = agentOptional.map(Agent::getDetails);
 
         return result;
     }
 
+    @Override
     public int getAge() {
         return hour;
     }
@@ -187,17 +188,22 @@ public class World {
         return result;
     }
 
-    public Collection<? extends Agent> getLivingAgents() {
-        return livingAgents;
+    @Override
+    public Collection<AgentDetails.Immutable> getLivingAgentsDetails() {
+        return convertToDetails(livingAgents);
     }
 
-    public Collection<Agent> getEdges() {
-        return edges;
+    @Override
+    public Collection<AgentDetails.Immutable> getEdges() { //TODO: refactor too
+        return convertToDetails(edges);
     }
 
-    public interface WorldListener {
-        boolean ticked(int hour);
+    private Collection<AgentDetails.Immutable> convertToDetails(Iterable<? extends Agent> agents) {
+        Collection<AgentDetails.Immutable> result = new ArrayList<>();
+        for (Agent agent : agents) {
+            result.add(agent.getDetails());
+        }
 
-        void ended(int hour);
+        return result;
     }
 }

@@ -2,7 +2,6 @@ package com.github.thehilikus.alife.agent.api;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.Map;
 
 /**
  * An entity in the World
@@ -12,7 +11,7 @@ public interface Agent {
     int getId();
 
     @NotNull
-    Map<String, Object> getDetails();
+    AgentDetails.Immutable getDetails();
 
     Position.Immutable getPosition();
 

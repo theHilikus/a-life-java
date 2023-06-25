@@ -116,10 +116,10 @@ public class Simulation {
     }
 
     private void initConsole() {
-        ConsoleView consoleView = new ConsoleView(world);
+        ConsoleView consoleView = new ConsoleView();
         consoleController = new SimulationConsoleController(consoleView, control);
         world.setWorldListener(consoleController);
-        consoleView.refreshNonBlocking();
+        consoleView.refreshNonBlocking(world);
     }
 
     private void initGui() {
@@ -135,7 +135,7 @@ public class Simulation {
         animation.addActionListener(graphicalController);
         world.setWorldListener(graphicalController);
         try {
-            worldView.createNextKeyframe();
+            worldView.createNextKeyframe(world);
         } catch (InterruptedException e) {
             throw new AssertionError("Should never happen since there are no interrupts at this stage");
         }
