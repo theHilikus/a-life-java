@@ -29,6 +29,7 @@ public class World implements WorldListener.WorldStatus {
     private int hour;
     private WorldListener worldListener;
     private final WorldStatistics stats = new WorldStatistics();
+    private int nextId;
 
     public World(int width, int height) {
         LOG.info("Creating world of {}x{}", width, height);
@@ -36,6 +37,7 @@ public class World implements WorldListener.WorldStatus {
         this.height = height + 2;
         createEdge();
         hour = 0;
+        nextId = 0;
     }
 
     private void createEdge() {
@@ -205,5 +207,9 @@ public class World implements WorldListener.WorldStatus {
         }
 
         return result;
+    }
+
+    public int getNextId() {
+        return nextId++;
     }
 }

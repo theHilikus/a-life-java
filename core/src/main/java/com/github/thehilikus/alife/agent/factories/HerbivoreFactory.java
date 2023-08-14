@@ -4,7 +4,6 @@ import com.github.thehilikus.alife.agent.api.Agent;
 import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.api.LivingAgentFactory;
 import com.github.thehilikus.alife.agent.api.Position;
-import com.github.thehilikus.alife.agent.api.internal.IdsProvider;
 import com.github.thehilikus.alife.agent.controllers.SocialController;
 import com.github.thehilikus.alife.agent.controllers.VitalsController;
 import com.github.thehilikus.alife.agent.genetics.Genome;
@@ -42,7 +41,7 @@ public class HerbivoreFactory extends LivingAgentFactory {
     }
 
     private Herbivore createAgentFromGenome(Genome genome, Position position) {
-        int id = IdsProvider.getNextId();
+        int id = getWorld().getNextId();
         AgentModules dependencies = new AgentModules(genome);
         dependencies.addComponent(Vision.class, new SurroundingsVision(id, genome, getWorld()));
         dependencies.addComponent(Locomotion.class, new RandomWalk(getWorld().getWidth(), getWorld().getHeight(), id, position, genome));

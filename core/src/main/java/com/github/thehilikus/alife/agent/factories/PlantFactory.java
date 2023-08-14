@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agent.factories;
 
-import com.github.thehilikus.alife.agent.api.internal.IdsProvider;
 import com.github.thehilikus.alife.agent.api.LivingAgentFactory;
 import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.Growing;
@@ -17,7 +16,7 @@ public class PlantFactory extends LivingAgentFactory {
 
     @Override
     protected LivingAgent createAgent() {
-        int id = IdsProvider.getNextId();
+        int id = getWorld().getNextId();
         Mood startingMood = new Growing(id);
 
         final double maxSizeProportionToWorld = 0.09;
