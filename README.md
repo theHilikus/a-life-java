@@ -15,3 +15,8 @@ Moving agents that need food and sleep to survice. They can be in 5 states:
 * Scouting for food
 * Going to located food
 * Eating
+
+# Visualization
+## In Console
+https://github.com/user-attachments/assets/f4d6d9d3-a532-4fe2-8e06-03cae8cbe73c
+
