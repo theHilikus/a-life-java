@@ -11,6 +11,7 @@ import com.github.thehilikus.alife.agent.vitals.AgentModules;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedSet;
 
 /**
@@ -34,13 +35,27 @@ public class InHeat implements Mood {
     public @NotNull Mood tick(LivingAgent me) {
         SortedSet<ScanResult> potentialMates = vision.scan(Herbivore.class::isInstance);
         if (!potentialMates.isEmpty()) {
-            ScanResult closest = potentialMates.first();
-            locomotion.turn(closest.getRelativeDirection());
-            return new InHeatChasing(dependencies, (SocialAgent) closest.getAgent());
-        } else {
-            existing.tick(me);
-            return this;
+            Optional<ScanResult> closestGood = getClosestValidMate(potentialMates);
+            if (closestGood.isPresent()) {
+                locomotion.turn(closestGood.get().getRelativeDirection());
+                return new InHeatChasing(dependencies, (SocialAgent) closestGood.get().getAgent());
+            }
         }
+
+        // nothing found
+        existing.tick(me);
+        return this;
+    }
+
+    private Optional<ScanResult> getClosestValidMate(Iterable<ScanResult> potentialMates) {
+        for (ScanResult potentialMateScan : potentialMates) {
+            LivingAgent potentialMate = (LivingAgent) potentialMateScan.getAgent();
+            if (potentialMate.getMood() instanceof InHeat || potentialMate.getMood() instanceof InHeatChasing) {
+                return Optional.of(potentialMateScan);
+            }
+        }
+
+        return Optional.empty();
     }
 
     @Override

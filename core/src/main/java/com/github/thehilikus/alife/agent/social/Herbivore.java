@@ -112,4 +112,9 @@ public class Herbivore implements SocialAgent {
     public int getOrientation() {
         return locomotion.getOrientation();
     }
+
+    @Override
+    public Mood getMood() {
+        return mood;
+    }
 }

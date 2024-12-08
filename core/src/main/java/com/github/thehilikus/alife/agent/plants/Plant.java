@@ -47,6 +47,12 @@ public class Plant implements EatableAgent {
 
         return energyTracker.isAlive() ? null : energyTracker;
     }
+
+    @Override
+    public Mood getMood() {
+        return mood;
+    }
+
     @Override
     public int getId() {
         return id;
