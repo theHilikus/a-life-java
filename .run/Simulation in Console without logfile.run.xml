@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Simulation in Console without logfile" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.github.thehilikus.alife.simulation.Simulation" />
+    <module name="a-life-application" />
+    <option name="PROGRAM_PARAMETERS" value="--print-world --not-random" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.github.thehilikus.alife.world.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
