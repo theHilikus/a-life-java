@@ -9,6 +9,7 @@ import com.github.thehilikus.alife.agent.vision.api.Shape;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -77,6 +78,7 @@ public class World implements WorldListener.WorldStatus {
             LOG.info("Starting hour {}", ++hour);
             Collection<LivingAgent> toRemove = new HashSet<>();
             livingAgents.forEach(agent -> {
+                MDC.put("agentId", String.valueOf(agent.getId()));
                 Position.Immutable originalPosition = agent.getPosition();
                 VitalSign causeOfDeath = agent.tick();
                 if (causeOfDeath == null) {
@@ -96,6 +98,7 @@ public class World implements WorldListener.WorldStatus {
                     stats.incrementDeathCount(agent.getClass().getSimpleName() + ":" + causeOfDeath.getClass().getSimpleName());
                     toRemove.add(agent);
                 }
+                MDC.remove("agentId");
             });
             toRemove.forEach(this::removeAgent);
             stats.completeSeries(hour);
@@ -130,9 +133,11 @@ public class World implements WorldListener.WorldStatus {
     }
 
     private void removeAgent(LivingAgent agent) {
+        MDC.put("agentId", String.valueOf(agent.getId()));
         LOG.info("Removing {} from world", agent);
         livingAgents.remove(agent);
         cemetery.put(agent.getId(), agent);
+        MDC.remove("agentId");
     }
 
     private Optional<LivingAgent> getLivingAgent(int agentId) {

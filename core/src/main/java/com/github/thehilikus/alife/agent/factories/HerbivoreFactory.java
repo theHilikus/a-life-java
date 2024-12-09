@@ -19,6 +19,7 @@ import com.github.thehilikus.alife.agent.vitals.*;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 /**
  * Constructor for {@link Herbivore}
@@ -42,6 +43,7 @@ public class HerbivoreFactory extends LivingAgentFactory {
 
     private Herbivore createAgentFromGenome(Genome genome, Position position) {
         int id = getWorld().getNextId();
+        MDC.put("agentId", String.valueOf(id));
         AgentModules dependencies = new AgentModules(genome);
         dependencies.addComponent(Vision.class, new SurroundingsVision(id, genome, getWorld()));
         dependencies.addComponent(Locomotion.class, new RandomWalk(getWorld().getWidth(), getWorld().getHeight(), id, position, genome));
@@ -59,6 +61,7 @@ public class HerbivoreFactory extends LivingAgentFactory {
         Herbivore result = new Herbivore(id, dependencies, startingMood, vitalsController, socialController);
 
         getWorld().addAgent(result);
+        MDC.remove("agentId");
 
         return result;
     }
