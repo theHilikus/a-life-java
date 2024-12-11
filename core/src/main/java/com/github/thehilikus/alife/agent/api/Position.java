@@ -31,10 +31,7 @@ public class Position {
 
     @Override
     public String toString() {
-        return "Position{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "(" + x + ", " + y + ")";
     }
 
     public Immutable toImmutable() {
@@ -67,10 +64,7 @@ public class Position {
 
         @Override
         public String toString() {
-            return "Immutable{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    '}';
+            return "(" + x + ", " + y + ")";
         }
 
         @Override

@@ -54,6 +54,7 @@ public class ScanResult implements Comparable<ScanResult> {
                 "distanceSquared=" + distanceSquared +
                 ", direction=" + direction +
                 ", agentId=" + agent.getId() +
+                ", agentPosition=" + agent.getPosition() +
                 '}';
     }
 }
