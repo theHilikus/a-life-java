@@ -49,8 +49,12 @@ public class Position {
         private final int y;
 
         private Immutable(Position mutable) {
-            this.x = (int) Math.round(mutable.x);
-            this.y = (int) Math.round(mutable.y);
+            this(mutable.x, mutable.y);
+        }
+
+        public Immutable(double x, double y) {
+            this.x = (int) Math.round(x);
+            this.y = (int) Math.round(y);
         }
 
         public int getX() {
