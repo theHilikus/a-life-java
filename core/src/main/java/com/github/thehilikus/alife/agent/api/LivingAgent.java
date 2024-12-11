@@ -1,5 +1,6 @@
 package com.github.thehilikus.alife.agent.api;
 
+import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 
 /**
@@ -16,6 +17,8 @@ public interface LivingAgent extends Agent {
     default int getOrientation() {
         return 0;
     }
+
+    Mood getMood();
 
     /**
      * Min size for any agent

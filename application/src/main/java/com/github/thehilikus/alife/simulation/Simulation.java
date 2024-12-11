@@ -111,12 +111,12 @@ public class Simulation {
             initGui();
             control.start();
         } else {
-            initConsole();
+            initConsole(options.isPrintWorld());
         }
     }
 
-    private void initConsole() {
-        ConsoleView consoleView = new ConsoleView();
+    private void initConsole(boolean printWorld) {
+        ConsoleView consoleView = new ConsoleView(printWorld);
         consoleController = new SimulationConsoleController(consoleView, control);
         world.setWorldListener(consoleController);
         consoleView.refreshNonBlocking(world);

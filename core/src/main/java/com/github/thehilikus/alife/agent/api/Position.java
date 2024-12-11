@@ -31,10 +31,7 @@ public class Position {
 
     @Override
     public String toString() {
-        return "Position{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "(" + x + ", " + y + ")";
     }
 
     public Immutable toImmutable() {
@@ -49,8 +46,12 @@ public class Position {
         private final int y;
 
         private Immutable(Position mutable) {
-            this.x = (int) Math.round(mutable.x);
-            this.y = (int) Math.round(mutable.y);
+            this(mutable.x, mutable.y);
+        }
+
+        public Immutable(double x, double y) {
+            this.x = (int) Math.round(x);
+            this.y = (int) Math.round(y);
         }
 
         public int getX() {
@@ -63,10 +64,7 @@ public class Position {
 
         @Override
         public String toString() {
-            return "Immutable{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    '}';
+            return "(" + x + ", " + y + ")";
         }
 
         @Override

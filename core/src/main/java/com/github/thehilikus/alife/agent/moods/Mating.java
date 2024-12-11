@@ -62,7 +62,7 @@ public class Mating implements Mood {
                     return new Existing(dependencies);
                 }
                 timeWithMate++;
-                matingEnergySpent += Math.round(EnergyTracker.ENERGY_DERIVATIVE * MATE_ENERGY_FACTOR);
+                matingEnergySpent += (int) Math.round(EnergyTracker.ENERGY_DERIVATIVE * MATE_ENERGY_FACTOR);
             } else {
                 timeWithMate = 0;
                 LOG.debug("Mate {} is too far", mate);

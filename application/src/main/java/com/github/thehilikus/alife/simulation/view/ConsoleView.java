@@ -18,10 +18,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class ConsoleView {
 
+    private final boolean printWorld;
     private WorldListener.WorldStatus latestStatus;
     private final Semaphore semaphore = new Semaphore(0);
     private final AgentView agentsView = new AgentsViewDelegator();
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
+    public ConsoleView(boolean printWorld) {
+        this.printWorld = printWorld;
+    }
 
     public void runAutomatic(int refreshDelay) {
         executor.scheduleAtFixedRate(semaphore::release, 0, refreshDelay, TimeUnit.MILLISECONDS);
@@ -35,8 +40,10 @@ public class ConsoleView {
 
     public void refreshNonBlocking(WorldListener.WorldStatus latestStatus) {
         this.latestStatus = latestStatus;
-        String textualRepresentation = createWorldRepresentation(latestStatus);
-        System.out.println(textualRepresentation);
+        if (printWorld) {
+            String textualRepresentation = createWorldRepresentation(latestStatus);
+            System.out.println(textualRepresentation);
+        }
     }
 
     private String createWorldRepresentation(WorldListener.WorldStatus latestStatus) {

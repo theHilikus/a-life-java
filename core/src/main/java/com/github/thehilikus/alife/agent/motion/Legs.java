@@ -28,8 +28,8 @@ public class Legs implements Locomotion {
     private final int worldWidth;
     private final Position position;
     private int orientation;
-    private double velocityX;
-    private double velocityY;
+    private double cosOrientation;
+    private double sinOrientation;
 
     private final int topSpeed;
     @DecimalMin("-1.0")
@@ -53,8 +53,8 @@ public class Legs implements Locomotion {
     @Override
     public double move(double speedFactor, SortedSet<ScanResult> scanResults) {
         double maxMovement = Math.ceil(topSpeed * speedFactor);
-        double endX = position.getX() + velocityX * maxMovement;
-        double endY = position.getY() + velocityY * maxMovement;
+        double endX = position.getX() + cosOrientation * maxMovement;
+        double endY = position.getY() + sinOrientation * maxMovement;
 
         double result;
         if (endX < 1 || endX > worldWidth - 2 || endY < 1 || endY > worldHeight - 2) {
@@ -89,7 +89,7 @@ public class Legs implements Locomotion {
             result += moveForwards(irrelevant, 1);
         }
 
-        throw new IllegalStateException("Never reached edge");
+        throw new IllegalStateException("Never reached edge. currentPosition=" + position + ", orientation=" + orientation + ", scans=" + scanResults);
     }
 
     private boolean isFacing(Agent edge) {
@@ -185,12 +185,12 @@ public class Legs implements Locomotion {
     private double moveForwards(double speedFactor, double maxMovement) {
         double movementDelta = Math.ceil(topSpeed * speedFactor);
         movementDelta = Math.min(movementDelta, maxMovement);
+        position.move(cosOrientation * movementDelta, sinOrientation * movementDelta);
         if (movementDelta != maxMovement) {
             LOG.info("Walking {} spaces in direction {}°", movementDelta, orientation);
         } else {
-            LOG.info("Walking only {} spaces in direction {}° because it is close to the target", movementDelta, orientation);
+            LOG.info("Walking only {} spaces in direction {}° because it is close to the target. New position={}", movementDelta, orientation, position);
         }
-        position.move(velocityX * movementDelta, velocityY * movementDelta);
 
         return movementDelta * energyExpenditureFactor;
     }
@@ -223,8 +223,8 @@ public class Legs implements Locomotion {
     public void turn(int degrees) {
         int originalOrientation = orientation;
         orientation = Math.floorMod(orientation + degrees, Turn.FULL);
-        velocityX = Math.cos(Math.toRadians(orientation));
-        velocityY = Math.sin(Math.toRadians(orientation));
+        cosOrientation = Math.cos(Math.toRadians(orientation));
+        sinOrientation = Math.sin(Math.toRadians(orientation));
 
         LOG.info("Turned from {}° to {}°", originalOrientation, orientation);
     }

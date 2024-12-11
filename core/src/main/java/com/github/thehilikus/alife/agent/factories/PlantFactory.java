@@ -7,6 +7,7 @@ import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.plants.Plant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 /**
  * Builds {@link Plant}
@@ -17,6 +18,7 @@ public class PlantFactory extends LivingAgentFactory {
     @Override
     protected LivingAgent createAgent() {
         int id = getWorld().getNextId();
+        MDC.put("agentId", String.valueOf(id));
         Mood startingMood = new Growing(id);
 
         final double maxSizeProportionToWorld = 0.09;
@@ -24,6 +26,7 @@ public class PlantFactory extends LivingAgentFactory {
         LivingAgent result = new Plant(id, getWorld().getRandomPosition(), startingMood, maxSize);
         LOG.info("Created {}", result);
         getWorld().addAgent(result);
+        MDC.remove("agentId");
 
         return result;
     }

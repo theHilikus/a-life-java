@@ -30,4 +30,11 @@ public class Edge implements Agent {
     public Position.Immutable getPosition() {
         return position;
     }
+
+    @Override
+    public String toString() {
+        return "Edge{" +
+                "position=" + position +
+                '}';
+    }
 }
