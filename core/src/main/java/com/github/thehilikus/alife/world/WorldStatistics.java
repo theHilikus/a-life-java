@@ -21,7 +21,7 @@ public class WorldStatistics {
     private final List<Class<? extends Mood>> plantMoods;
 
     public WorldStatistics() {
-        List<Class<? extends Mood>> herbivoreMoods = Arrays.asList(Eating.class, Existing.class, Hunting.class, InHeat.class, InHeatChasing.class, Mating.class, Scouting.class, Sleeping.class);
+        List<Class<? extends Mood>> herbivoreMoods = Arrays.asList(Eating.class, Existing.class, Foraging.class, InHeat.class, InHeatChasing.class, Mating.class, Scouting.class, Sleeping.class);
         plantMoods = Arrays.asList(BeingEaten.class, Growing.class);
         moodList = Stream.concat(herbivoreMoods.stream(), plantMoods.stream()).collect(Collectors.toList());
         typeList = Arrays.asList(Herbivore.class, Plant.class);

@@ -50,7 +50,7 @@ public class HerbivoreGenome extends Genome {
         result.put(Locomotion.PARAMETER_PREFIX + "turningProbability", RandomProvider.nextDouble(1));
         result.put(Locomotion.PARAMETER_PREFIX + "idleSpeedFactor", RandomProvider.nextDouble(MAX_IDLE_SPEED_FACTOR));
         result.put(Locomotion.PARAMETER_PREFIX + "scoutSpeedFactor", RandomProvider.nextDouble(MAX_SCOUT_SPEED_FACTOR));
-        result.put(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor", RandomProvider.nextDouble(MAX_HUNT_SPEED_FACTOR));
+        result.put(Locomotion.PARAMETER_PREFIX + "foragingSpeedFactor", RandomProvider.nextDouble(MAX_HUNT_SPEED_FACTOR));
         int lifeExpectancy = RandomProvider.nextInt(MIN_LIFE_EXPECTANCY, MAX_LIFE_EXPECTANCY);
         result.put(VitalSign.PARAMETER_PREFIX + "lifeExpectancy", lifeExpectancy);
         result.put(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold", RandomProvider.nextInt(MAX_LOW_ENERGY_THRESHOLD));

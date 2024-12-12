@@ -24,7 +24,7 @@ public class HerbivoreView implements AgentView {
     private static final Map<String, Ansi.FColor> consoleMoodColours = Map.of(
             "Eating", Ansi.FColor.GREEN,
             "Existing", Ansi.FColor.WHITE,
-            "Hunting", Ansi.FColor.BLUE,
+            "Foraging", Ansi.FColor.BLUE,
             "InHeat", Ansi.FColor.WHITE,
             "InHeatChasing", Ansi.FColor.MAGENTA,
             "Mating", Ansi.FColor.RED,
@@ -38,7 +38,7 @@ public class HerbivoreView implements AgentView {
     public static final Map<String, Color> graphicalMoodColours = Map.of(
             "Eating", Color.GREEN,
             "Existing", Color.GRAY,
-            "Hunting", Color.BLUE,
+            "Foraging", Color.BLUE,
             "InHeat", Color.PINK,
             "InHeatChasing", Color.MAGENTA,
             "Mating", Color.RED,
@@ -137,7 +137,7 @@ public class HerbivoreView implements AgentView {
     }
 
     private void drawPathToTarget(Graphics2D g2d, Position.Immutable position, Position.Immutable targetPosition) {
-        g2d.setColor(graphicalMoodColours.get("Hunting"));
+        g2d.setColor(graphicalMoodColours.get("Foraging"));
         g2d.drawLine(position.getX(), position.getY(), targetPosition.getX(), targetPosition.getY());
     }
 

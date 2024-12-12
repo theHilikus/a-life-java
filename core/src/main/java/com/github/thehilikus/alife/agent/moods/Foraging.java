@@ -20,9 +20,9 @@ import java.util.SortedSet;
 /**
  * When food has been located
  */
-public class Hunting implements Mood {
+public class Foraging implements Mood {
     private static final int PRIORITY = 82;
-    private static final Logger LOG = LoggerFactory.getLogger(Hunting.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Foraging.class);
     private final Vision vision;
     private final Locomotion locomotion;
     private final double speedFactor;
@@ -30,11 +30,11 @@ public class Hunting implements Mood {
     private final AgentModules dependencies;
     private double lastMovementEnergy;
 
-    public Hunting(AgentModules dependencies, Agent target) {
+    public Foraging(AgentModules dependencies, Agent target) {
         this.dependencies = dependencies;
         this.vision = dependencies.getVision();
         this.locomotion = dependencies.getLocomotion();
-        this.speedFactor = dependencies.getGenome().getGene(Locomotion.PARAMETER_PREFIX + "huntSpeedFactor");
+        this.speedFactor = dependencies.getGenome().getGene(Locomotion.PARAMETER_PREFIX + "foragingSpeedFactor");
         this.target = target;
     }
 
@@ -90,7 +90,7 @@ public class Hunting implements Mood {
 
     @Override
     public String toString() {
-        return "Hunting{" +
+        return "Foraging{" +
                 "target=" + target.getId() +
                 '}';
     }

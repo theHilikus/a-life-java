@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * When an agent has found a potential mate
  */
-public class InHeatChasing extends Hunting {
+public class InHeatChasing extends Foraging {
     private static final int PRIORITY = 62;
     private final AgeTracker ageTracker;
     private final SizeTracker sizeTracker;

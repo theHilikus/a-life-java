@@ -45,7 +45,7 @@ public class Scouting implements Mood {
             if (plantScanOptional.isPresent()) {
                 ScanResult plantScan = plantScanOptional.get();
                 locomotion.turn(plantScan.getRelativeDirection());
-                return new Hunting(dependencies, plantScan.getAgent());
+                return new Foraging(dependencies, plantScan.getAgent());
             } else {
                 //only found edges
                 lastMovementEnergy = locomotion.move(speedFactor, foundAgents);
