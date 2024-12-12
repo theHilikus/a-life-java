@@ -29,6 +29,8 @@ https://github.com/user-attachments/assets/f4d6d9d3-a532-4fe2-8e06-03cae8cbe73c
 ### Graphical (Java Swing)
 Immerse yourself in a visually rich representation of the world.
 
+https://github.com/user-attachments/assets/cee6eee7-4fd5-4027-b2a1-73d71ff61361
+
 #### Agent appearance
 * Background color: Reflects the agent's current mood based on its needs
 * Background transparency: Indicates the agent's vitality (energy and hunger levels).
@@ -38,7 +40,6 @@ Immerse yourself in a visually rich representation of the world.
 #### Agent details: A Window into Individual Lives
 Gain deeper insights into the agents' internal states by tracking their attributes at each simulation tick. This window provides a detailed view of individual agent behaviour and how it changes over time.
 
-https://github.com/user-attachments/assets/cee6eee7-4fd5-4027-b2a1-73d71ff61361
 
 
 **Note:** This is a personal project for learning and exploration.
