@@ -60,7 +60,7 @@ public class Plant implements EatableAgent {
 
     @Override
     public AgentDetails.Immutable getDetails() {
-        AgentDetails details = new AgentDetails(id, getClass().getSimpleName(), getPosition());
+        AgentDetails details = new AgentDetails(id, getClass().getSimpleName(), position());
         details.addAttribute("size", size);
         details.addAttribute(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
 
@@ -71,7 +71,7 @@ public class Plant implements EatableAgent {
     }
 
     @Override
-    public Position.Immutable getPosition() {
+    public Position.Immutable position() {
         return position.toImmutable();
     }
 

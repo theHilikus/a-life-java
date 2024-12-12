@@ -78,7 +78,7 @@ public class Herbivore implements SocialAgent {
 
     @Override
     public AgentDetails.Immutable getDetails() {
-        AgentDetails details = new AgentDetails(id, getClass().getSimpleName(), getPosition());
+        AgentDetails details = new AgentDetails(id, getClass().getSimpleName(), position());
         details.addAttribute(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
 
         details.addAllDetails(vitals.getDetails());
@@ -93,7 +93,7 @@ public class Herbivore implements SocialAgent {
     public String toString() {
         return "Herbivore{" +
                 "id=" + id +
-                ", position=" + getPosition() +
+                ", position=" + position() +
                 ", mood=" + mood +
                 '}';
     }
@@ -104,7 +104,7 @@ public class Herbivore implements SocialAgent {
     }
 
     @Override
-    public Position.Immutable getPosition() {
+    public Position.Immutable position() {
         return locomotion.getPosition();
     }
 

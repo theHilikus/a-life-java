@@ -36,7 +36,7 @@ public class HerbivoreFactory extends LivingAgentFactory {
         }
         Genome genome = new HerbivoreGenome();
         Herbivore result = createAgentFromGenome(genome, getWorld().getRandomPosition());
-        LOG.info("Created {}", result);
+        LOG.info("Created agent {}", result);
 
         return result;
     }
@@ -71,7 +71,7 @@ public class HerbivoreFactory extends LivingAgentFactory {
         Genome offspringGenome = motherGenome.crossover(father);
         offspringGenome.mutate();
 
-        Position offspringPosition = new Position(mother.getPosition().getX(), mother.getPosition().getY());
+        Position offspringPosition = new Position(mother.position().getX(), mother.position().getY());
         Herbivore result = createAgentFromGenome(offspringGenome, offspringPosition);
         LOG.info("Created offspring {}", result);
         return result;

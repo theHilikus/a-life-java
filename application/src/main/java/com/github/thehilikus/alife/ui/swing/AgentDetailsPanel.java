@@ -29,20 +29,7 @@ public class AgentDetailsPanel extends PropertySheetPanel {
         PropertySheetTableModel tableModel = new PropertySheetTableModel();
 
         for (Map.Entry<String, Object> detailsEntry : agentDetails.entrySet()) {
-            String[] detailSplit = detailsEntry.getKey().split("\\.");
-            String category = detailSplit.length > 1 ? detailSplit[0] : "basic";
-            String name = detailSplit.length > 1 ? detailSplit[1] : detailSplit[0];
-
-            DefaultProperty property = new DefaultProperty();
-            property.setCategory(category.substring(0, 1).toUpperCase() + category.substring(1));
-            property.setDisplayName(name);
-            property.setName(name);
-
-            Object value = detailsEntry.getValue();
-            if (value instanceof Double) {
-                value = String.format("%.3f", value);
-            }
-            property.setValue(value);
+            DefaultProperty property = createDetailsPropertyPanel(detailsEntry);
 
             tableModel.addProperty(property);
         }
@@ -54,5 +41,23 @@ public class AgentDetailsPanel extends PropertySheetPanel {
         PropertySheetTable table = new PropertySheetTable(tableModel);
 
         setTable(table);
+    }
+
+    private static DefaultProperty createDetailsPropertyPanel(Map.Entry<String, Object> detailsEntry) {
+        String[] detailSplit = detailsEntry.getKey().split("\\.");
+        String category = detailSplit.length > 1 ? detailSplit[0] : "basic";
+        String name = detailSplit.length > 1 ? detailSplit[1] : detailSplit[0];
+
+        DefaultProperty property = new DefaultProperty();
+        property.setCategory(category.substring(0, 1).toUpperCase() + category.substring(1));
+        property.setDisplayName(name);
+        property.setName(name);
+
+        Object value = detailsEntry.getValue();
+        if (value instanceof Double) {
+            value = String.format("%.3f", value);
+        }
+        property.setValue(value);
+        return property;
     }
 }

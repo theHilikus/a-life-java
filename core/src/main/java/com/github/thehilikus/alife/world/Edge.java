@@ -7,12 +7,7 @@ import com.github.thehilikus.alife.agent.api.Position;
 /**
  * An agent that represents a side limit of the world
  */
-public class Edge implements Agent {
-    private final Position.Immutable position;
-
-    public Edge(Position.Immutable position) {
-        this.position = position;
-    }
+public record Edge(Position.Immutable position) implements Agent {
 
     @Override
     public int getId() {
@@ -24,11 +19,6 @@ public class Edge implements Agent {
         AgentDetails details = new AgentDetails(getId(), getClass().getSimpleName(), position);
 
         return details.toImmutable();
-    }
-
-    @Override
-    public Position.Immutable getPosition() {
-        return position;
     }
 
     @Override

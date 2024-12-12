@@ -84,7 +84,7 @@ public class Legs implements Locomotion {
                     break;
                 }
                 if (scanResult.getAgent() instanceof Edge) {
-                    if (position.toImmutable().isNextTo(scanResult.getAgent().getPosition()) && isFacing(scanResult.getAgent())) {
+                    if (position.toImmutable().isNextTo(scanResult.getAgent().position()) && isFacing(scanResult.getAgent())) {
                         return result;
                     }
                 }
@@ -102,8 +102,8 @@ public class Legs implements Locomotion {
         boolean facingEast = orientation > Orientation.NORTH || orientation < Orientation.SOUTH;
         boolean facingSouth = orientation < Turn.HALF;
 
-        int deltaX = edge.getPosition().getX() - position.getX();
-        int deltaY = edge.getPosition().getY() - position.getY();
+        int deltaX = edge.position().getX() - position.getX();
+        int deltaY = edge.position().getY() - position.getY();
 
         return deltaX < 0 && deltaY < 0 && facingWest && facingNorth
                 || deltaX < 0 && deltaY > 0 && facingWest && facingSouth
@@ -116,29 +116,34 @@ public class Legs implements Locomotion {
     }
 
     private void turnAfterEdgeCollision() {
-        CartesianVector wallNormal;
-        if (position.getX() == 1) {
-            //west wall
-            wallNormal = new CartesianVector(1, 0);
-        } else if (position.getY() == 1) {
-            //north wall
-            wallNormal = new CartesianVector(0, 1);
-        } else if (position.getX() == worldWidth - 2) {
-            //east wall
-            wallNormal = new CartesianVector(-1, 0);
-        } else if (position.getY() == worldHeight - 2) {
-            //south wall
-            wallNormal = new CartesianVector(0, -1);
-        } else {
-            throw new IllegalStateException("Did not hit a wall");
-        }
+        CartesianVector wallNormal = createWallNormal();
 
         CartesianVector current = new PolarVector(orientation, 1).toCartesian();
         CartesianVector reflection = current.plus(wallNormal.multiply(-2 * current.dot(wallNormal)));
-        double reflectionAngleInRadians = Math.atan2(reflection.getY(), reflection.getX());
+        double reflectionAngleInRadians = Math.atan2(reflection.y(), reflection.x());
         int reflectionAngle = (int) (Math.round(Math.toDegrees(reflectionAngleInRadians)) - orientation);
         LOG.debug("Bouncing off edge");
         turn(reflectionAngle);
+    }
+
+    private CartesianVector createWallNormal() {
+        CartesianVector result;
+        if (position.getX() == 1) {
+            //west wall
+            result = new CartesianVector(1, 0);
+        } else if (position.getY() == 1) {
+            //north wall
+            result = new CartesianVector(0, 1);
+        } else if (position.getX() == worldWidth - 2) {
+            //east wall
+            result = new CartesianVector(-1, 0);
+        } else if (position.getY() == worldHeight - 2) {
+            //south wall
+            result = new CartesianVector(0, -1);
+        } else {
+            throw new IllegalStateException("Did not hit a wall");
+        }
+        return result;
     }
 
     @Override
@@ -154,7 +159,7 @@ public class Legs implements Locomotion {
 
     private double moveTo(double speedFactor, PolarVector vector) {
         if (Math.abs(vector.getAngle()) > Turn.HALF) {
-            throw new IllegalArgumentException("Orientation offset must be reduced to its smallest representation: e.g. 359 -> -1");
+            throw new IllegalArgumentException("Orientation offset must be reduced to its smallest representation. e.g., 359 -> -1");
         }
 
         double movementEnergy = 0;

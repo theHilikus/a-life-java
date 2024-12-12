@@ -3,14 +3,7 @@ package com.github.thehilikus.alife.agent.motion.api;
 /**
  * A vector with in cartesian coordinates
  */
-public class CartesianVector {
-    private final double x;
-    private final double y;
-
-    public CartesianVector(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
+public record CartesianVector(double x, double y) {
 
     public double dot(CartesianVector other) {
         return x * other.x + y * other.y;
@@ -22,14 +15,6 @@ public class CartesianVector {
 
     public CartesianVector plus(CartesianVector other) {
         return new CartesianVector(x + other.x, y + other.y);
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
     }
 
     public PolarVector toPolar() {

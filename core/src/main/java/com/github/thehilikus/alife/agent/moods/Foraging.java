@@ -49,7 +49,7 @@ public class Foraging implements Mood {
                 PARAMETER_PREFIX + "speedFactor", speedFactor,
                 PARAMETER_PREFIX + "lastMovementEnergy", lastMovementEnergy,
                 PARAMETER_PREFIX + "target", target.getId(),
-                PARAMETER_PREFIX + "targetPosition", target.getPosition()
+                PARAMETER_PREFIX + "targetPosition", target.position()
         );
     }
 
@@ -60,8 +60,8 @@ public class Foraging implements Mood {
         Optional<ScanResult> targetOptional = scanResult.stream().filter(scan -> scan.getAgent().getId() == this.target.getId()).findFirst();
         if (targetOptional.isPresent()) {
             ScanResult targetScan = targetOptional.get();
-            double movementEnergy = locomotion.moveTowardsTarget(speedFactor, targetScan.getAgent().getPosition());
-            if (locomotion.getPosition().isNextTo(targetScan.getAgent().getPosition())) {
+            double movementEnergy = locomotion.moveTowardsTarget(speedFactor, targetScan.getAgent().position());
+            if (locomotion.getPosition().isNextTo(targetScan.getAgent().position())) {
                 return reachedTarget((SocialAgent) me);
             } else {
                 lastMovementEnergy = movementEnergy;

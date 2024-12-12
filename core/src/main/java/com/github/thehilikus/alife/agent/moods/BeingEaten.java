@@ -6,7 +6,7 @@ import com.github.thehilikus.alife.agent.moods.api.Mood;
 import java.util.Map;
 
 /**
- * A Eatable agent being eaten
+ * An Eatable agent being eaten
  */
 public class BeingEaten implements Mood {
     private final int agentId;

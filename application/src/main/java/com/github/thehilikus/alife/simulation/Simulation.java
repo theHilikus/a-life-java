@@ -51,6 +51,17 @@ public class Simulation {
     }
 
     private static void setupLogFile(CliOptions options) {
+        FileAppender<ILoggingEvent> fileAppender = createLogFileAppender(options);
+        fileAppender.start();
+
+        // attach the rolling file appender to the logger of your choice
+        @SuppressWarnings("unchecked")
+        AppenderAttachable<ILoggingEvent> logbackLogger = (AppenderAttachable<ILoggingEvent>) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        logbackLogger.addAppender(fileAppender);
+        logbackLogger.detachAppender("CONSOLE");
+    }
+
+    private static FileAppender<ILoggingEvent> createLogFileAppender(CliOptions options) {
         Context loggerContext = (Context) LoggerFactory.getILoggerFactory();
 
         PatternLayoutEncoder encoder = new PatternLayoutEncoder();
@@ -64,13 +75,7 @@ public class Simulation {
         fileAppender.setFile(options.getLogFile().getAbsolutePath());
         fileAppender.setAppend(false);
         fileAppender.setEncoder(encoder);
-        fileAppender.start();
-
-        // attach the rolling file appender to the logger of your choice
-        @SuppressWarnings("unchecked")
-        AppenderAttachable<ILoggingEvent> logbackLogger = (AppenderAttachable<ILoggingEvent>) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        logbackLogger.addAppender(fileAppender);
-        logbackLogger.detachAppender("CONSOLE");
+        return fileAppender;
     }
 
     private static CliOptions parseArguments(String[] args) {

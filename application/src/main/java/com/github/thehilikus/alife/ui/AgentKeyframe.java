@@ -94,7 +94,7 @@ public class AgentKeyframe implements Comparable<AgentKeyframe> {
                 result = (int) interpolateNumber(startAngle, endAngle, percentToKeyFrame);
             }
         } else { //endAngle < startAngle
-            //turned anticlock or wrapped around
+            //turned anticlockwise or wrapped around
             if (startAngle - endAngle > Locomotion.Turn.HALF) {
                 //clock is shorter
                 result = (int) interpolateNumber(startAngle, endAngle + Locomotion.Turn.FULL, percentToKeyFrame);

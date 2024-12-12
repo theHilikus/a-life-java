@@ -42,9 +42,9 @@ public class SocialController implements Component {
 
     public void receiveMessage(Message message) {
         LOG.debug("Agent {} received message {}", agentId, message);
-        if (message.getMessage().equals(MessageType.MATING_CALL)) {
-            mateRequest(message.getSender(), message.getDetails());
-        } else if (message.getMessage().equals(MessageType.NEW_OFFSPRING)) {
+        if (message.message().equals(MessageType.MATING_CALL)) {
+            mateRequest(message.sender(), message.details());
+        } else if (message.message().equals(MessageType.NEW_OFFSPRING)) {
             newOffspring(message);
         }
     }
@@ -72,8 +72,8 @@ public class SocialController implements Component {
     }
 
     private void newOffspring(Message message) {
-        int offspringId = (int) message.getDetails().get("offspringId");
-        int motherId = message.getSender().getId();
+        int offspringId = (int) message.details().get("offspringId");
+        int motherId = message.sender().getId();
         reproduction.gaveBirth(motherId, offspringId);
     }
 

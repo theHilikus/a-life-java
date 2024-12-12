@@ -13,6 +13,6 @@ public interface Agent {
     @NotNull
     AgentDetails.Immutable getDetails();
 
-    Position.Immutable getPosition();
+    Position.Immutable position();
 
 }

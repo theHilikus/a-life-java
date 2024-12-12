@@ -2,6 +2,9 @@ package com.github.thehilikus.alife.agent.vision;
 
 import com.github.thehilikus.alife.agent.vision.api.Shape;
 
+/**
+ * A triangle with four sides
+ */
 public class Rectangle implements Shape {
     private final int x;
     private final int y;

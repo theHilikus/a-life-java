@@ -89,7 +89,7 @@ public class HerbivoreGenome extends Genome {
             } else {
                 result = new HerbivoreGenome(new HashMap<>(getGenes()));
             }
-            LOG.debug("No crossover. Instead, cloning the genome of the " + (cloneMother ? "mother" : "father"));
+            LOG.debug("No crossover. Instead, cloning the genome of the {}", cloneMother ? "mother" : "father");
         }
 
         return result;

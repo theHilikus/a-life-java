@@ -28,7 +28,7 @@ public class DummyAgent implements LivingAgent {
     }
 
     @Override
-    public Position.Immutable getPosition() {
+    public Position.Immutable position() {
         return legs.getPosition();
     }
 
