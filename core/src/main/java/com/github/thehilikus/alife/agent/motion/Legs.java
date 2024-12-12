@@ -57,7 +57,11 @@ public class Legs implements Locomotion {
         double endY = position.getY() + sinOrientation * maxMovement;
 
         double result;
-        if (endX < 1 || endX > worldWidth - 2 || endY < 1 || endY > worldHeight - 2) {
+
+        final double edgeStartPosition = 0.5;
+        final double edgeEndPosition = 1.5;
+        if (endX < edgeStartPosition || endX > worldWidth - edgeEndPosition || endY < edgeStartPosition || endY > worldHeight - edgeEndPosition) {
+            LOG.debug("Normal movement of {} would leave agent outside the world. endX={}, endY={}", maxMovement, endX, endY);
             result = moveToEdge(scanResults, maxMovement);
             turnAfterEdgeCollision();
         } else {
