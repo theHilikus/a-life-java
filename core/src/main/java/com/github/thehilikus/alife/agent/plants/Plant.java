@@ -27,7 +27,7 @@ public class Plant implements EatableAgent {
         this.id = id;
         this.position = startingPosition;
         this.mood = startingMood;
-        this.energyTracker = new EnergyTracker(id);
+        this.energyTracker = new EnergyTracker(id, 0, 80); //TODO: maybe make starting energy random
         this.size = RandomProvider.nextInt(LivingAgent.MIN_SIZE, Math.max(maxSize, LivingAgent.MIN_SIZE + 1));
     }
 

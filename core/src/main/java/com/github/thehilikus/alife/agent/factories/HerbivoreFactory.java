@@ -27,6 +27,7 @@ import org.slf4j.MDC;
 public class HerbivoreFactory extends LivingAgentFactory {
     private static final Logger LOG = LoggerFactory.getLogger(HerbivoreFactory.class);
     private static boolean configuredGenome;
+    private static final int STARTING_ENERGY = 100;
 
     @Override
     public LivingAgent createAgent() {
@@ -50,7 +51,7 @@ public class HerbivoreFactory extends LivingAgentFactory {
         dependencies.addComponent(Locomotion.class, new RandomWalk(getWorld().getWidth(), getWorld().getHeight(), id, position, genome));
 
         dependencies.addVitalSign(HungerTracker.class, new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold")));
-        dependencies.addVitalSign(EnergyTracker.class, new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold")));
+        dependencies.addVitalSign(EnergyTracker.class, new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"), STARTING_ENERGY));
         dependencies.addVitalSign(AgeTracker.class, new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "teenAge"), genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy")));
         dependencies.addVitalSign(ReproductionTracker.class, new ReproductionTracker());
         dependencies.addVitalSign(SizeTracker.class, new SizeTracker(genome.getGene("maxSize")));
