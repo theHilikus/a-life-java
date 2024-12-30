@@ -43,6 +43,7 @@ public class HerbivoreFactory extends LivingAgentFactory {
 
     private Herbivore createAgentFromGenome(Genome genome, Position position) {
         int id = getWorld().getNextId();
+        String oldId = MDC.get("agentId");
         MDC.put("agentId", String.valueOf(id));
         AgentModules dependencies = new AgentModules(genome);
         dependencies.addComponent(Vision.class, new SurroundingsVision(id, genome, getWorld()));
@@ -61,7 +62,7 @@ public class HerbivoreFactory extends LivingAgentFactory {
         Herbivore result = new Herbivore(id, dependencies, startingMood, vitalsController, socialController);
 
         getWorld().addAgent(result);
-        MDC.remove("agentId");
+        MDC.put("agentId", oldId);
 
         return result;
     }
