@@ -61,7 +61,7 @@ public class Plant implements EatableAgent {
     @Override
     public AgentDetails.Immutable getDetails() {
         AgentDetails details = new AgentDetails(id, getClass().getSimpleName(), position());
-        details.addAttribute("maxSize", maxSize);
+        details.addAttribute(VitalSign.PARAMETER_PREFIX + "maxSize", maxSize);
         details.addAttribute(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
 
         details.addAllDetails(mood.getDetails());

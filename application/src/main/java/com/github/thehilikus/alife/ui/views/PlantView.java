@@ -76,7 +76,7 @@ public class PlantView implements AgentView {
     }
 
     private Shape createPlantShape(AgentKeyframe frame) {
-        int agentSize = frame.getAgentDetail("maxSize");
+        int agentSize = frame.getAgentDetail(VitalSign.PARAMETER_PREFIX + "maxSize");
 
         double vitality = ((Integer) frame.getInterpolatedProperty("energy")).doubleValue() / VitalSign.MAX_ENERGY;
         //noinspection MagicNumber
