@@ -14,7 +14,7 @@ import java.util.Map;
 public class Growing implements Mood {
     private final int agentId;
 
-    private static final int RECOVERY_RATE = 10;
+    private static final int RECOVERY_RATE = 1;
 
     public Growing(int agentId) {
         this.agentId = agentId;
