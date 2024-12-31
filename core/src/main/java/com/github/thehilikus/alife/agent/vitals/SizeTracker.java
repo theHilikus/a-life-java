@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agent.vitals;
 
-import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 
 import java.util.Map;
@@ -14,8 +13,9 @@ public class SizeTracker implements VitalSign {
     private int currentSize;
     private int updates;
 
-    public SizeTracker(int maxSize) {
+    public SizeTracker(int initialSize, int maxSize) {
         this.maxSize = maxSize;
+        this.currentSize = initialSize;
     }
 
     @Override
@@ -40,5 +40,13 @@ public class SizeTracker implements VitalSign {
     public Map<String, Object> getDetails() {
         return Map.of("size", currentSize,
                 PARAMETER_PREFIX + "maxSize", maxSize);
+    }
+
+    public boolean isFullSize() {
+        return currentSize >= maxSize;
+    }
+
+    public int getMaxSize() {
+        return maxSize;
     }
 }
