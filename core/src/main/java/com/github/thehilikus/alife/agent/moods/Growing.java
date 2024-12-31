@@ -2,6 +2,7 @@ package com.github.thehilikus.alife.agent.moods;
 
 import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
+import com.github.thehilikus.alife.agent.plants.Plant;
 
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Collections;
@@ -21,6 +22,10 @@ public class Growing implements Mood {
 
     @Override
     public Mood tick(LivingAgent me) {
+        Plant mePlant = (Plant) me;
+        if (mePlant.isFullSize()) {
+            return new Pollinating(agentId, mePlant.getPollinationProbability());
+        }
         return this;
     }
 

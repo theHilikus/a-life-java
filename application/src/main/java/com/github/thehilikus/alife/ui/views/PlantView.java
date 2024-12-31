@@ -28,7 +28,8 @@ public class PlantView implements AgentView {
      */
     public static final Map<String, Color> graphicalMoodColours = Map.of(
             "BeingEaten", Color.YELLOW,
-            "Growing", Color.GREEN
+            "Growing", Color.GREEN,
+            "Pollinating", Color.PINK
     );
 
     @Override

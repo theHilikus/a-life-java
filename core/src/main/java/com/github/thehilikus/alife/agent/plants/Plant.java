@@ -1,9 +1,7 @@
 package com.github.thehilikus.alife.agent.plants;
 
 import com.github.thehilikus.alife.agent.api.AgentDetails;
-import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.api.Position;
-import com.github.thehilikus.alife.agent.api.RandomProvider;
 import com.github.thehilikus.alife.agent.api.internal.EatableAgent;
 import com.github.thehilikus.alife.agent.moods.BeingEaten;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
@@ -18,17 +16,19 @@ import org.slf4j.LoggerFactory;
 public class Plant implements EatableAgent {
     private static final Logger LOG = LoggerFactory.getLogger(Plant.class);
     private final int id;
+    private final double pollinationProbability;
     private final Position position;
     private final int maxSize;
     private Mood mood;
     private final EnergyTracker energyTracker;
 
-    public Plant(int id, Position startingPosition, Mood startingMood, int maxSize) {
+    public Plant(int id, Position startingPosition, Mood startingMood, int maxSize, double pollinationProbability) {
         this.id = id;
         this.position = startingPosition;
         this.mood = startingMood;
+        this.pollinationProbability = pollinationProbability;
         this.energyTracker = new EnergyTracker(id, 0, 80); //TODO: maybe make starting energy random
-        this.maxSize = RandomProvider.nextInt(LivingAgent.MIN_SIZE, Math.max(maxSize, LivingAgent.MIN_SIZE + 1));
+        this.maxSize = maxSize;
     }
 
     @Override
@@ -80,6 +80,7 @@ public class Plant implements EatableAgent {
         return "Plant{" +
                 "id=" + id +
                 ", position=" + position +
+                ", mood=" + mood +
                 '}';
     }
 
@@ -98,5 +99,17 @@ public class Plant implements EatableAgent {
 
         int actualBiteSize = (int) Math.round((energyCost / (double) VitalSign.MAX_ENERGY) * maxSize);
         return Math.min(desiredBiteSize, actualBiteSize);
+    }
+
+    public boolean isFullSize() {
+        return energyTracker.getValue() == VitalSign.MAX_ENERGY;
+    }
+
+    public double getPollinationProbability() {
+        return pollinationProbability;
+    }
+
+    public int getMaxSize() {
+        return maxSize;
     }
 }
