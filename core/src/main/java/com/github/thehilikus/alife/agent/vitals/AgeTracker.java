@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agent.vitals;
 
-import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 
 import javax.validation.constraints.PositiveOrZero;
@@ -21,7 +20,7 @@ public class AgeTracker implements VitalSign {
     }
 
     @Override
-    public void update(Mood currentMood) {
+    public void update(int unused) {
         currentAge++;
     }
 

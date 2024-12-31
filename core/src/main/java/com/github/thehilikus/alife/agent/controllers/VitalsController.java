@@ -38,8 +38,8 @@ public class VitalsController implements Component {
     }
 
     public void updateTrackers(Mood currentMood) {
-        hungerTracker.update(currentMood);
-        energyTracker.update(currentMood);
+        hungerTracker.update(currentMood.getHungerDelta());
+        energyTracker.update(currentMood.getEnergyDelta());
         ageTracker.update();
         sizeTracker.update();
 
