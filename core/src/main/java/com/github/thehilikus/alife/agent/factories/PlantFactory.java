@@ -46,11 +46,12 @@ public class PlantFactory extends LivingAgentFactory {
 
     private Position getClonePosition(Plant original) {
         int worldSize = Math.min(getWorld().getWidth(), getWorld().getHeight()); //assume the world is square
-        int maxDispersion = (int) (worldSize * MAX_DISPERSION_WORLD_PROPORTION);
+        int maxDispersion = (int) Math.round(worldSize * MAX_DISPERSION_WORLD_PROPORTION);
         int windDispersion = maxDispersion / original.getMaxSize(); //the bigger the plant, the smaller the distance
         int xDistanceFromOriginal = RandomProvider.nextInt(-windDispersion, windDispersion);
         int yDistanceFromOriginal = RandomProvider.nextInt(-windDispersion, windDispersion);
 
-        return new Position(original.position().getX() + xDistanceFromOriginal, original.position().getY() + yDistanceFromOriginal);
+        Position position = new Position(original.position().getX() + xDistanceFromOriginal, original.position().getY() + yDistanceFromOriginal);
+        return position.truncate(1, 1, getWorld().getWidth() - 2, getWorld().getHeight() - 2);
     }
 }
