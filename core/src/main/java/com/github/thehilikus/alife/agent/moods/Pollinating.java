@@ -21,23 +21,31 @@ public class Pollinating implements Mood {
 
     private final int agentId;
     private final double pollinationProbability;
+    private final int pollinationPeriod;
     private boolean pollinated;
+    private int tickCounter;
 
-    public Pollinating(int agentId, double pollinationProbability) {
+    public Pollinating(int agentId, double pollinationProbability, int pollinationPeriod) {
         this.agentId = agentId;
         this.pollinationProbability = pollinationProbability;
+        this.pollinationPeriod = pollinationPeriod;
+        tickCounter = 0;
     }
 
     @Override
     public Mood tick(LivingAgent me) {
+        tickCounter++;
         if (RandomProvider.nextDouble(1) < pollinationProbability) {
             LOG.debug("Plant {} is pollinating", agentId);
             Agent clone = new PlantFactory().createClone((Plant) me);
             LOG.info("Created clone of plant {}. Clone: {}", me.getId(), clone);
             pollinated = true;
-            return new Growing(agentId);
+            return new Growing(agentId, pollinationPeriod * 4);
         } else {
             pollinated = false;
+        }
+        if (tickCounter > pollinationPeriod) {
+            return new Growing(agentId);
         }
 
         return this;
@@ -66,7 +74,9 @@ public class Pollinating implements Mood {
     @Override
     public Map<String, Object> getDetails() {
         return Map.of(
-                PARAMETER_PREFIX + "pollinationProbability", pollinationProbability
+                PARAMETER_PREFIX + "pollinationProbability", pollinationProbability,
+                PARAMETER_PREFIX + "pollinationPeriod", pollinationPeriod,
+                PARAMETER_PREFIX + "pollinationClock", tickCounter
         );
     }
 
@@ -74,6 +84,7 @@ public class Pollinating implements Mood {
     public String toString() {
         return "Pollinating{" +
                 "probability=" + String.format("%.2f", pollinationProbability) +
+                ", period=" + pollinationPeriod +
                 '}';
     }
 }

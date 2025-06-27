@@ -18,16 +18,18 @@ public class Plant implements EatableAgent {
     private static final Logger LOG = LoggerFactory.getLogger(Plant.class);
     private final int id;
     private final double pollinationProbability;
+    private final int pollinationPeriod;
     private final Position position;
     private final int maxSize;
     private Mood mood;
     private final SizeTracker sizeTracker;
 
-    public Plant(int id, Position startingPosition, Mood startingMood, int maxSize, double pollinationProbability) {
+    public Plant(int id, Position startingPosition, Mood startingMood, int maxSize, double pollinationProbability, int pollinationPeriod) {
         this.id = id;
         this.position = startingPosition;
         this.mood = startingMood;
         this.pollinationProbability = pollinationProbability;
+        this.pollinationPeriod = pollinationPeriod;
         final double minSizeProportion = 0.05;
         int initialSize = (int) Math.round(maxSize * RandomProvider.nextDouble(minSizeProportion, 1));
         this.sizeTracker = new SizeTracker(initialSize, maxSize);
@@ -112,6 +114,9 @@ public class Plant implements EatableAgent {
         return pollinationProbability;
     }
 
+    public int getPollinationPeriod() {
+        return pollinationPeriod;
+    }
     public int getMaxSize() {
         return sizeTracker.getMaxSize();
     }

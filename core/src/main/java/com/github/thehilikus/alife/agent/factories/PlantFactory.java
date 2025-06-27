@@ -13,9 +13,11 @@ import org.slf4j.MDC;
  */
 public class PlantFactory extends LivingAgentFactory {
     private static final Logger LOG = LoggerFactory.getLogger(PlantFactory.class);
-    private static final double MAX_POLLINATION_PROBABILITY = 0.15;
+    private static final double MAX_POLLINATION_PROBABILITY = 0.05;
     private static final double MAX_DISPERSION_WORLD_PROPORTION = 0.40;
     private static final double MAX_SIZE_PROPORTION_TO_WORLD = 0.05;
+    private static final int MIN_POLLINATION_PERIOD = 10;
+    private static final int MAX_POLLINATION_PERIOD = 40;
 
     @Override
     protected LivingAgent createAgent() {
@@ -26,7 +28,8 @@ public class PlantFactory extends LivingAgentFactory {
         int maxSizePossible = (int) (Math.min(getWorld().getWidth(), getWorld().getHeight()) * MAX_SIZE_PROPORTION_TO_WORLD);
         int plantMaxSize = RandomProvider.nextInt(LivingAgent.MIN_SIZE, Math.max(maxSizePossible, LivingAgent.MIN_SIZE + 1));
         double pollinationProbability = RandomProvider.nextDouble(MAX_POLLINATION_PROBABILITY);
-        LivingAgent result = new Plant(id, getWorld().getRandomPosition(), startingMood, plantMaxSize, pollinationProbability);
+        int pollinationPeriod = RandomProvider.nextInt(MIN_POLLINATION_PERIOD, MAX_POLLINATION_PERIOD);
+        LivingAgent result = new Plant(id, getWorld().getRandomPosition(), startingMood, plantMaxSize, pollinationProbability, pollinationPeriod);
         LOG.info("Created {}", result);
         getWorld().addAgent(result);
         MDC.remove("agentId");
@@ -38,7 +41,7 @@ public class PlantFactory extends LivingAgentFactory {
     public Agent createClone(Plant original) {
         int cloneId = getWorld().getNextId();
         Position clonePosition = getClonePosition(original);
-        Agent result = new Plant(cloneId, clonePosition, new Growing(cloneId), original.getMaxSize(), original.getPollinationProbability());
+        Agent result = new Plant(cloneId, clonePosition, new Growing(cloneId), original.getMaxSize(), original.getPollinationProbability(), original.getPollinationPeriod());
         getWorld().addAgent(result);
 
         return result;
