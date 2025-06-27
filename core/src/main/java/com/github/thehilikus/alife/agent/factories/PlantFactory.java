@@ -13,7 +13,7 @@ import org.slf4j.MDC;
  */
 public class PlantFactory extends LivingAgentFactory {
     private static final Logger LOG = LoggerFactory.getLogger(PlantFactory.class);
-    private static final double MAX_POLLINATION_PROBABILITY = 0.25;
+    private static final double MAX_POLLINATION_PROBABILITY = 0.15;
     private static final double MAX_DISPERSION_WORLD_PROPORTION = 0.40;
     private static final double MAX_SIZE_PROPORTION_TO_WORLD = 0.05;
 

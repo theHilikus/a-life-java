@@ -2,10 +2,11 @@ package com.github.thehilikus.alife.agent.plants;
 
 import com.github.thehilikus.alife.agent.api.AgentDetails;
 import com.github.thehilikus.alife.agent.api.Position;
+import com.github.thehilikus.alife.agent.api.RandomProvider;
 import com.github.thehilikus.alife.agent.api.internal.EatableAgent;
 import com.github.thehilikus.alife.agent.moods.BeingEaten;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
-import com.github.thehilikus.alife.agent.vitals.EnergyTracker;
+import com.github.thehilikus.alife.agent.vitals.SizeTracker;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +21,16 @@ public class Plant implements EatableAgent {
     private final Position position;
     private final int maxSize;
     private Mood mood;
-    private final EnergyTracker energyTracker;
+    private final SizeTracker sizeTracker;
 
     public Plant(int id, Position startingPosition, Mood startingMood, int maxSize, double pollinationProbability) {
         this.id = id;
         this.position = startingPosition;
         this.mood = startingMood;
         this.pollinationProbability = pollinationProbability;
-        this.energyTracker = new EnergyTracker(id, 0, 80); //TODO: maybe make starting energy random
+        final double minSizeProportion = 0.05;
+        int initialSize = (int) Math.round(maxSize * RandomProvider.nextDouble(minSizeProportion, 1));
+        this.sizeTracker = new SizeTracker(initialSize, maxSize);
         this.maxSize = maxSize;
     }
 
@@ -39,13 +42,13 @@ public class Plant implements EatableAgent {
         if (oldMood != mood) {
             LOG.info("Transitioning from {} to {}", oldMood, mood);
         }
-        int energyBefore = energyTracker.getValue();
-        energyTracker.update(oldMood);
-        if (energyTracker.getValue() != energyBefore) {
-            LOG.debug("Energy went from {} to {}", energyBefore, energyTracker.getValue());
+        int sizeBefore = sizeTracker.getValue();
+        sizeTracker.update(oldMood.getEnergyDelta());
+        if (sizeTracker.getValue() != sizeBefore) {
+            LOG.debug("Size went from {} to {}", sizeBefore, sizeTracker.getValue());
         }
 
-        return energyTracker.isAlive() ? null : energyTracker;
+        return sizeTracker.isAlive() ? null : sizeTracker;
     }
 
     @Override
@@ -65,7 +68,7 @@ public class Plant implements EatableAgent {
         details.addAttribute(Mood.PARAMETER_PREFIX + "current", mood.getClass().getSimpleName());
 
         details.addAllDetails(mood.getDetails());
-        details.addAllDetails(energyTracker.getDetails());
+        details.addAllDetails(sizeTracker.getDetails());
 
         return details.toImmutable();
     }
@@ -92,7 +95,7 @@ public class Plant implements EatableAgent {
 
         double plantEnergyProportion = desiredBiteSize / (double) maxSize;
         int energyCost = (int) Math.round(plantEnergyProportion * VitalSign.MAX_ENERGY);
-        energyCost = Math.min(energyCost, energyTracker.getValue());
+        energyCost = Math.min(energyCost, sizeTracker.getValue());
 
         ((BeingEaten) mood).bite(energyCost);
         LOG.debug("Plant {} lost {} energy", id, energyCost);
@@ -102,7 +105,7 @@ public class Plant implements EatableAgent {
     }
 
     public boolean isFullSize() {
-        return energyTracker.getValue() == VitalSign.MAX_ENERGY;
+        return sizeTracker.isFullSize();
     }
 
     public double getPollinationProbability() {
@@ -110,6 +113,6 @@ public class Plant implements EatableAgent {
     }
 
     public int getMaxSize() {
-        return maxSize;
+        return sizeTracker.getMaxSize();
     }
 }
