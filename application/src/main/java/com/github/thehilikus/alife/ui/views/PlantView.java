@@ -28,7 +28,8 @@ public class PlantView implements AgentView {
      */
     public static final Map<String, Color> graphicalMoodColours = Map.of(
             "BeingEaten", Color.YELLOW,
-            "Growing", Color.GREEN
+            "Growing", Color.GREEN,
+            "Pollinating", Color.PINK
     );
 
     @Override
@@ -52,7 +53,7 @@ public class PlantView implements AgentView {
     @Override
     public AgentKeyframe createAgentFrame(AgentDetails.Immutable agentDetails) {
         AgentKeyframe result = new AgentKeyframe(agentDetails.getId(), Z_ORDER, agentDetails);
-        result.addPropertyToInterpolate("energy", agentDetails.getAttribute(VitalSign.PARAMETER_PREFIX + "energy"));
+        result.addPropertyToInterpolate("size", agentDetails.getAttribute("size"));
         String moodName = agentDetails.getAttribute(Mood.PARAMETER_PREFIX + "current").toString();
         Color moodColor = graphicalMoodColours.get(moodName);
         Objects.requireNonNull(moodColor, "Mood color was empty for " + moodName);
@@ -75,11 +76,11 @@ public class PlantView implements AgentView {
     }
 
     private Shape createPlantShape(AgentKeyframe frame) {
-        int agentSize = frame.getAgentDetail("size");
+        int maxSize = frame.getAgentDetail(VitalSign.PARAMETER_PREFIX + "maxSize");
 
-        double vitality = ((Integer) frame.getInterpolatedProperty("energy")).doubleValue() / VitalSign.MAX_ENERGY;
+        double vitality = ((Integer) frame.getInterpolatedProperty("size")).doubleValue() / maxSize;
         //noinspection MagicNumber
-        double radius = agentSize / 2.0 * vitality;
+        double radius = maxSize / 2.0 * vitality;
 
         int x = ((Position.Immutable) frame.getAgentDetail("position")).getX();
         int y = ((Position.Immutable) frame.getAgentDetail("position")).getY();

@@ -39,6 +39,22 @@ public class Position {
     }
 
     /**
+     * Returns a new position which is the same as this one, but with the x and y coordinates
+     * clamped to the given range.
+     *
+     * @param xMin the minimum x value
+     * @param yMin the minimum y value
+     * @param xMax the maximum x value
+     * @param yMax the maximum y value
+     * @return a new position with x and y coordinates clamped to the given range
+     */
+    public Position truncate(int xMin, int yMin, int xMax, int yMax) {
+        double newX = Math.max(Math.min(x, xMax), xMin);
+        double newY = Math.max(Math.min(y, yMax), yMin);
+        return new Position(newX, newY);
+    }
+
+    /**
      * The immutable version of {@link Position}
      */
     public static class Immutable {

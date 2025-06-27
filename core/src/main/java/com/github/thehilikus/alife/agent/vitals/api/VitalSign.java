@@ -1,7 +1,5 @@
 package com.github.thehilikus.alife.agent.vitals.api;
 
-import com.github.thehilikus.alife.agent.moods.api.Mood;
-
 import java.util.Map;
 
 /**
@@ -23,12 +21,13 @@ public interface VitalSign {
 
     /**
      * Updates the vital sign based on the mood
-     * @param currentMood the mood the agent is in
+     *
+     * @param delta the change in the vital sign
      */
-    void update(Mood currentMood);
+    void update(int delta);
 
     default void update() {
-        update(null);
+        update(0);
     }
 
     boolean isAlive();

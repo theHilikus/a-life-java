@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agent.vitals;
 
-import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 
 import javax.validation.constraints.Max;
@@ -25,8 +24,8 @@ public class HungerTracker implements VitalSign {
     }
 
     @Override
-    public void update(Mood currentMood) {
-        currentHunger += currentMood.getHungerDelta();
+    public void update(int delta) {
+        currentHunger += delta;
     }
 
     @Override

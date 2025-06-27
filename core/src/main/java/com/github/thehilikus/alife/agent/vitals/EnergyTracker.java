@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agent.vitals;
 
-import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,6 @@ public class EnergyTracker implements VitalSign {
      */
     public static final int ENERGY_DERIVATIVE = -1;
     private static final Logger LOG = LoggerFactory.getLogger(EnergyTracker.class);
-    private static final int STARTING_ENERGY = 100;
     private final int agentId;
 
     @Min(0)
@@ -27,19 +25,15 @@ public class EnergyTracker implements VitalSign {
 
     private final int lowEnergyThreshold;
 
-    public EnergyTracker(int agentId) {
-        this(agentId, 0);
-    }
-
-    public EnergyTracker(int agentId, int lowEnergyThreshold) {
+    public EnergyTracker(int agentId, int lowEnergyThreshold, int startingEnergy) {
         this.agentId = agentId;
-        currentEnergy = STARTING_ENERGY;
         this.lowEnergyThreshold = lowEnergyThreshold;
+        currentEnergy = startingEnergy;
     }
 
     @Override
-    public void update(Mood currentMood) {
-        currentEnergy += currentMood.getEnergyDelta();
+    public void update(int delta) {
+        currentEnergy += delta;
         currentEnergy = Math.max(0, currentEnergy);
         currentEnergy = Math.min(MAX_ENERGY, currentEnergy);
     }

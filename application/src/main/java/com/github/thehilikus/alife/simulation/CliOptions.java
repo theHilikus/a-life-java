@@ -18,7 +18,7 @@ public class CliOptions {
     @Option(name = "--not-random", usage = "Set a fixed seed to the RNG so that the runs are consistent")
     private boolean notRandom;
     @Option(name = "--plants", usage = "The number of plants to add to the world")
-    private int plantsCount = 50;
+    private int plantsCount = 30;
     @Option(name = "--herbivores", usage = "The number of herbivores to add to the world")
     private int herbivoresCount = 20;
     @Option(name = "--world-width", usage = "The number of horizontal positions")

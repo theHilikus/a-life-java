@@ -37,5 +37,9 @@ public interface Mood extends Component {
      */
     int getEnergyDelta();
 
+    /**
+     * @return the priority level of the current mood, which is used to determine the precedence of actions when multiple moods are available.
+     * Higher number means higher priority
+     */
     int getPriority();
 }

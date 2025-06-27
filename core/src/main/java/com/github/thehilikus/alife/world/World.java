@@ -144,6 +144,11 @@ public class World implements WorldListener.WorldStatus {
         return livingAgents.stream().filter(agent2 -> agent2.getId() == agentId).findFirst();
     }
 
+    /**
+     * Gets a random position <strong>inside</strong> the world
+     *
+     * @return a random position
+     */
     public Position getRandomPosition() {
         int x = RandomProvider.nextInt(1, getWidth() - 1);
         int y = RandomProvider.nextInt(1, getHeight() - 1);

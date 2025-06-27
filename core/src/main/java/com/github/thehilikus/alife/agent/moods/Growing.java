@@ -2,9 +2,9 @@ package com.github.thehilikus.alife.agent.moods;
 
 import com.github.thehilikus.alife.agent.api.LivingAgent;
 import com.github.thehilikus.alife.agent.moods.api.Mood;
+import com.github.thehilikus.alife.agent.plants.Plant;
 
 import javax.validation.constraints.PositiveOrZero;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -12,15 +12,30 @@ import java.util.Map;
  */
 public class Growing implements Mood {
     private final int agentId;
+    private final int frozenTime;
 
-    private static final int RECOVERY_RATE = 10;
+    private static final int RECOVERY_RATE = 1;
+    private int tickCounter;
 
     public Growing(int agentId) {
+        this(agentId, 10);
+    }
+
+    public Growing(int agentId, int frozenTime) {
         this.agentId = agentId;
+        this.frozenTime = frozenTime;
     }
 
     @Override
     public Mood tick(LivingAgent me) {
+        Plant mePlant = (Plant) me;
+        if (mePlant.isFullSize()) {
+            if (tickCounter > frozenTime) {
+                return new Pollinating(agentId, mePlant.getPollinationProbability(), ((Plant) me).getPollinationPeriod());
+            } else {
+                tickCounter++;
+            }
+        }
         return this;
     }
 
@@ -46,7 +61,11 @@ public class Growing implements Mood {
 
     @Override
     public Map<String, Object> getDetails() {
-        return Collections.emptyMap();
+        return Map.of(
+                PARAMETER_PREFIX + "frozenTime", frozenTime,
+                PARAMETER_PREFIX + "freezeCounter",  tickCounter
+        );
+
     }
 
     @Override

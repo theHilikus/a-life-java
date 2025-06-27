@@ -1,7 +1,5 @@
 package com.github.thehilikus.alife.agent.vitals;
 
-import com.github.thehilikus.alife.agent.api.LivingAgent;
-import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 
 import java.util.Map;
@@ -12,35 +10,43 @@ import java.util.Map;
 public class SizeTracker implements VitalSign {
     private static final int SLOWING_FACTOR = 3;
     private final int maxSize;
-    private int size = LivingAgent.MIN_SIZE;
+    private int currentSize;
     private int updates;
 
-    public SizeTracker(int maxSize) {
+    public SizeTracker(int initialSize, int maxSize) {
         this.maxSize = maxSize;
+        this.currentSize = initialSize;
     }
 
     @Override
-    public void update(Mood currentMood) {
+    public void update(int unused) {
         updates++;
         if (updates % SLOWING_FACTOR == 0) {
-            size = Math.min(size + 1, maxSize);
-
+            currentSize = Math.min(currentSize + 1, maxSize);
         }
     }
 
     @Override
     public boolean isAlive() {
-        return true;
+        return currentSize > 0;
     }
 
     @Override
     public int getValue() {
-        return size;
+        return currentSize;
     }
 
     @Override
     public Map<String, Object> getDetails() {
-        return Map.of("size", size,
+        return Map.of("size", currentSize,
                 PARAMETER_PREFIX + "maxSize", maxSize);
+    }
+
+    public boolean isFullSize() {
+        return currentSize >= maxSize;
+    }
+
+    public int getMaxSize() {
+        return maxSize;
     }
 }

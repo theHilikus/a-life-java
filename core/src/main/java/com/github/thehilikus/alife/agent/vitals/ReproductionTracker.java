@@ -1,6 +1,5 @@
 package com.github.thehilikus.alife.agent.vitals;
 
-import com.github.thehilikus.alife.agent.moods.api.Mood;
 import com.github.thehilikus.alife.agent.vitals.api.VitalSign;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ public class ReproductionTracker implements VitalSign {
     private final Collection<Integer> mates = new ArrayList<>();
 
     @Override
-    public void update(Mood currentMood) {
+    public void update(int unused) {
         timeSinceReproduction++;
     }
 

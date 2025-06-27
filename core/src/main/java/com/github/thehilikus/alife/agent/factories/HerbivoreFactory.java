@@ -27,6 +27,7 @@ import org.slf4j.MDC;
 public class HerbivoreFactory extends LivingAgentFactory {
     private static final Logger LOG = LoggerFactory.getLogger(HerbivoreFactory.class);
     private static boolean configuredGenome;
+    private static final int STARTING_ENERGY = 100;
 
     @Override
     public LivingAgent createAgent() {
@@ -43,16 +44,17 @@ public class HerbivoreFactory extends LivingAgentFactory {
 
     private Herbivore createAgentFromGenome(Genome genome, Position position) {
         int id = getWorld().getNextId();
+        String oldId = MDC.get("agentId");
         MDC.put("agentId", String.valueOf(id));
         AgentModules dependencies = new AgentModules(genome);
         dependencies.addComponent(Vision.class, new SurroundingsVision(id, genome, getWorld()));
         dependencies.addComponent(Locomotion.class, new RandomWalk(getWorld().getWidth(), getWorld().getHeight(), id, position, genome));
 
         dependencies.addVitalSign(HungerTracker.class, new HungerTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "hungryThreshold")));
-        dependencies.addVitalSign(EnergyTracker.class, new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold")));
+        dependencies.addVitalSign(EnergyTracker.class, new EnergyTracker(id, genome.getGene(VitalSign.PARAMETER_PREFIX + "lowEnergyThreshold"), STARTING_ENERGY));
         dependencies.addVitalSign(AgeTracker.class, new AgeTracker(genome.getGene(VitalSign.PARAMETER_PREFIX + "teenAge"), genome.getGene(VitalSign.PARAMETER_PREFIX + "lifeExpectancy")));
         dependencies.addVitalSign(ReproductionTracker.class, new ReproductionTracker());
-        dependencies.addVitalSign(SizeTracker.class, new SizeTracker(genome.getGene("maxSize")));
+        dependencies.addVitalSign(SizeTracker.class, new SizeTracker(LivingAgent.MIN_SIZE, genome.getGene("maxSize")));
 
         VitalsController vitalsController = new VitalsController(id, dependencies);
         SocialController socialController = new SocialController(id, dependencies, vitalsController);
@@ -61,7 +63,7 @@ public class HerbivoreFactory extends LivingAgentFactory {
         Herbivore result = new Herbivore(id, dependencies, startingMood, vitalsController, socialController);
 
         getWorld().addAgent(result);
-        MDC.remove("agentId");
+        MDC.put("agentId", oldId);
 
         return result;
     }
